@@ -127,6 +127,7 @@ void SetReadFlash1(u16 *dest)
     }
 }
 
+// Using volatile here to make sure the flash memory will ONLY be read as bytes, to prevent any compiler optimizations.
 void ReadFlash_Core(vu8 *src, u8 *dest, u32 size)
 {
     while (size-- != 0)
