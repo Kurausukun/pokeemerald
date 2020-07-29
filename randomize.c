@@ -32,7 +32,7 @@
 // Trainer Mons
 #define RANDOMIZE_TRAINERS              true    // If true, randomizes trainers' pokemons.
 
-#define RANDOMIZE_TRAINER_MOVES         false   // If true, randomizes not only trainers' pokemon, but also their mons' moves(for trainers whose pokemon have specific mpves).
+#define RANDOMIZE_TRAINER_MOVES         true   // If true, randomizes not only trainers' pokemon, but also their mons' moves(for trainers whose pokemon have specific mpves).
 #define SAME_TRAINER_BASE_STATS         false    // The same as with wild mons, new random mons will have similar base stat total if true.
 #define SAME_TRAINER_STATS_RANGE_LOW    25      // Same as with wild mons, but low range. High value -> weaker mons allowed
 #define SAME_TRAINER_STATS_RANGE_HIGH   100     // Same as with wild mons, but high range. High value -> stronger mons allowed
