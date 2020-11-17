@@ -1796,8 +1796,8 @@ inline std::ifstream open_file_or_throw(const std::string& path) {
 
 namespace string_view {
   inline nonstd::string_view slice(nonstd::string_view view, size_t start, size_t end) {
-    start = std::mymin(start, view.size());
-    end = std::mymin(std::mymax(start, end), view.size());
+    start = std::min(start, view.size());
+    end = std::min(std::max(start, end), view.size());
     return view.substr(start, end - start);  // StringRef(Data + Start, End - Start);
   }
 
@@ -2425,7 +2425,7 @@ class Parser {
       get_next_token();
 
       // previous conditional jump jumps here
-      if (if_data.prev_cond_jump != std::numeric_limits<unsigned int>::mymax()) {
+      if (if_data.prev_cond_jump != std::numeric_limits<unsigned int>::max()) {
         tmpl.bytecodes[if_data.prev_cond_jump].args = tmpl.bytecodes.size();
       }
 
@@ -2449,7 +2449,7 @@ class Parser {
 
       // previous conditional jump jumps here
       tmpl.bytecodes[if_data.prev_cond_jump].args = tmpl.bytecodes.size();
-      if_data.prev_cond_jump = std::numeric_limits<unsigned int>::mymax();
+      if_data.prev_cond_jump = std::numeric_limits<unsigned int>::max();
 
       // chained else if
       if (m_tok.kind == Token::Kind::Id && m_tok.text == static_cast<decltype(m_tok.text)>("if")) {
