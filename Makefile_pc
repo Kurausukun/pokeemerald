@@ -1,9 +1,9 @@
-PREFIX := 
+PREFIX :=i686-w64-mingw32-
 OBJCOPY := $(PREFIX)objcopy
 CC := $(PREFIX)gcc
 AS := $(PREFIX)as
 
-SDL_DIR := /cygdrive/f/modernpkmn/pokeruby_pc/SDL-devel-1.2.15-mingw32/SDL-1.2.15
+SDL_DIR := /mnt/c/pret/pcport/SDL2-2.0.12/i686-w64-mingw32
 ASM_PSEUDO_OP_CONV := sed -e 's/\.4byte/\.int/g;s/\.2byte/\.short/g'
 
 export CPP := $(PREFIX)cpp
@@ -40,7 +40,7 @@ ASFLAGS := --32 --defsym MODERN=$(MODERN) --defsym PORTABLE=1
 GCC_VER   := $(shell $(CC) -dumpversion)
 
 CC1             := $(shell $(PREFIX)gcc --print-prog-name=cc1) -quiet
-override CFLAGS += -Wno-trigraphs -Wimplicit -Wparentheses -Wunused -m32 -std=gnu99 -fno-leading-underscore -fno-dce -fno-builtin -Wno-unused-function -DPORTABLE -DNONMATCHING -I/usr/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main -DMODERN=$(MODERN)
+override CFLAGS += -Wno-trigraphs -Wimplicit -Wparentheses -Wunused -m32 -std=gnu99 -fno-leading-underscore -fno-dce -fno-builtin -Wno-unused-function -DPORTABLE -DNONMATCHING -DMODERN=$(MODERN)
 ROM := pokeemerald.exe
 OBJ_DIR := build/pc
 
@@ -196,7 +196,7 @@ $(DATA_ASM_BUILDDIR)/%.o: $(DATA_ASM_SUBDIR)/%.s $$(data_dep)
 	$(PREPROC) $< charmap.txt | $(CPP) -I include | $(ASM_PSEUDO_OP_CONV) | $(AS) $(ASFLAGS) -o $@
 
 $(SONG_BUILDDIR)/%.o: $(SONG_SUBDIR)/%.s
-	$(ASM_PSEUDO_OP_CONV) | (AS) $(ASFLAGS) -I sound -o $@ $<
+	$(ASM_PSEUDO_OP_CONV) $< | $(AS) $(ASFLAGS) -I sound -o $@
 
 $(OBJ_DIR)/sym_bss.ld: sym_bss.txt
 	$(RAMSCRGEN) .bss $< ENGLISH > $@
@@ -221,6 +221,7 @@ $(OBJ_DIR)/ld_script.ld: $(LD_SCRIPT) $(LD_SCRIPT_DEPS)
 $(ELF): $(OBJ_DIR)/ld_script.ld $(OBJS)
 	cd $(OBJ_DIR) && $(LD) $(LDFLAGS) -T ld_script.ld -o ../../$@ $(OBJS_REL) $(LIB)
 	$(FIX) $@ -t"$(TITLE)" -c$(GAME_CODE) -m$(MAKER_CODE) -r$(REVISION) --silent
+
 $(ROM): $(OBJS)
 	$(CC) $(CFLAGS) -Wl,--demangle $^ -static-libgcc -L$(SDL_DIR)/lib -lmingw32 -lSDL2main -lSDL2.dll -lwinmm -o $@
 
