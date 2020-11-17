@@ -18,7 +18,7 @@ RustboroCity_DevonCorp_3F_EventScript_SetEmployeePos:: @ 8212449
 
 RustboroCity_DevonCorp_3F_OnWarp: @ 8212455
 	map_script_2 VAR_DEVON_CORP_3F_STATE, 0, RustboroCity_DevonCorp_3F_EventScript_PlayerFaceEast
-	.2byte 0
+	.short 0
 
 RustboroCity_DevonCorp_3F_EventScript_PlayerFaceEast:: @ 821245F
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_EAST
@@ -26,7 +26,7 @@ RustboroCity_DevonCorp_3F_EventScript_PlayerFaceEast:: @ 821245F
 
 RustboroCity_DevonCorp_3F_OnFrame: @ 8212464
 	map_script_2 VAR_DEVON_CORP_3F_STATE, 0, RustboroCity_DevonCorp_3F_EventScript_MeetPresident
-	.2byte 0
+	.short 0
 
 RustboroCity_DevonCorp_3F_EventScript_MeetPresident:: @ 821246E
 	lockall

@@ -50,7 +50,7 @@ s16 MathUtil_Div16Shift(u8 s, s16 x, s16 y)
 
 s32 MathUtil_Div32(s32 x, s32 y)
 {
-    s64 _x;
+    u32 _x;
 
     if (y == 0)
     {
@@ -79,8 +79,5 @@ s16 MathUtil_Inv16Shift(u8 s, s16 y)
 
 s32 MathUtil_Inv32(s32 y)
 {
-    s64 x;
-
-    x = 0x10000;
-    return x / y;
+    return 0x10000 / y;
 }

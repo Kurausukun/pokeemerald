@@ -91,7 +91,7 @@ Route110_TrickHousePuzzle7_OnLoad: @ 826E1B4
 
 Route110_TrickHousePuzzle7_OnFrame: @ 826E1C0
 	map_script_2 VAR_TRICK_HOUSE_PUZZLE_7_STATE_2, 1, Route110_TrickHousePuzzle7_EventScript_ClearState2
-	.2byte 0
+	.short 0
 
 Route110_TrickHousePuzzle7_EventScript_ClearState2:: @ 826E1CA
 	setvar VAR_TRICK_HOUSE_PUZZLE_7_STATE_2, 0

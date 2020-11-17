@@ -90,7 +90,7 @@ bool8 RunScriptCommand(struct ScriptContext *ctx)
             if (ctx->scriptPtr == gNullScriptPtr)
             {
                 while (1)
-                    asm("svc 2"); // HALT
+                    continue; // HALT
             }
 
             cmdCode = *(ctx->scriptPtr);

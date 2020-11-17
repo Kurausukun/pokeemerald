@@ -22,7 +22,7 @@ Route114_OnLoad: @ 81F2561
 
 Route114_OnFrame: @ 81F2578
 	map_script_2 VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_EndEventAndCleanup_1
-	.2byte 0
+	.short 0
 
 Route114_EventScript_Man:: @ 81F2582
 	lock

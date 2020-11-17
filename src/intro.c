@@ -1042,11 +1042,13 @@ static u8 SetUpCopyrightScreen(void)
             if (gMultibootProgramStruct.gcmb_field_2 == 2)
             {
                 // check the multiboot ROM header game code to see if we already did this
+                /*
                 if (*(u32 *)(EWRAM_START + 0xAC) == 0x65366347) // "Gc6e" in ASCII
                 {
                     CpuCopy16(&gMultiBootProgram_PokemonColosseum_Start, (void *)EWRAM_START, sizeof(gMultiBootProgram_PokemonColosseum_Start));
                     *(u32 *)(EWRAM_START + 0xAC) = 0x65366347;
                 }
+                */
                 GameCubeMultiBoot_ExecuteProgram(&gMultibootProgramStruct);
             }
         }
@@ -1578,6 +1580,12 @@ static void Task_IntroSpinAndZoomPokeball(u8 taskId)
     {
         gTasks[taskId].func = Task_IntroWaitToSetupPart3LegendsFight;
     }
+    
+#ifdef PORTABLE
+    //division by 0
+    if (gTasks[taskId].data[1] == 0)
+        gTasks[taskId].data[1] = 1;
+#endif
 
     PanFadeAndZoomScreen(0x78, 0x50, 0x10000 / gTasks[taskId].data[1], gTasks[taskId].data[0]);
 

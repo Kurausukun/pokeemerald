@@ -2,17 +2,17 @@
 
 	.macro loadspritegfx tag:req
 	.byte 0x0
-	.2byte \tag
+	.short \tag
 	.endm
 
 	.macro unloadspritegfx tag:req
 	.byte 0x1
-	.2byte \tag
+	.short \tag
 	.endm
 
 .macro createsprite template:req, anim_battler:req, subpriority_offset:req, argv:vararg
 	.byte 0x02
-	.4byte \template
+	.int \template
 	.if \anim_battler == ANIM_TARGET
 	.byte 0x80 | (\subpriority_offset & 0x7F)
 	.else
@@ -20,17 +20,17 @@
 	.endif
 	.byte (.Lsprite_\@_2 - .Lsprite_\@_1) / 2
 .Lsprite_\@_1:
-	.2byte \argv
+	.short \argv
 .Lsprite_\@_2:
 	.endm
 
 	.macro createvisualtask addr:req, priority:req, argv:vararg
 	.byte 0x03
-	.4byte \addr
+	.int \addr
 	.byte \priority
 	.byte (.Lcreatetask_\@_2 - .Lcreatetask_\@_1) / 2
 .Lcreatetask_\@_1:
-	.2byte \argv
+	.short \argv
 .Lcreatetask_\@_2:
 	.endm
 
@@ -57,7 +57,7 @@
 
 	.macro playse se:req
 	.byte 0x9
-	.2byte \se
+	.short \se
 	.endm
 
 	.macro monbg battler:req
@@ -72,7 +72,7 @@
 
 	.macro setalpha eva:req, evb:req
 	.byte 0x0C
-	.2byte ((\evb) << 8) | (\eva)
+	.short ((\evb) << 8) | (\eva)
 	.endm
 
 	.macro blendoff
@@ -81,7 +81,7 @@
 
 	.macro call param0:req
 	.byte 0xe
-	.4byte \param0
+	.int \param0
 	.endm
 
 	.macro return
@@ -91,24 +91,24 @@
 	.macro setarg param0:req, param1:req
 	.byte 0x10
 	.byte \param0
-	.2byte \param1
+	.short \param1
 	.endm
 
 	.macro choosetwoturnanim param0:req, param1:req
 	.byte 0x11
-	.4byte \param0
-	.4byte \param1
+	.int \param0
+	.int \param1
 	.endm
 
 	.macro jumpifmoveturn param0:req, ptr:req
 	.byte 0x12
 	.byte \param0
-	.4byte \ptr
+	.int \ptr
 	.endm
 
 	.macro goto ptr:req
 	.byte 0x13
-	.4byte \ptr
+	.int \ptr
 	.endm
 
 	.macro fadetobg bg:req
@@ -135,7 +135,7 @@
 
 	.macro playsewithpan se:req, pan:req
 	.byte 0x19
-	.2byte \se
+	.short \se
 	.byte \pan
 	.endm
 
@@ -146,7 +146,7 @@
 
 	.macro panse_1B se:req, param1:req, param2:req, param3:req, param4:req
 	.byte 0x1b
-	.2byte \se
+	.short \se
 	.byte \param1
 	.byte \param2
 	.byte \param3
@@ -155,7 +155,7 @@
 
 	.macro loopsewithpan se:req, pan:req, wait:req, times:req
 	.byte 0x1c
-	.2byte \se
+	.short \se
 	.byte \pan
 	.byte \wait
 	.byte \times
@@ -163,22 +163,22 @@
 
 	.macro waitplaysewithpan se:req, pan:req, wait:req
 	.byte 0x1d
-	.2byte \se
+	.short \se
 	.byte \pan
 	.byte \wait
 	.endm
 
 	.macro setbldcnt param0:req
 	.byte 0x1e
-	.2byte \param0
+	.short \param0
 	.endm
 
 	.macro createsoundtask addr:req, argv:vararg
 	.byte 0x1F
-	.4byte \addr
+	.int \addr
 	.byte (.Lcreatetask_1F_\@_2 - .Lcreatetask_1F_\@_1) / 2
 .Lcreatetask_1F_\@_1:
-	.2byte \argv
+	.short \argv
 .Lcreatetask_1F_\@_2:
 	.endm
 
@@ -189,8 +189,8 @@
 	.macro jumpargeq param0:req, param1:req, ptr:req
 	.byte 0x21
 	.byte \param0
-	.2byte \param1
-	.4byte \ptr
+	.short \param1
+	.int \ptr
 	.endm
 
 	.macro monbg_22 battler:req
@@ -205,7 +205,7 @@
 
 	.macro jumpifcontest ptr:req
 	.byte 0x24
-	.4byte \ptr
+	.int \ptr
 	.endm
 
 	.macro fadetobgfromset param0:req, param1:req, param2:req
@@ -217,7 +217,7 @@
 
 	.macro panse_26 se:req, param1:req, param2:req, param3:req, param4:req
 	.byte 0x26
-	.2byte \se
+	.short \se
 	.byte \param1
 	.byte \param2
 	.byte \param3
@@ -226,7 +226,7 @@
 
 	.macro panse_27 se:req, param1:req, param2:req, param3:req, param4:req
 	.byte 0x27
-	.2byte \se
+	.short \se
 	.byte \param1
 	.byte \param2
 	.byte \param3

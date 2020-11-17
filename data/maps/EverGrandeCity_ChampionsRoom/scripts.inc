@@ -14,7 +14,7 @@ EverGrandeCity_ChampionsRoom_OnTransition: @ 82289FF
 
 EverGrandeCity_ChampionsRoom_OnWarp: @ 8228A05
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_ChampionsRoom_EventScript_PlayerTurnNorth
-	.2byte 0
+	.short 0
 
 EverGrandeCity_ChampionsRoom_EventScript_PlayerTurnNorth:: @ 8228A0F
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
@@ -22,7 +22,7 @@ EverGrandeCity_ChampionsRoom_EventScript_PlayerTurnNorth:: @ 8228A0F
 
 EverGrandeCity_ChampionsRoom_OnFrame: @ 8228A14
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_ChampionsRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 EverGrandeCity_ChampionsRoom_EventScript_EnterRoom:: @ 8228A1E
 	lockall

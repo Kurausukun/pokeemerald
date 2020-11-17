@@ -13,16 +13,16 @@ MossdeepCity_Mart_EventScript_Clerk:: @ 82223C8
 
 	.align 2
 MossdeepCity_Mart_Pokemart: @ 82223E0
-	.2byte ITEM_ULTRA_BALL
-	.2byte ITEM_NET_BALL
-	.2byte ITEM_DIVE_BALL
-	.2byte ITEM_HYPER_POTION
-	.2byte ITEM_FULL_HEAL
-	.2byte ITEM_REVIVE
-	.2byte ITEM_MAX_REPEL
-	.2byte ITEM_X_ATTACK
-	.2byte ITEM_X_DEFEND
-	.2byte ITEM_NONE
+	.short ITEM_ULTRA_BALL
+	.short ITEM_NET_BALL
+	.short ITEM_DIVE_BALL
+	.short ITEM_HYPER_POTION
+	.short ITEM_FULL_HEAL
+	.short ITEM_REVIVE
+	.short ITEM_MAX_REPEL
+	.short ITEM_X_ATTACK
+	.short ITEM_X_DEFEND
+	.short ITEM_NONE
 	release
 	end
 

@@ -7,7 +7,7 @@ EverGrandeCity_HallOfFame_MapScripts:: @ 822982C
 
 EverGrandeCity_HallOfFame_OnWarp: @ 8229837
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_HallOfFame_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 EverGrandeCity_HallOfFame_EventScript_TurnPlayerNorth:: @ 8229841
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
@@ -15,7 +15,7 @@ EverGrandeCity_HallOfFame_EventScript_TurnPlayerNorth:: @ 8229841
 
 EverGrandeCity_HallOfFame_OnFrame: @ 8229846
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_HallOfFame_EventScript_EnterHallOfFame
-	.2byte 0
+	.short 0
 
 EverGrandeCity_HallOfFame_EventScript_EnterHallOfFame:: @ 8229850
 	lockall

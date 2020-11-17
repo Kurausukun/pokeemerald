@@ -20,7 +20,7 @@ Route110_TrickHouseEnd_OnTransition: @ 826ACD0
 
 Route110_TrickHouseEnd_OnWarp: @ 826ACDE
 	map_script_2 VAR_TEMP_2, 0, Route110_TrickHouseEnd_EventScript_SetTrickMasterPos
-	.2byte 0
+	.short 0
 
 Route110_TrickHouseEnd_EventScript_SetTrickMasterPos:: @ 826ACE8
 	addobject LOCALID_TRICK_MASTER
@@ -30,7 +30,7 @@ Route110_TrickHouseEnd_EventScript_SetTrickMasterPos:: @ 826ACE8
 
 Route110_TrickHouseEnd_OnFrame: @ 826ACF5
 	map_script_2 VAR_TEMP_1, 0, Route110_TrickHouseEnd_EventScript_CloseDoor
-	.2byte 0
+	.short 0
 
 Route110_TrickHouseEnd_EventScript_CloseDoor:: @ 826ACFF
 	setvar VAR_TEMP_1, 1

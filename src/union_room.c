@@ -3254,7 +3254,7 @@ void InitUnionRoom(void)
     sUnionRoomPlayerName[0] = EOS;
 }
 
-static void Task_InitUnionRoom(u8 taskId)
+/*static void Task_InitUnionRoom(u8 taskId)
 {
     s32 i;
     u8 text[32];
@@ -3321,7 +3321,7 @@ static void Task_InitUnionRoom(u8 taskId)
         DestroyTask(taskId);
         break;
     }
-}
+}*/
 
 bool16 BufferUnionRoomPlayerName(void)
 {
@@ -3642,7 +3642,7 @@ static s32 ListMenuHandler_AllItemsAvailable(u8 *state, u8 *windowId, u8 *listMe
         }
         if (winTemplateCopy.tilemapLeft + winTemplateCopy.width > 29)
         {
-            winTemplateCopy.tilemapLeft = max(29 - winTemplateCopy.width, 0);
+            winTemplateCopy.tilemapLeft = mymax(29 - winTemplateCopy.width, 0);
         }
         *windowId = AddWindow(&winTemplateCopy);
         DrawStdWindowFrame(*windowId, FALSE);

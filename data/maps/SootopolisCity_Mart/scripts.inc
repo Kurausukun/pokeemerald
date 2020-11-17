@@ -12,16 +12,16 @@ SootopolisCity_Mart_EventScript_Clerk:: @ 8226795
 	end
 
 SootopolisCity_Mart_Pokemart: @ 82267AC
-	.2byte ITEM_ULTRA_BALL
-	.2byte ITEM_HYPER_POTION
-	.2byte ITEM_MAX_POTION
-	.2byte ITEM_FULL_HEAL
-	.2byte ITEM_REVIVE
-	.2byte ITEM_MAX_REPEL
-	.2byte ITEM_X_ATTACK
-	.2byte ITEM_X_DEFEND
-	.2byte ITEM_SHADOW_MAIL
-	.2byte ITEM_NONE
+	.short ITEM_ULTRA_BALL
+	.short ITEM_HYPER_POTION
+	.short ITEM_MAX_POTION
+	.short ITEM_FULL_HEAL
+	.short ITEM_REVIVE
+	.short ITEM_MAX_REPEL
+	.short ITEM_X_ATTACK
+	.short ITEM_X_DEFEND
+	.short ITEM_SHADOW_MAIL
+	.short ITEM_NONE
 	release
 	end
 

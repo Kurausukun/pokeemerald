@@ -4,6 +4,8 @@
 
 #include "gba/gba.h"
 #include "siirtc.h"
+#include "global.h"
+#include "platform.h"
 
 #define STATUS_INTFE  0x02 // frequency interrupt enable
 #define STATUS_INTME  0x08 // per-minute interrupt enable
@@ -59,11 +61,20 @@
 #define DIR_ALL_IN  (DIR_0_IN | DIR_1_IN | DIR_2_IN)
 #define DIR_ALL_OUT (DIR_0_OUT | DIR_1_OUT | DIR_2_OUT)
 
+#ifdef PORTABLE
+u16 GPIO_PORT_DATA;
+u16 GPIO_PORT_DIRECTION;
+u16 GPIO_PORT_READ_ENABLE;
+
+bool32 alarmOn;
+
+#else
 #define GPIO_PORT_DATA        (*(vu16 *)0x80000C4)
 #define GPIO_PORT_DIRECTION   (*(vu16 *)0x80000C6)
 #define GPIO_PORT_READ_ENABLE (*(vu16 *)0x80000C8)
+#endif
 
-extern vu16 GPIOPortDirection;
+vu16 GPIOPortDirection;
 
 static u16 sDummy; // unused variable
 static bool8 sLocked;
@@ -78,13 +89,17 @@ static const char AgbLibRtcVersion[] = "SIIRTC_V001";
 
 void SiiRtcUnprotect(void)
 {
+#ifndef PORTABLE
     EnableGpioPortRead();
+#endif
     sLocked = FALSE;
 }
 
 void SiiRtcProtect(void)
 {
+#ifndef PORTABLE
     DisableGpioPortRead();
+#endif
     sLocked = TRUE;
 }
 
@@ -137,6 +152,9 @@ bool8 SiiRtcReset(void)
     if (sLocked == TRUE)
         return FALSE;
 
+#ifdef PORTABLE
+    // TODO
+#else
     sLocked = TRUE;
 
     GPIO_PORT_DATA = SCK_HI;
@@ -150,6 +168,7 @@ bool8 SiiRtcReset(void)
     GPIO_PORT_DATA = SCK_HI;
 
     sLocked = FALSE;
+#endif
 
     rtc.status = SIIRTCINFO_24HOUR;
 
@@ -167,6 +186,9 @@ bool8 SiiRtcGetStatus(struct SiiRtcInfo *rtc)
 
     sLocked = TRUE;
 
+#ifdef PORTABLE
+    Platform_GetStatus(rtc);
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -185,6 +207,7 @@ bool8 SiiRtcGetStatus(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -199,7 +222,10 @@ bool8 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
         return FALSE;
 
     sLocked = TRUE;
-
+    
+#ifdef PORTABLE
+    Platform_SetStatus(rtc)
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -216,6 +242,7 @@ bool8 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -230,7 +257,9 @@ bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
         return FALSE;
 
     sLocked = TRUE;
-
+#ifdef PORTABLE
+    Platform_GetDateTime(rtc);
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -247,6 +276,7 @@ bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -262,6 +292,9 @@ bool8 SiiRtcSetDateTime(struct SiiRtcInfo *rtc)
 
     sLocked = TRUE;
 
+#ifdef PORTABLE
+    Platform_SetDateTime(rtc);
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -274,6 +307,7 @@ bool8 SiiRtcSetDateTime(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -288,7 +322,11 @@ bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
         return FALSE;
 
     sLocked = TRUE;
-
+    
+#ifdef PORTABLE
+    Platform_GetTime(rtc);
+    INFO_BUF(rtc, OFFSET_HOUR) &= 0x7F;
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -305,6 +343,7 @@ bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -320,6 +359,9 @@ bool8 SiiRtcSetTime(struct SiiRtcInfo *rtc)
 
     sLocked = TRUE;
 
+#ifdef PORTABLE
+    Platform_SetTime(rtc);
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -332,6 +374,7 @@ bool8 SiiRtcSetTime(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
@@ -359,7 +402,10 @@ bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
         alarmData[0] = rtc->alarmHour | ALARM_PM;
 
     alarmData[1] = rtc->alarmMinute;
-
+    
+#ifdef PORTABLE
+    Platform_SetAlarm(alarmData);
+#else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;
 
@@ -372,12 +418,14 @@ bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
 
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI;
+#endif
 
     sLocked = FALSE;
 
     return TRUE;
 }
 
+#ifndef PORTABLE
 static int WriteCommand(u8 value)
 {
     u8 i;
@@ -443,3 +491,4 @@ static void DisableGpioPortRead()
 {
     GPIO_PORT_READ_ENABLE = 0;
 }
+#endif

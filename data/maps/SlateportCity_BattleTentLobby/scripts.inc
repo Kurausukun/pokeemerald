@@ -7,7 +7,7 @@ SlateportCity_BattleTentLobby_MapScripts:: @ 8208730
 
 SlateportCity_BattleTentLobby_OnWarp: @ 820873B
 	map_script_2 VAR_TEMP_1, 0, SlateportCity_BattleTentLobby_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentLobby_EventScript_TurnPlayerNorth:: @ 8208745
 	setvar VAR_TEMP_1, 1
@@ -20,7 +20,7 @@ SlateportCity_BattleTentLobby_OnFrame: @ 820874F
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, SlateportCity_BattleTentLobby_EventScript_ResumeChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, SlateportCity_BattleTentLobby_EventScript_WonChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, SlateportCity_BattleTentLobby_EventScript_LostChallenge
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentLobby_EventScript_GetChallengeStatus:: @ 8208779
 	frontier_getstatus

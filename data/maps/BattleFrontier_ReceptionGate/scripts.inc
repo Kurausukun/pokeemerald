@@ -13,7 +13,7 @@ BattleFrontier_ReceptionGate_OnTransition: @ 82661E5
 
 BattleFrontier_ReceptionGate_OnFrame: @ 82661E9
 	map_script_2 VAR_HAS_ENTERED_BATTLE_FRONTIER, 0, BattleFrontier_ReceptionGate_EventScript_FirstTimeEntering
-	.2byte 0
+	.short 0
 
 BattleFrontier_ReceptionGate_EventScript_FirstTimeEntering:: @ 82661F3
 	lockall

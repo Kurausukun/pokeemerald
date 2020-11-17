@@ -17,7 +17,7 @@ MtChimney_CableCarStation_EventScript_MoveAttendantAside:: @ 822AC11
 
 MtChimney_CableCarStation_OnFrame: @ 822AC1D
 	map_script_2 VAR_CABLE_CAR_STATION_STATE, 1, MtChimney_CableCarStation_EventScript_ExitCableCar
-	.2byte 0
+	.short 0
 
 MtChimney_CableCarStation_EventScript_ExitCableCar:: @ 822AC27
 	lockall

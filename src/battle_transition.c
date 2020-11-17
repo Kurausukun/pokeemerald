@@ -1013,7 +1013,12 @@ static bool8 Transition_WaitForPhase2(struct Task *task)
 {
     task->tTransitionDone = FALSE;
     if (FindTaskIdByFunc(sPhase2_Tasks[task->tTransitionId]) == 0xFF)
+    {
         task->tTransitionDone = TRUE;
+#ifdef PORTABLE
+        SetVBlankCallback(NULL); // fixes use after free of sTransitionStructPtr in callbacks
+#endif
+    }
     return FALSE;
 }
 

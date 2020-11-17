@@ -27,7 +27,7 @@ MossdeepCity_StevensHouse_EventScript_SetStevenPos:: @ 82227B4
 
 MossdeepCity_StevensHouse_OnFrame: @ 82227C0
 	map_script_2 VAR_STEVENS_HOUSE_STATE, 1, MossdeepCity_StevensHouse_EventScript_StevenGivesDive
-	.2byte 0
+	.short 0
 
 MossdeepCity_StevensHouse_EventScript_StevenGivesDive:: @ 82227CA
 	lockall

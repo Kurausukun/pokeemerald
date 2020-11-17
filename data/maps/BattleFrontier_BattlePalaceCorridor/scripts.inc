@@ -6,7 +6,7 @@ BattleFrontier_BattlePalaceCorridor_MapScripts:: @ 824F4A3
 
 BattleFrontier_BattlePalaceCorridor_OnFrame: @ 824F4A9
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattlePalaceCorridor_EventScript_WalkThroughCorridor
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePalaceCorridor_EventScript_WalkThroughCorridor:: @ 824F4B3
 	delay 16

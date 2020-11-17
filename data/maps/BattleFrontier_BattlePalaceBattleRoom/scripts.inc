@@ -40,7 +40,7 @@ BattleFrontier_BattlePalaceBattleRoom_EventScript_SetPlayerGfxFemale:: @ 824F856
 
 BattleFrontier_BattlePalaceBattleRoom_OnFrame: @ 824F861
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattlePalaceBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePalaceBattleRoom_EventScript_EnterRoom:: @ 824F86B
 	showobjectat LOCALID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM
@@ -309,7 +309,7 @@ BattleFrontier_BattlePalaceBattleRoom_EventScript_DoPalaceBattle:: @ 824FDF7
 
 BattleFrontier_BattlePalaceBattleRoom_OnWarp: @ 824FE34
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattlePalaceBattleRoom_EventScript_SetUpRoomObjects
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePalaceBattleRoom_EventScript_SetUpRoomObjects:: @ 824FE3E
 	hideobjectat LOCALID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM

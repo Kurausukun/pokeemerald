@@ -57,13 +57,13 @@ Route104_PrettyPetalFlowerShop_EventScript_SellDecorations:: @ 822A3E4
 
 	.align 2
 Route104_PrettyPetalFlowerShop_Pokemart_Plants: @ 822A3FC
-	.2byte DECOR_RED_PLANT
-	.2byte DECOR_TROPICAL_PLANT
-	.2byte DECOR_PRETTY_FLOWERS
-	.2byte DECOR_COLORFUL_PLANT
-	.2byte DECOR_BIG_PLANT
-	.2byte DECOR_GORGEOUS_PLANT
-	.2byte DECOR_NONE
+	.short DECOR_RED_PLANT
+	.short DECOR_TROPICAL_PLANT
+	.short DECOR_PRETTY_FLOWERS
+	.short DECOR_COLORFUL_PLANT
+	.short DECOR_BIG_PLANT
+	.short DECOR_GORGEOUS_PLANT
+	.short DECOR_NONE
 	release
 	end
 

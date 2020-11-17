@@ -2323,7 +2323,7 @@ static u32 sub_802745C(u8 arg0)
     u32 sum = gUnknown_02022C98->unk4A[arg0][0]
             + gUnknown_02022C98->unk4A[arg0][1]
             + gUnknown_02022C98->unk4A[arg0][2];
-    return min(sum, 9999);
+    return mymin(sum, 9999);
 }
 
 static void sub_802749C(void)
@@ -2565,7 +2565,7 @@ static u32 IncrementWithLimit(u32 a, u32 max)
         return max;
 }
 
-// Gamefreak pls, min(a, b) ((a) < (b) ? (a) : (b)) is a well-known macro
+// Gamefreak pls, mymin(a, b) ((a) < (b) ? (a) : (b)) is a well-known macro
 static u32 Min(u32 a, u32 b)
 {
     if (a < b)

@@ -8,7 +8,7 @@ BattleFrontier_BattlePyramidFloor_OnFrame: @ 8252A43
 	map_script_2 VAR_TEMP_D, 1, BattleFrontier_BattlePyramidFloor_EventScript_UpdateLight
 	map_script_2 VAR_TEMP_E, 0, BattleFrontier_BattlePyramidFloor_EventScript_PlayPyramidMusic
 	map_script_2 VAR_TEMP_F, 1, BattleFrontier_BattlePyramidFloor_EventScript_ShowMapName
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePyramidFloor_EventScript_UpdateLight:: @ 8252A5D
 	lockall

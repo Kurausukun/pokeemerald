@@ -111,7 +111,7 @@ Route111_EventScript_SetMirageTowerGone:: @ 81F0E40
 
 Route111_OnWarp: @ 81F0E46
 	map_script_2 VAR_MIRAGE_TOWER_STATE, 1, Route111_EventScript_HidePlayerForMirageTower
-	.2byte 0
+	.short 0
 
 Route111_EventScript_HidePlayerForMirageTower:: @ 81F0E50
 	hideobjectat OBJ_EVENT_ID_PLAYER, MAP_LITTLEROOT_TOWN
@@ -119,7 +119,7 @@ Route111_EventScript_HidePlayerForMirageTower:: @ 81F0E50
 
 Route111_OnFrame: @ 81F0E56
 	map_script_2 VAR_MIRAGE_TOWER_STATE, 1, Route111_EventScript_MirageTowerDisappear
-	.2byte 0
+	.short 0
 
 Route111_EventScript_MirageTowerDisappear:: @ 81F0E60
 	lockall

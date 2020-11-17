@@ -14,6 +14,7 @@
 
 #define CPU_COPY(src, dest, size, bit) CpuSet(src, dest, CPU_SET_##bit##BIT | ((size)/(bit/8) & 0x1FFFFF))
 
+#define CpuCopy8(src, dest, size) CPU_COPY(src, dest, size, 8)
 #define CpuCopy16(src, dest, size) CPU_COPY(src, dest, size, 16)
 #define CpuCopy32(src, dest, size) CPU_COPY(src, dest, size, 32)
 
@@ -31,6 +32,10 @@
 
 #define CpuFastCopy(src, dest, size) CpuFastSet(src, dest, ((size)/(32/8) & 0x1FFFFF))
 
+#ifdef PORTABLE
+extern void DmaSet(int dmaNum, const void *src, void *dest, u32 control);
+
+#else
 #define DmaSet(dmaNum, src, dest, control)        \
 {                                                 \
     vu32 *dmaRegs = (vu32 *)REG_ADDR_DMA##dmaNum; \
@@ -39,6 +44,8 @@
     dmaRegs[2] = (vu32)(control);                 \
     dmaRegs[2];                                   \
 }
+#endif
+
 
 #define DMA_FILL(dmaNum, value, dest, size, bit)                                              \
 {                                                                                             \
@@ -50,8 +57,13 @@
          | ((size)/(bit/8)));                                                                 \
 }
 
+#ifdef PORTABLE
+#define DmaFill16(dmaNum, value, dest, size) CpuFill16(value, dest, size)
+#define DmaFill32(dmaNum, value, dest, size) CpuFill32(value, dest, size)
+#else
 #define DmaFill16(dmaNum, value, dest, size) DMA_FILL(dmaNum, value, dest, size, 16)
 #define DmaFill32(dmaNum, value, dest, size) DMA_FILL(dmaNum, value, dest, size, 32)
+#endif
 
 // Note that the DMA clear macros cause the DMA control value to be calculated
 // at runtime rather than compile time. The size is divided by the DMA transfer
@@ -77,6 +89,14 @@
 
 #define DmaCopy16(dmaNum, src, dest, size) DMA_COPY(dmaNum, src, dest, size, 16)
 #define DmaCopy32(dmaNum, src, dest, size) DMA_COPY(dmaNum, src, dest, size, 32)
+
+#ifdef PORTABLE
+#define DmaCopy16(dmaNum, src, dest, size) CpuCopy16(src, dest, size)
+#define DmaCopy32(dmaNum, src, dest, size) CpuCopy32(src, dest, size)
+#else
+#define DmaCopy16(dmaNum, src, dest, size) DMA_COPY(dmaNum, src, dest, size, 16)
+#define DmaCopy32(dmaNum, src, dest, size) DMA_COPY(dmaNum, src, dest, size, 32)
+#endif
 
 #define DmaCopyLarge(dmaNum, src, dest, size, block, bit) \
 {                                                         \

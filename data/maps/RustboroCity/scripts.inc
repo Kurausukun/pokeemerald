@@ -36,7 +36,7 @@ RustboroCity_EventScript_HideMapNamePopup:: @ 81E0707
 
 RustboroCity_OnFrame: @ 81E070B
 	map_script_2 VAR_RUSTBORO_CITY_STATE, 6, RustboroCity_EventScript_ScientistAddMatchCall
-	.2byte 0
+	.short 0
 
 RustboroCity_EventScript_ScientistAddMatchCall:: @ 81E0715
 	lockall

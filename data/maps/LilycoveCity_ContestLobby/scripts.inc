@@ -32,7 +32,7 @@ LilycoveCity_ContestLobby_EventScript_ShowBlendMaster:: @ 821A23C
 LilycoveCity_ContestLobby_OnFrame: @ 821A243
 	map_script_2 VAR_LILYCOVE_CONTEST_LOBBY_STATE, 1, LilycoveCity_ContestLobby_EventScript_TryDoContestArtist
 	map_script_2 VAR_LILYCOVE_CONTEST_LOBBY_STATE, 2, LilycoveCity_ContestLobby_EventScript_TryDoLinkContestArtist
-	.2byte 0
+	.short 0
 
 LilycoveCity_ContestLobby_EventScript_TryDoContestArtist:: @ 821A255
 	goto_if_set FLAG_HIDE_LILYCOVE_MUSEUM_CURATOR, LilycoveCity_ContestLobby_EventScript_ContestArtist

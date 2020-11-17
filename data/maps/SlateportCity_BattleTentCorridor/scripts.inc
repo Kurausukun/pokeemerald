@@ -9,7 +9,7 @@ SlateportCity_BattleTentCorridor_MapScripts:: @ 8208E26
 
 SlateportCity_BattleTentCorridor_OnWarp: @ 8208E31
 	map_script_2 VAR_TEMP_1, 0, SlateportCity_BattleTentCorridor_EventScript_SetUpObjects
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentCorridor_EventScript_SetUpObjects:: @ 8208E3B
 	setvar VAR_TEMP_1, 1
@@ -23,7 +23,7 @@ SlateportCity_BattleTentCorridor_EventScript_TurnPlayerNorth:: @ 8208E56
 
 SlateportCity_BattleTentCorridor_OnFrame: @ 8208E5B
 	map_script_2 VAR_TEMP_0, 0, SlateportCity_BattleTentCorridor_EventScript_EnterCorridor
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentCorridor_EventScript_EnterCorridor:: @ 8208E65
 	compare VAR_0x8006, 1

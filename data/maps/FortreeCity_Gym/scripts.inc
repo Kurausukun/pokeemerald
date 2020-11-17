@@ -9,7 +9,7 @@ FortreeCity_Gym_OnTransition: @ 82165B6
 
 FortreeCity_Gym_OnWarp: @ 82165BA
 	map_script_2 VAR_TEMP_0, VAR_TEMP_0, FortreeCity_Gym_EventScript_InitRotatingGates
-	.2byte 0
+	.short 0
 
 FortreeCity_Gym_EventScript_InitRotatingGates:: @ 82165C4
 	special RotatingGate_InitPuzzleAndGraphics

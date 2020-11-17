@@ -3037,6 +3037,11 @@ static void SpriteCB_PokedexListMonSprite(struct Sprite *sprite)
         u32 var;
 
         sprite->pos2.y = gSineTable[(u8)sprite->data[5]] * 76 / 256;
+#ifdef PORTABLE
+        // divide by 0 occurs here
+        if (abs(sprite->data[5]) == 64)
+            sprite->data[5] += 1;
+#endif
         var = 0x10000 / gSineTable[sprite->data[5] + 64];
         if (var > 0xFFFF)
             var = 0xFFFF;

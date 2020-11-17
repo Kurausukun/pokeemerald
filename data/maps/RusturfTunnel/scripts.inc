@@ -12,7 +12,7 @@ RusturfTunnel_MapScripts:: @ 822CE27
 RusturfTunnel_OnFrame: @ 822CE32
 	map_script_2 VAR_RUSTURF_TUNNEL_STATE, 4, RusturfTunnel_EventScript_ClearTunnelScene
 	map_script_2 VAR_RUSTURF_TUNNEL_STATE, 5, RusturfTunnel_EventScript_ClearTunnelScene
-	.2byte 0
+	.short 0
 
 RusturfTunnel_OnTransition: @ 822CE44
 	compare VAR_RUSTURF_TUNNEL_STATE, 2

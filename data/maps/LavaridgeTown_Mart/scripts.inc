@@ -13,16 +13,16 @@ LavaridgeTown_Mart_EventScript_Clerk:: @ 81FF9CE
 
 	.align 2
 LavaridgeTown_Mart_Pokemart: @ 81FF9E8
-	.2byte ITEM_GREAT_BALL
-	.2byte ITEM_SUPER_POTION
-	.2byte ITEM_ANTIDOTE
-	.2byte ITEM_PARALYZE_HEAL
-	.2byte ITEM_AWAKENING
-	.2byte ITEM_BURN_HEAL
-	.2byte ITEM_REVIVE
-	.2byte ITEM_SUPER_REPEL
-	.2byte ITEM_X_SPEED
-	.2byte ITEM_NONE
+	.short ITEM_GREAT_BALL
+	.short ITEM_SUPER_POTION
+	.short ITEM_ANTIDOTE
+	.short ITEM_PARALYZE_HEAL
+	.short ITEM_AWAKENING
+	.short ITEM_BURN_HEAL
+	.short ITEM_REVIVE
+	.short ITEM_SUPER_REPEL
+	.short ITEM_X_SPEED
+	.short ITEM_NONE
 	release
 	end
 

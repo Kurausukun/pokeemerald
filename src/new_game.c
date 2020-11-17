@@ -82,7 +82,14 @@ void CopyTrainerId(u8 *dst, u8 *src)
 {
     s32 i;
     for (i = 0; i < TRAINER_ID_LENGTH; i++)
+    {
+#ifdef PORTABLE
+        if (src == NULL)
+            dst[i] = 0;
+#else
         dst[i] = src[i];
+#endif
+    }
 }
 
 static void InitPlayerTrainerId(void)

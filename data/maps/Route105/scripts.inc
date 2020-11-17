@@ -28,7 +28,7 @@ Route105_OnTransition: @ 81EE21E
 
 Route105_OnFrame: @ 81EE240
 	map_script_2 VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_EndEventAndCleanup_1
-	.2byte 0
+	.short 0
 
 Route105_EventScript_Foster:: @ 81EE24A
 	trainerbattle_single TRAINER_FOSTER, Route105_Text_FosterIntro, Route105_Text_FosterDefeated

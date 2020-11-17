@@ -44,7 +44,7 @@ BattleFrontier_BattleArenaBattleRoom_EventScript_SetPlayerGfxFemale:: @ 82574CC
 
 BattleFrontier_BattleArenaBattleRoom_OnFrame: @ 82574D2
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleArenaBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleArenaBattleRoom_EventScript_EnterRoom:: @ 82574DC
 	lockall
@@ -485,7 +485,7 @@ BattleFrontier_BattleArenaBattleRoom_Movement_WalkInPlaceRight2: @ 8257C0A
 
 BattleFrontier_BattleArenaBattleRoom_OnWarp: @ 8257C0C
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleArenaBattleRoom_EventScript_SetUpRoomObjects
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleArenaBattleRoom_EventScript_SetUpRoomObjects:: @ 8257C16
 	hideobjectat LOCALID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_ARENA_BATTLE_ROOM

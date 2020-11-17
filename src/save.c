@@ -50,7 +50,7 @@ static u8 HandleWriteSector(u16 a1, const struct SaveSectionLocation *location);
 #define SAVEBLOCK_CHUNK(structure, chunkNum)                                \
 {                                                                           \
     chunkNum * SECTOR_DATA_SIZE,                                            \
-    min(sizeof(structure) - chunkNum * SECTOR_DATA_SIZE, SECTOR_DATA_SIZE)  \
+    mymin(sizeof(structure) - chunkNum * SECTOR_DATA_SIZE, SECTOR_DATA_SIZE)  \
 }                                                                           \
 
 static const struct SaveSectionOffsets sSaveSectionOffsets[] =

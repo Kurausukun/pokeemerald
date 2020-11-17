@@ -47,7 +47,7 @@ LittlerootTown_BrendansHouse_2F_EventScript_SetReadyToMeetBrendan:: @ 81F8464
 
 LittlerootTown_BrendansHouse_2F_OnWarp: @ 81F846A
 	map_script_2 VAR_SECRET_BASE_INITIALIZED, 0, LittlerootTown_BrendansHouse_2F_EventScript_CheckInitDecor
-	.2byte 0
+	.short 0
 
 LittlerootTown_BrendansHouse_2F_EventScript_CheckInitDecor:: @ 81F8474
 	checkplayergender

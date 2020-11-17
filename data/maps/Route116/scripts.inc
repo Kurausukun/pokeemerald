@@ -30,7 +30,7 @@ Route116_OnLoad: @ 81F2C4F
 
 Route116_OnFrame: @ 81F2C66
 	map_script_2 VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_EndEventAndCleanup_1
-	.2byte 0
+	.short 0
 
 Route116_EventScript_WandasBoyfriend:: @ 81F2C70
 	lock

@@ -32,7 +32,7 @@ BattleFrontier_BattleTowerLobby_EventScript_HideApprentice:: @ 823E6C1
 
 BattleFrontier_BattleTowerLobby_OnWarp: @ 823E6C9
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleTowerLobby_EventScript_PlayerFaceNorth
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleTowerLobby_EventScript_PlayerFaceNorth:: @ 823E6D3
 	setvar VAR_TEMP_1, 1
@@ -45,7 +45,7 @@ BattleFrontier_BattleTowerLobby_OnFrame: @ 823E6DD
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattleTowerLobby_EventScript_ResumeChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, BattleFrontier_BattleTowerLobby_EventScript_WonChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, BattleFrontier_BattleTowerLobby_EventScript_LostChallenge
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleTowerLobby_EventScript_GetChallengeStatus:: @ 823E707
 	frontier_getstatus

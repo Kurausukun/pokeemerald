@@ -19,7 +19,7 @@ BattleFrontier_BattleTowerCorridor_EventScript_OpenFarDoor:: @ 8241AD3
 
 BattleFrontier_BattleTowerCorridor_OnFrame: @ 8241AE6
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleTowerCorridor_EventScript_EnterCorridor
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleTowerCorridor_EventScript_EnterCorridor:: @ 8241AF0
 	setvar VAR_TEMP_0, 1

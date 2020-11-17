@@ -9,7 +9,7 @@ Route104_MapScripts:: @ 81ECC32
 
 Route104_OnFrame: @ 81ECC3D
 	map_script_2 VAR_BOARD_BRINEY_BOAT_STATE, 1, Route104_EventScript_StartSailToDewford
-	.2byte 0
+	.short 0
 
 Route104_EventScript_StartSailToDewford:: @ 81ECC47
 	lockall

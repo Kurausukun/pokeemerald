@@ -40,7 +40,7 @@ BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetLinkPlayerGfx:: @ 8248F
 
 BattleFrontier_BattleTowerMultiBattleRoom_OnWarp: @ 8248F33
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_HidePlayerObj
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_HidePlayerObj:: @ 8248F3D
 	hideobjectat OBJ_EVENT_ID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_BATTLE_ROOM
@@ -48,7 +48,7 @@ BattleFrontier_BattleTowerMultiBattleRoom_EventScript_HidePlayerObj:: @ 8248F3D
 
 BattleFrontier_BattleTowerMultiBattleRoom_OnFrame: @ 8248F43
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom:: @ 8248F4D
 	setvar VAR_TEMP_0, 1

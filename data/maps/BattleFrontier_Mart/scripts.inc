@@ -15,20 +15,20 @@ BattleFrontier_Mart_EventScript_Clerk:: @ 8267ACC
 
 	.align 2
 BattleFrontier_Mart_Pokemart: @ 8267AE4
-	.2byte ITEM_ULTRA_BALL
-	.2byte ITEM_HYPER_POTION
-	.2byte ITEM_MAX_POTION
-	.2byte ITEM_FULL_RESTORE
-	.2byte ITEM_FULL_HEAL
-	.2byte ITEM_REVIVE
-	.2byte ITEM_MAX_REPEL
-	.2byte ITEM_PROTEIN
-	.2byte ITEM_CALCIUM
-	.2byte ITEM_IRON
-	.2byte ITEM_ZINC
-	.2byte ITEM_CARBOS
-	.2byte ITEM_HP_UP
-	.2byte ITEM_NONE
+	.short ITEM_ULTRA_BALL
+	.short ITEM_HYPER_POTION
+	.short ITEM_MAX_POTION
+	.short ITEM_FULL_RESTORE
+	.short ITEM_FULL_HEAL
+	.short ITEM_REVIVE
+	.short ITEM_MAX_REPEL
+	.short ITEM_PROTEIN
+	.short ITEM_CALCIUM
+	.short ITEM_IRON
+	.short ITEM_ZINC
+	.short ITEM_CARBOS
+	.short ITEM_HP_UP
+	.short ITEM_NONE
 	release
 	end
 

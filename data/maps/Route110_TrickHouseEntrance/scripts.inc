@@ -138,7 +138,7 @@ Route110_TrickHouseEntrance_OnWarp: @ 8269BD3
 	map_script_2 VAR_TRICK_HOUSE_ENTRANCE_STATE, 4, Route110_TrickHouseEntrance_EventScript_RemoveTrickMaster
 	map_script_2 VAR_TRICK_HOUSE_ENTRANCE_STATE, 5, Route110_TrickHouseEntrance_EventScript_RemoveTrickMaster
 	map_script_2 VAR_TRICK_HOUSE_ENTRANCE_STATE, 6, Route110_TrickHouseEntrance_EventScript_SetTrickMasterInFrontOfDoor
-	.2byte 0
+	.short 0
 
 Route110_TrickHouseEntrance_EventScript_TrickMasterFound:: @ 8269C15
 	addobject LOCALID_TRICK_MASTER
@@ -211,7 +211,7 @@ Route110_TrickHouseEntrance_EventScript_SetTrickMasterInFrontOfDoor:: @ 8269CDF
 
 Route110_TrickHouseEntrance_OnFrame: @ 8269CEE
 	map_script_2 VAR_TRICK_HOUSE_FOUND_TRICK_MASTER, 1, Route110_TrickHouseEntrance_EventScript_BeginChallenge
-	.2byte 0
+	.short 0
 
 Route110_TrickHouseEntrance_EventScript_BeginChallenge:: @ 8269CF8
 	lockall

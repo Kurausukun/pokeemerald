@@ -7,7 +7,7 @@ PetalburgCity_WallysHouse_MapScripts:: @ 8204229
 
 PetalburgCity_WallysHouse_OnWarp: @ 8204234
 	map_script_2 VAR_PETALBURG_CITY_STATE, 4, PetalburgCity_WallysHouse_EventScript_PlayerWallysDadFaceEachOther
-	.2byte 0
+	.short 0
 
 PetalburgCity_WallysHouse_EventScript_PlayerWallysDadFaceEachOther:: @ 820423E
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_EAST
@@ -16,7 +16,7 @@ PetalburgCity_WallysHouse_EventScript_PlayerWallysDadFaceEachOther:: @ 820423E
 
 PetalburgCity_WallysHouse_OnFrame: @ 8204247
 	map_script_2 VAR_PETALBURG_CITY_STATE, 4, PetalburgCity_WallysHouse_EventScript_GiveHM03Surf
-	.2byte 0
+	.short 0
 
 PetalburgCity_WallysHouse_EventScript_GiveHM03Surf:: @ 8204251
 	lockall

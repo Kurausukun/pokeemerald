@@ -358,6 +358,8 @@ static void CloseTrainerCard(u8 taskId)
     FreeAllWindowBuffers();
     FREE_AND_SET_NULL(sData);
     DestroyTask(taskId);
+#ifdef PORTABLE
+    SetVBlankHBlankCallbacksToNull(); // UB: Fixes use after free of sData in VBlank callback
 }
 
 // States for Task_TrainerCard. Skips the initial states, which are done once in order
@@ -641,7 +643,7 @@ static u32 GetCappedGameStat(u8 statId, u32 maxValue)
 {
     u32 statValue = GetGameStat(statId);
 
-    return min(maxValue, statValue);
+    return mymin(maxValue, statValue);
 }
 
 static bool8 HasAllFrontierSymbols(void)

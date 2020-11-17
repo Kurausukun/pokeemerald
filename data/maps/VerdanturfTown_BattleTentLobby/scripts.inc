@@ -7,7 +7,7 @@ VerdanturfTown_BattleTentLobby_MapScripts:: @ 82016D0
 
 VerdanturfTown_BattleTentLobby_OnWarp: @ 82016DB
 	map_script_2 VAR_TEMP_1, 0, VerdanturfTown_BattleTentLobby_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 VerdanturfTown_BattleTentLobby_EventScript_TurnPlayerNorth:: @ 82016E5
 	setvar VAR_TEMP_1, 1
@@ -20,7 +20,7 @@ VerdanturfTown_BattleTentLobby_OnFrame: @ 82016EF
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, VerdanturfTown_BattleTentLobby_EventScript_ResumeChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, VerdanturfTown_BattleTentLobby_EventScript_WonChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, VerdanturfTown_BattleTentLobby_EventScript_LostChallenge
-	.2byte 0
+	.short 0
 
 VerdanturfTown_BattleTentLobby_EventScript_GetChallengeStatus:: @ 8201719
 	frontier_getstatus

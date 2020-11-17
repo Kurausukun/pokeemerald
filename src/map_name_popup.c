@@ -290,7 +290,12 @@ void HideMapNamePopUpWindow(void)
 {
     if (FuncIsActiveTask(Task_MapNamePopUpWindow))
     {
+#ifndef PORTABLE
+        // UB: GetMapNamePopUpWindowId can return an invalid window ID (0xFF) if the window has already been removed
+        // This causes a buffer overflow into /some/ memory; in testing it happened to overflow into the scanline buffer
+        // Move the clearing portion into RemoveMapNamePopUpWindow since it's only called here and has its own validity check
         ClearStdWindowAndFrame(GetMapNamePopUpWindowId(), TRUE);
+#endif
         RemoveMapNamePopUpWindow();
         SetGpuReg_ForcedBlank(REG_OFFSET_BG0VOFS, 0);
         DestroyTask(sPopupTaskId);

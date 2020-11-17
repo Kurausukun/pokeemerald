@@ -12,38 +12,38 @@
 
 	.align 2
 gBattleAI_ScriptsTable:: @ 82DBEF8
-	.4byte AI_CheckBadMove          @ AI_SCRIPT_CHECK_BAD_MOVE
-	.4byte AI_TryToFaint            @ AI_SCRIPT_TRY_TO_FAINT
-	.4byte AI_CheckViability        @ AI_SCRIPT_CHECK_VIABILITY
-	.4byte AI_SetupFirstTurn        @ AI_SCRIPT_SETUP_FIRST_TURN
-	.4byte AI_Risky                 @ AI_SCRIPT_RISKY
-	.4byte AI_PreferStrongestMove   @ AI_SCRIPT_PREFER_STRONGEST_MOVE
-	.4byte AI_PreferBatonPass       @ AI_SCRIPT_PREFER_BATON_PASS
-	.4byte AI_DoubleBattle 	        @ AI_SCRIPT_DOUBLE_BATTLE
-	.4byte AI_HPAware               @ AI_SCRIPT_HP_AWARE
-	.4byte AI_Unknown               @ AI_SCRIPT_UNKNOWN
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Ret
-	.4byte AI_Roaming               @ AI_SCRIPT_ROAMING
-	.4byte AI_Safari                @ AI_SCRIPT_SAFARI
-	.4byte AI_FirstBattle           @ AI_SCRIPT_FIRST_BATTLE
+	.int AI_CheckBadMove          @ AI_SCRIPT_CHECK_BAD_MOVE
+	.int AI_TryToFaint            @ AI_SCRIPT_TRY_TO_FAINT
+	.int AI_CheckViability        @ AI_SCRIPT_CHECK_VIABILITY
+	.int AI_SetupFirstTurn        @ AI_SCRIPT_SETUP_FIRST_TURN
+	.int AI_Risky                 @ AI_SCRIPT_RISKY
+	.int AI_PreferStrongestMove   @ AI_SCRIPT_PREFER_STRONGEST_MOVE
+	.int AI_PreferBatonPass       @ AI_SCRIPT_PREFER_BATON_PASS
+	.int AI_DoubleBattle 	        @ AI_SCRIPT_DOUBLE_BATTLE
+	.int AI_HPAware               @ AI_SCRIPT_HP_AWARE
+	.int AI_Unknown               @ AI_SCRIPT_UNKNOWN
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Ret
+	.int AI_Roaming               @ AI_SCRIPT_ROAMING
+	.int AI_Safari                @ AI_SCRIPT_SAFARI
+	.int AI_FirstBattle           @ AI_SCRIPT_FIRST_BATTLE
 
 AI_CheckBadMove:
 	if_target_is_ally AI_Ret
@@ -864,46 +864,46 @@ AI_CV_MirrorMove_End: @ 82DCB6B
 	end
 
 AI_CV_MirrorMove_EncouragedMovesToMirror: @ 82DCB6C
-    .2byte MOVE_SLEEP_POWDER
-    .2byte MOVE_LOVELY_KISS
-    .2byte MOVE_SPORE
-    .2byte MOVE_HYPNOSIS
-    .2byte MOVE_SING
-    .2byte MOVE_GRASS_WHISTLE
-    .2byte MOVE_SHADOW_PUNCH
-    .2byte MOVE_SAND_ATTACK
-    .2byte MOVE_SMOKESCREEN
-    .2byte MOVE_TOXIC
-    .2byte MOVE_GUILLOTINE
-    .2byte MOVE_HORN_DRILL
-    .2byte MOVE_FISSURE
-    .2byte MOVE_SHEER_COLD
-    .2byte MOVE_CROSS_CHOP
-    .2byte MOVE_AEROBLAST
-    .2byte MOVE_CONFUSE_RAY
-    .2byte MOVE_SWEET_KISS
-    .2byte MOVE_SCREECH
-    .2byte MOVE_COTTON_SPORE
-    .2byte MOVE_SCARY_FACE
-    .2byte MOVE_FAKE_TEARS
-    .2byte MOVE_METAL_SOUND
-    .2byte MOVE_THUNDER_WAVE
-    .2byte MOVE_GLARE
-    .2byte MOVE_POISON_POWDER
-    .2byte MOVE_SHADOW_BALL
-    .2byte MOVE_DYNAMIC_PUNCH
-    .2byte MOVE_HYPER_BEAM
-    .2byte MOVE_EXTREME_SPEED
-    .2byte MOVE_THIEF
-    .2byte MOVE_COVET
-    .2byte MOVE_ATTRACT
-    .2byte MOVE_SWAGGER
-    .2byte MOVE_TORMENT
-    .2byte MOVE_FLATTER
-    .2byte MOVE_TRICK
-    .2byte MOVE_SUPERPOWER
-    .2byte MOVE_SKILL_SWAP
-    .2byte -1
+    .short MOVE_SLEEP_POWDER
+    .short MOVE_LOVELY_KISS
+    .short MOVE_SPORE
+    .short MOVE_HYPNOSIS
+    .short MOVE_SING
+    .short MOVE_GRASS_WHISTLE
+    .short MOVE_SHADOW_PUNCH
+    .short MOVE_SAND_ATTACK
+    .short MOVE_SMOKESCREEN
+    .short MOVE_TOXIC
+    .short MOVE_GUILLOTINE
+    .short MOVE_HORN_DRILL
+    .short MOVE_FISSURE
+    .short MOVE_SHEER_COLD
+    .short MOVE_CROSS_CHOP
+    .short MOVE_AEROBLAST
+    .short MOVE_CONFUSE_RAY
+    .short MOVE_SWEET_KISS
+    .short MOVE_SCREECH
+    .short MOVE_COTTON_SPORE
+    .short MOVE_SCARY_FACE
+    .short MOVE_FAKE_TEARS
+    .short MOVE_METAL_SOUND
+    .short MOVE_THUNDER_WAVE
+    .short MOVE_GLARE
+    .short MOVE_POISON_POWDER
+    .short MOVE_SHADOW_BALL
+    .short MOVE_DYNAMIC_PUNCH
+    .short MOVE_HYPER_BEAM
+    .short MOVE_EXTREME_SPEED
+    .short MOVE_THIEF
+    .short MOVE_COVET
+    .short MOVE_ATTRACT
+    .short MOVE_SWAGGER
+    .short MOVE_TORMENT
+    .short MOVE_FLATTER
+    .short MOVE_TRICK
+    .short MOVE_SUPERPOWER
+    .short MOVE_SKILL_SWAP
+    .short -1
 
 AI_CV_AttackUp: @ 82DCBBC
 	if_stat_level_less_than AI_USER, STAT_ATK, 9, AI_CV_AttackUp2
@@ -2926,9 +2926,9 @@ AI_PreferBatonPass_End:
 	end
 
 sMovesTable_ProtectMoves:
-    .2byte MOVE_PROTECT
-    .2byte MOVE_DETECT
-    .2byte -1
+    .short MOVE_PROTECT
+    .short MOVE_DETECT
+    .short -1
 
 AI_PreferBatonPass_EncourageIfHighStats:
 	get_turn_count

@@ -23,13 +23,13 @@
 	.byte \y
 	.byte \width
 	.byte \height
-	.4byte gMapName_\name
+	.int gMapName_\name
 	.endm
 
 	.macro obj_tiles address, uncompressed_size, tag = 0
-	.4byte \address
-	.2byte \uncompressed_size
-	.2byte \tag
+	.int \address
+	.short \uncompressed_size
+	.short \tag
 	.endm
 
 	.macro null_obj_tiles
@@ -37,9 +37,9 @@
 	.endm
 
 	.macro obj_pal address, tag
-	.4byte \address
-	.2byte \tag
-	.2byte 0@ padding
+	.int \address
+	.short \tag
+	.short 0@ padding
 	.endm
 
 	.macro null_obj_pal
@@ -47,26 +47,26 @@
 	.endm
 
 	.macro paired_pals tag, address
-	.2byte \tag
-	.2byte 0 @ padding
-	.4byte \address
+	.short \tag
+	.short 0 @ padding
+	.int \address
 	.endm
 
 @ For object animation frames.
 	.macro obj_frame_tiles address, uncompressed_size
-	.4byte \address
-	.2byte \uncompressed_size
-	.2byte 0 @ padding
+	.int \address
+	.short \uncompressed_size
+	.short 0 @ padding
 	.endm
 
 	.macro spr_template tile_tag, pal_tag, oam, anims, images, affine_anims, callback
-	.2byte \tile_tag
-	.2byte \pal_tag
-	.4byte \oam
-	.4byte \anims
-	.4byte \images
-	.4byte \affine_anims
-	.4byte \callback
+	.short \tile_tag
+	.short \pal_tag
+	.int \oam
+	.int \anims
+	.int \images
+	.int \affine_anims
+	.int \callback
 	.endm
 
 @ Berry trees have a table defining the palette slot used for each of their 5
@@ -79,68 +79,68 @@
 	.macro subsprite x, y, priority, tile_num_offset, size
 	.byte \x
 	.byte \y
-	.2byte ((\priority) << 14) | ((\tile_num_offset) << 4) | SPRITE_SIZE_\size
+	.short ((\priority) << 14) | ((\tile_num_offset) << 4) | SPRITE_SIZE_\size
 	.endm
 
 	.macro obj_image_anim_frame pic_id, duration, flags = 0
-	.2byte \pic_id
+	.short \pic_id
 	.byte (\flags) | (\duration)
 	.byte 0 @ padding
 	.endm
 
 	.macro obj_image_anim_loop count
-	.2byte 0xfffd
+	.short 0xfffd
 	.byte \count
 	.byte 0 @ padding
 	.endm
 
 	.macro obj_image_anim_jump target_index
-	.2byte 0xfffe
+	.short 0xfffe
 	.byte \target_index
 	.byte 0 @ padding
 	.endm
 
 	.macro obj_image_anim_end
-	.2byte 0xffff
-	.2byte 0 @ padding
+	.short 0xffff
+	.short 0 @ padding
 	.endm
 
 	.macro obj_rot_scal_anim_frame delta_x_scale, delta_y_scale, delta_angle, duration
-	.2byte \delta_x_scale
-	.2byte \delta_y_scale
+	.short \delta_x_scale
+	.short \delta_y_scale
 	.byte \delta_angle
 	.byte \duration
-	.2byte 0 @ padding
+	.short 0 @ padding
 	.endm
 
 	.macro obj_rot_scal_anim_loop count
-	.2byte 0x7ffd
-	.2byte \count
-	.4byte 0 @ padding
+	.short 0x7ffd
+	.short \count
+	.int 0 @ padding
 	.endm
 
 	.macro obj_rot_scal_anim_jump target_index
-	.2byte 0x7ffe
-	.2byte \target_index
-	.4byte 0 @ padding
+	.short 0x7ffe
+	.short \target_index
+	.int 0 @ padding
 	.endm
 
 	.macro obj_rot_scal_anim_end unknown=0
-	.2byte 0x7fff
-	.2byte \unknown
+	.short 0x7fff
+	.short \unknown
 	.fill 4 @ padding
 	.endm
 
 	.macro door_anim_frame unknown, offset
 	.byte \unknown
 	.byte 0 @ padding
-	.2byte \offset
+	.short \offset
 	.endm
 
 	.macro door_anim_gfx metatile_num, unknown, unknown2, tile_addr, palette_addr
-	.2byte \metatile_num
+	.short \metatile_num
 	.byte \unknown
 	.byte \unknown2
-	.4byte \tile_addr
-	.4byte \palette_addr
+	.int \tile_addr
+	.int \palette_addr
 	.endm

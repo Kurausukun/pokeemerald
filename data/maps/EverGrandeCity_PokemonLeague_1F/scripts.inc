@@ -38,14 +38,14 @@ EverGrandeCity_PokemonLeague_1F_EventScript_Clerk:: @ 822960A
 
 	.align 2
 EverGrandeCity_PokemonLeague_1F_Pokemart: @ 8229624
-	.2byte ITEM_ULTRA_BALL
-	.2byte ITEM_HYPER_POTION
-	.2byte ITEM_MAX_POTION
-	.2byte ITEM_FULL_RESTORE
-	.2byte ITEM_FULL_HEAL
-	.2byte ITEM_REVIVE
-	.2byte ITEM_MAX_REPEL
-	.2byte ITEM_NONE
+	.short ITEM_ULTRA_BALL
+	.short ITEM_HYPER_POTION
+	.short ITEM_MAX_POTION
+	.short ITEM_FULL_RESTORE
+	.short ITEM_FULL_HEAL
+	.short ITEM_REVIVE
+	.short ITEM_MAX_REPEL
+	.short ITEM_NONE
 	release
 	end
 

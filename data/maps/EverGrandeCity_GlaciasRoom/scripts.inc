@@ -6,7 +6,7 @@ EverGrandeCity_GlaciasRoom_MapScripts:: @ 8228412
 
 EverGrandeCity_GlaciasRoom_OnWarp: @ 8228422
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_GlaciasRoom_EventScript_PlayerTurnNorth
-	.2byte 0
+	.short 0
 
 EverGrandeCity_GlaciasRoom_EventScript_PlayerTurnNorth:: @ 822842C
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
@@ -14,7 +14,7 @@ EverGrandeCity_GlaciasRoom_EventScript_PlayerTurnNorth:: @ 822842C
 
 EverGrandeCity_GlaciasRoom_OnFrame: @ 8228431
 	map_script_2 VAR_ELITE_4_STATE, 2, EverGrandeCity_GlaciasRoom_EventScript_WalkInCloseDoor
-	.2byte 0
+	.short 0
 
 EverGrandeCity_GlaciasRoom_EventScript_WalkInCloseDoor:: @ 822843B
 	lockall

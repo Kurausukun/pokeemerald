@@ -25,18 +25,18 @@ _start: @ 0
 
 	.global _GPIOPortData
 _GPIOPortData: @ C4
-	.2byte 0
+	.short 0
 
 	.global _GPIOPortDirection
 _GPIOPortDirection: @ C6
-	.2byte 0
+	.short 0
 
 	.global _GPIOPortReadEnable
 _GPIOPortReadEnable: @ C8
-	.2byte 0
+	.short 0
 
 @ CA
-	.2byte 0
+	.short 0
 
 @ CC
 	.space 0x34

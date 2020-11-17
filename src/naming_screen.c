@@ -703,6 +703,11 @@ static bool8 MainState_Exit(void)
             SeedRngAndSetTrainerId();
         SetMainCallback2(sNamingScreen->returnCallback);
         DestroyTask(FindTaskIdByFunc(Task_NamingScreen));
+#ifdef PORTABLE
+        NamingScreen_TurnOffScreen();
+        // Fix Use after free issues with sNamingScreen caused by sprites calling their callbacks which attempt to read from sNamingScreen.
+        ResetSpriteData();
+#endif
         FreeAllWindowBuffers();
         FREE_AND_SET_NULL(sNamingScreen);
     }

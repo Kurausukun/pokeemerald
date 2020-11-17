@@ -39,7 +39,7 @@ MossdeepCity_SpaceCenter_2F_EventScript_MoveDefeatedGrunts:: @ 8223D9F
 
 MossdeepCity_SpaceCenter_2F_OnFrame: @ 8223DB5
 	map_script_2 VAR_MOSSDEEP_SPACE_CENTER_STATE, 1, MossdeepCity_SpaceCenter_2F_EventScript_ThreeMagmaGrunts
-	.2byte 0
+	.short 0
 
 MossdeepCity_SpaceCenter_2F_EventScript_ThreeMagmaGrunts:: @ 8223DBF
 	playse SE_PIN

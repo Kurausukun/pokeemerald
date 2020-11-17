@@ -82,31 +82,31 @@ string generate_map_header_text(Json map_data, Json layouts_data, string version
          << "/map.json\n@\n\n";
 
     text << map_data["name"].string_value() << ":\n"
-         << "\t.4byte " << layout["name"].string_value() << "\n";
+         << "\t.int " << layout["name"].string_value() << "\n";
 
     if (map_data.object_items().find("shared_events_map") != map_data.object_items().end())
-        text << "\t.4byte " << map_data["shared_events_map"].string_value() << "_MapEvents\n";
+        text << "\t.int " << map_data["shared_events_map"].string_value() << "_MapEvents\n";
     else
-        text << "\t.4byte " << map_data["name"].string_value() << "_MapEvents\n";
+        text << "\t.int " << map_data["name"].string_value() << "_MapEvents\n";
 
     if (map_data.object_items().find("shared_scripts_map") != map_data.object_items().end())
-        text << "\t.4byte " << map_data["shared_scripts_map"].string_value() << "_MapScripts\n";
+        text << "\t.int " << map_data["shared_scripts_map"].string_value() << "_MapScripts\n";
     else
-        text << "\t.4byte " << map_data["name"].string_value() << "_MapScripts\n";
+        text << "\t.int " << map_data["name"].string_value() << "_MapScripts\n";
 
     if (map_data.object_items().find("connections") != map_data.object_items().end()
      && map_data["connections"].array_items().size() > 0)
-        text << "\t.4byte " << map_data["name"].string_value() << "_MapConnections\n";
+        text << "\t.int " << map_data["name"].string_value() << "_MapConnections\n";
     else
-        text << "\t.4byte 0x0\n";
+        text << "\t.int 0x0\n";
 
-    text << "\t.2byte " << map_data["music"].string_value() << "\n"
-         << "\t.2byte " << layout["id"].string_value() << "\n"
+    text << "\t.short " << map_data["music"].string_value() << "\n"
+         << "\t.short " << layout["id"].string_value() << "\n"
          << "\t.byte "  << map_data["region_map_section"].string_value() << "\n"
          << "\t.byte "  << map_data["requires_flash"].bool_value() << "\n"
          << "\t.byte "  << map_data["weather"].string_value() << "\n"
          << "\t.byte "  << map_data["map_type"].string_value() << "\n"
-         << "\t.2byte 0\n";
+         << "\t.short 0\n";
 
     if (version == "ruby")
         text << "\t.byte " << map_data["show_map_name"].bool_value() << "\n";
@@ -142,8 +142,8 @@ string generate_map_connections_text(Json map_data) {
     }
 
     text << "\n" << map_data["name"].string_value() << "_MapConnections:\n"
-         << "\t.4byte " << map_data["connections"].array_items().size() << "\n"
-         << "\t.4byte " << map_data["name"].string_value() << "_MapConnectionsList\n\n";
+         << "\t.int " << map_data["connections"].array_items().size() << "\n"
+         << "\t.int " << map_data["name"].string_value() << "_MapConnectionsList\n\n";
 
     return text.str();
 }
@@ -305,13 +305,13 @@ string generate_groups_text(Json groups_data) {
         text << group << "::\n";
         auto maps = groups_data[group].array_items();
         for (Json &map_name : maps)
-            text << "\t.4byte " << map_name.string_value() << "\n";
+            text << "\t.int " << map_name.string_value() << "\n";
         text << "\n";
     }
 
     text << "\t.align 2\n" << "gMapGroups::\n";
     for (auto &group : groups_data["group_order"].array_items())
-        text << "\t.4byte " << group.string_value() << "\n";
+        text << "\t.int " << group.string_value() << "\n";
     text << "\n";
 
     return text.str();
@@ -330,10 +330,10 @@ string generate_connections_text(Json groups_data) {
         sort(map_names.begin(), map_names.end(), [connections_include_order](const Json &a, const Json &b) {
             auto iter_a = find(connections_include_order.begin(), connections_include_order.end(), a);
             if (iter_a == connections_include_order.end())
-                iter_a = connections_include_order.begin() + numeric_limits<int>::max();
+                iter_a = connections_include_order.begin() + numeric_limits<int>::mymax();
             auto iter_b = find(connections_include_order.begin(), connections_include_order.end(), b);
             if (iter_b == connections_include_order.end())
-                iter_b = connections_include_order.begin() + numeric_limits<int>::max();
+                iter_b = connections_include_order.begin() + numeric_limits<int>::mymax();
             return iter_a < iter_b;
         });
 
@@ -461,12 +461,12 @@ string generate_layout_headers_text(Json layouts_data) {
              << "\t.incbin \"" << layout["blockdata_filepath"].string_value() << "\"\n\n"
              << "\t.align 2\n"
              << layout["name"].string_value() << "::\n"
-             << "\t.4byte " << layout["width"].int_value() << "\n"
-             << "\t.4byte " << layout["height"].int_value() << "\n"
-             << "\t.4byte " << border_label << "\n"
-             << "\t.4byte " << blockdata_label << "\n"
-             << "\t.4byte " << layout["primary_tileset"].string_value() << "\n"
-             << "\t.4byte " << layout["secondary_tileset"].string_value() << "\n\n";
+             << "\t.int " << layout["width"].int_value() << "\n"
+             << "\t.int " << layout["height"].int_value() << "\n"
+             << "\t.int " << border_label << "\n"
+             << "\t.int " << blockdata_label << "\n"
+             << "\t.int " << layout["primary_tileset"].string_value() << "\n"
+             << "\t.int " << layout["secondary_tileset"].string_value() << "\n\n";
     }
 
     return text.str();
@@ -481,7 +481,7 @@ string generate_layouts_table_text(Json layouts_data) {
          << layouts_data["layouts_table_label"].string_value() << "::\n";
 
     for (auto &layout : layouts_data["layouts"].array_items())
-        text << "\t.4byte " << layout["name"].string_value() << "\n";
+        text << "\t.int " << layout["name"].string_value() << "\n";
 
     return text.str();
 }

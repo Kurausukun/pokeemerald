@@ -7,7 +7,7 @@ SecretBase_MapScripts::
 
 SecretBase_OnWarp: @ 823B498
     map_script_2 VAR_SECRET_BASE_INITIALIZED, 0, SecretBase_EventScript_InitDecorations
-    .2byte 0
+    .short 0
 
 SecretBase_OnTransition: @ 823B4A2
     call SecretBase_EventScript_SetDecorationFlags
@@ -17,7 +17,7 @@ SecretBase_OnTransition: @ 823B4A2
 
 SecretBase_OnFrame: @ 823B4AE
     map_script_2 VAR_INIT_SECRET_BASE, 0, SecretBase_EventScript_FirstEntrance
-    .2byte 0
+    .short 0
 
 SecretBase_OnResume: @ 823B4B8
     setstepcallback STEP_CB_SECRET_BASE

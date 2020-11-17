@@ -62,11 +62,11 @@ ContestHall_EventScript_ReShowAudience:: @ 823B80F
 
 ContestHall_OnFrame: @ 823B815
 	map_script_2 VAR_CONTEST_HALL_STATE, 1, ContestHall_EventScript_Contest
-	.2byte 0
+	.short 0
 
 ContestHall_OnWarp: @ 823B81F
 	map_script_2 VAR_CONTEST_HALL_STATE, 1, ContestHall_EventScript_SetContestObjects
-	.2byte 0
+	.short 0
 
 ContestHall_EventScript_Contest:: @ 823B829
 	call ContestHall_EventScript_DoContest

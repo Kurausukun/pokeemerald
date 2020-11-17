@@ -4,7 +4,7 @@ EverGrandeCity_Hall2_MapScripts:: @ 822957E
 
 EverGrandeCity_Hall2_OnWarp: @ 8229584
 	map_script_2 VAR_TEMP_1, 0, EverGrandeCity_Hall2_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 EverGrandeCity_Hall2_EventScript_TurnPlayerNorth:: @ 822958E
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH

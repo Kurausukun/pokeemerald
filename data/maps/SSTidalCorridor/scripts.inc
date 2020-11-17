@@ -11,7 +11,7 @@ SSTidalCorridor_OnFrame: @ 823BFD5
 	map_script_2 VAR_SS_TIDAL_STATE, SS_TIDAL_BOARD_LILYCOVE, SSTidalCorridor_EventScript_DepartLilycoveForSlateport
 	map_script_2 VAR_SS_TIDAL_STATE, SS_TIDAL_EXIT_CURRENTS_RIGHT, SSTidalCorridor_EventScript_HalfwayToLilycove
 	map_script_2 VAR_SS_TIDAL_STATE, SS_TIDAL_EXIT_CURRENTS_LEFT, SSTidalCorridor_EventScript_ArrivedInSlateport
-	.2byte 0
+	.short 0
 
 SSTidalCorridor_EventScript_DepartSlateportForLilycove:: @ 823BFFF
 	special SetSSTidalFlag

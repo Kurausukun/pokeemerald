@@ -417,16 +417,6 @@ void UpdatePulseBlend(struct PulseBlend *pulseBlend)
                             }
                         }
                         break;
-                    case (MODERN ? -2 : 2): // Flip back and forth
-                        // This code is never reached in vanilla
-                        if (pulseBlendPalette->fadeDirection)
-                            pulseBlendPalette->blendCoeff = 0;
-                        else
-                            pulseBlendPalette->blendCoeff = pulseBlendPalette->pulseBlendSettings.maxBlendCoeff & 0xF;
-                        
-                        pulseBlendPalette->fadeDirection ^= 1;
-                        pulseBlendPalette->fadeCycleCounter++;
-                        break;
                     }
 
                     if (pulseBlendPalette->pulseBlendSettings.numFadeCycles != 0xFF

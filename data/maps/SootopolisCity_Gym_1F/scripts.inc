@@ -41,7 +41,7 @@ SootopolisCity_Gym_1F_OnFrame: @ 8224ECB
 	map_script_2 VAR_ICE_STEP_COUNT, 28, SootopolisCity_Gym_1F_EventScript_UnlockSecondStairs
 	map_script_2 VAR_ICE_STEP_COUNT, 67, SootopolisCity_Gym_1F_EventScript_UnlockThirdStairs
 	map_script_2 VAR_ICE_STEP_COUNT, 0, SootopolisCity_Gym_1F_EventScript_FallThroughIce
-	.2byte 0
+	.short 0
 
 SootopolisCity_Gym_1F_EventScript_UnlockFirstStairs:: @ 8224EED
 	addvar VAR_ICE_STEP_COUNT, 1

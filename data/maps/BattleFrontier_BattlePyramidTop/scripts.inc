@@ -15,7 +15,7 @@ BattleFrontier_BattlePyramidTop_OnTransition: @ 82550B6
 
 BattleFrontier_BattlePyramidTop_OnWarp: @ 82550CE
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattlePyramidTop_EventScript_SetUpObjects
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePyramidTop_EventScript_SetUpObjects:: @ 82550D8
 	setvar VAR_TEMP_1, 1
@@ -50,7 +50,7 @@ BattleFrontier_BattlePyramidTop_EventScript_CheckChallengeStatus:: @ 825510C
 BattleFrontier_BattlePyramidTop_OnFrame: @ 825516E
 	map_script_2 VAR_TEMP_E, 0, BattleFrontier_BattlePyramidTop_EventScript_PlayPyramidMusic
 	map_script_2 VAR_TEMP_F, 1, BattleFrontier_BattlePyramidTop_EventScript_ShowMapName
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePyramidTop_EventScript_PlayPyramidMusic:: @ 8255180
 	playbgm MUS_B_PYRAMID_TOP, 0

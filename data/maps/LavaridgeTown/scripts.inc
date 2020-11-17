@@ -45,7 +45,7 @@ LavaridgeTown_EventScript_HideMapNamePopup:: @ 81EA543
 
 LavaridgeTown_OnFrame: @ 81EA547
 	map_script_2 VAR_LAVARIDGE_TOWN_STATE, 1, LavaridgeTown_EventScript_RivalGiveGoGoggles
-	.2byte 0
+	.short 0
 
 LavaridgeTown_EventScript_RivalGiveGoGoggles:: @ 81EA551
 	lockall

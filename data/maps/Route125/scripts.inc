@@ -23,7 +23,7 @@ Route125_OnLoad: @ 81F6783
 
 Route125_OnFrame: @ 81F679A
 	map_script_2 VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_EndEventAndCleanup_1
-	.2byte 0
+	.short 0
 
 Route125_EventScript_Nolen:: @ 81F67A4
 	trainerbattle_single TRAINER_NOLEN, Route125_Text_NolenIntro, Route125_Text_NolenDefeat

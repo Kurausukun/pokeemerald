@@ -336,44 +336,7 @@ bool32 sub_801B508(const u16 *data)
 
 void sub_801B580(struct MEventStruct_Unk1442CC *data, bool32 a1)
 {
-    int i;
-    CpuFill32(0, data, sizeof(struct MEventStruct_Unk1442CC));
-    data->unk_00 = 0x101;
-    data->unk_04 = 1;
-    data->unk_08 = 1;
-
-    if (a1)
-    {
-        data->unk_0C = 5;
-        data->unk_10 = 0x0201;
-    }
-    else
-    {
-        data->unk_0C = 4;
-        data->unk_10 = 0x0200;
-    }
-
-    if (ValidateReceivedWonderCard())
-    {
-        data->unk_14 = GetSavedWonderCard()->unk_00;
-        data->unk_20 = *sav1_get_mevent_buffer_2();
-        data->unk_44 = GetSavedWonderCard()->unk_09;
-    }
-    else
-    {
-        data->unk_14 = 0;
-    }
-
-    for (i = 0; i < 4; i++)
-        data->unk_16[i] = gSaveBlock1Ptr->unk_322C.unk_338[i];
-
-    CopyTrainerId(data->unk_4C, gSaveBlock2Ptr->playerTrainerId);
-    StringCopy(data->unk_45, gSaveBlock2Ptr->playerName);
-    for (i = 0; i < 6; i++)
-        data->unk_50[i] = gSaveBlock1Ptr->easyChatProfile[i];
-
-    memcpy(data->unk_5C, RomHeaderGameCode, 4);
-    data->unk_60 = RomHeaderSoftwareVersion;
+    return;
 }
 
 bool32 sub_801B6A0(const struct MEventStruct_Unk1442CC *data, bool32 a1)

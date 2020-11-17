@@ -6,7 +6,7 @@ TrainerHill_Elevator_MapScripts:: @ 826934F
 
 TrainerHill_Elevator_OnFrame: @ 8269355
 	map_script_2 VAR_TEMP_4, 0, TrainerHill_Elevator_EventScript_EnterElevator
-	.2byte 0
+	.short 0
 
 TrainerHill_Elevator_EventScript_Attendant:: @ 826935F
 	end

@@ -7,7 +7,7 @@ BattleFrontier_BattleArenaLobby_MapScripts:: @ 8255C36
 
 BattleFrontier_BattleArenaLobby_OnWarp: @ 8255C41
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleArenaLobby_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleArenaLobby_EventScript_TurnPlayerNorth:: @ 8255C4B
 	setvar VAR_TEMP_1, 1
@@ -20,7 +20,7 @@ BattleFrontier_BattleArenaLobby_OnFrame: @ 8255C55
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattleArenaLobby_EventScript_ResumeChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, BattleFrontier_BattleArenaLobby_EventScript_WonChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, BattleFrontier_BattleArenaLobby_EventScript_LostChallenge
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattleArenaLobby_EventScript_GetChallengeStatus:: @ 8255C7F
 	frontier_getstatus

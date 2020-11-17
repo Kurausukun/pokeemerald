@@ -173,11 +173,11 @@ _082DEE76:
 
 	.align 2, 0
 
-pool_HashVal: .4byte 0xa1c1
+pool_HashVal: .int 0xa1c1
 
 pool_Kawa: .ascii "Kawa" @ name of BIOS developer
 
-pool_NintendoLogo: .4byte RomHeaderNintendoLogo
+pool_NintendoLogo: .int RomHeaderNintendoLogo
 
 	thumb_func_start GameCubeMultiBoot_ExecuteProgram
 @ void GameCubeMultiBoot_ExecuteProgram(struct GameCubeMultiBoot *mb);
@@ -535,16 +535,16 @@ GameCubeMultiBoot_Quit: @ 82DF012
 
 	.align 2, 0
 
-_082DF034: .4byte 0x4000
+_082DF034: .int 0x4000
 
-pool_InterruptRegs: .4byte REG_BASE + 0x200
+pool_InterruptRegs: .int REG_BASE + 0x200
 
-pool_SerialRegs: .4byte REG_BASE + 0x120
+pool_SerialRegs: .int REG_BASE + 0x120
 
-pool_RegDispstat: .4byte REG_DISPSTAT
+pool_RegDispstat: .int REG_DISPSTAT
 
 pool_RubyUSAGameCode: .ascii "AXVE"
 
-pool_MultiBootLoadAddr: .4byte EWRAM_START
+pool_MultiBootLoadAddr: .int EWRAM_START
 
 	.align 2, 0 @ Don't pad with nop.

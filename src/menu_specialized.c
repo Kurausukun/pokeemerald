@@ -588,7 +588,7 @@ static void sub_81D24A4(struct ConditionGraph *graph)
     for (i = graph->unk12C[0].unk2; i <= graph->unk350; i++)
         graph->unk140[i - 56][0] = 155;
 
-    varMax = max(graph->unk350, graph->unk12C[2].unk2);
+    varMax = mymax(graph->unk350, graph->unk12C[2].unk2);
     for (i = varMax + 1; i < 122; i++)
     {
         graph->unk140[i - 56][0] = 0;
@@ -628,7 +628,7 @@ static void sub_81D2634(struct ConditionGraph *graph)
     for (i = graph->unk12C[0].unk2; i <= graph->unk350; i++)
         graph->unk140[i + 10][1] = 155;
 
-    varMax = max(graph->unk350, graph->unk12C[3].unk2 + 1);
+    varMax = mymax(graph->unk350, graph->unk12C[3].unk2 + 1);
     for (i = varMax; i < 122; i++)
     {
         graph->unk140[i + 10][0] = 0;

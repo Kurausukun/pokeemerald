@@ -32,7 +32,7 @@ SlateportCity_BattleTentBattleRoom_EventScript_SetPlayerGfxFemale:: @ 8209994
 
 SlateportCity_BattleTentBattleRoom_OnWarp: @ 820999A
 	map_script_2 VAR_TEMP_1, 0, SlateportCity_BattleTentBattleRoom_EventScript_SetUpObjects
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentBattleRoom_EventScript_SetUpObjects:: @ 82099A4
 	setvar VAR_TEMP_1, 1
@@ -42,7 +42,7 @@ SlateportCity_BattleTentBattleRoom_EventScript_SetUpObjects:: @ 82099A4
 
 SlateportCity_BattleTentBattleRoom_OnFrame: @ 82099B4
 	map_script_2 VAR_TEMP_0, 0, SlateportCity_BattleTentBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 SlateportCity_BattleTentBattleRoom_EventScript_EnterRoom:: @ 82099BE
 	applymovement LOCALID_PLAYER, SlateportCity_BattleTentBattleRoom_Movement_PlayerEnter

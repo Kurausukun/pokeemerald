@@ -12,7 +12,7 @@ TrainerHill_OnResume: @ 82C8336
 
 TrainerHill_OnWarp: @ 82C8372
 	map_script_2 VAR_TEMP_3, 0, TrainerHill_1F_EventScript_DummyOnWarp
-	.2byte 0
+	.short 0
 
 TrainerHill_1F_EventScript_DummyOnWarp:: @ 82C837C
 	setvar VAR_TEMP_3, 1
@@ -21,7 +21,7 @@ TrainerHill_1F_EventScript_DummyOnWarp:: @ 82C837C
 TrainerHill_OnFrame: @ 82C8381
 	map_script_2 VAR_TEMP_2, 0, TrainerHill_1F_EventScript_DummyWarpToEntranceCounter
 	map_script_2 VAR_TEMP_1, 1, TrainerHill_EventScript_WarpToEntranceCounter
-	.2byte 0
+	.short 0
 
 EventScript_TrainerHillTimer:: @ 82C8393
 	lockall

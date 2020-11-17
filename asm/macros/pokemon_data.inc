@@ -1,13 +1,13 @@
 	.macro pokedex_entry height, width, text_pointer, pokemon_scale, pokemon_offset, trainer_scale, trainer_offset
-	.2byte \height @ in decimeters
-	.2byte \width @ in hectograms
-	.4byte \text_pointer
-	.2byte 0 @ unused
-	.2byte \pokemon_scale
-	.2byte \pokemon_offset
-	.2byte \trainer_scale
-	.2byte \trainer_offset
-	.2byte 0 @ padding
+	.short \height @ in decimeters
+	.short \width @ in hectograms
+	.int \text_pointer
+	.short 0 @ unused
+	.short \pokemon_scale
+	.short \pokemon_offset
+	.short \trainer_scale
+	.short \trainer_offset
+	.short 0 @ padding
 	.endm
 
 	.macro base_stats hp, attack, defense, speed, sp_attack, sp_defense
@@ -20,18 +20,18 @@
 	.endm
 
 	.macro ev_yield hp, attack, defense, speed, sp_attack, sp_defense
-	.2byte (\sp_defense << 10) | (\sp_attack << 8) | (\speed << 6) | (\defense << 4) | (\attack << 2) | \hp
+	.short (\sp_defense << 10) | (\sp_attack << 8) | (\speed << 6) | (\defense << 4) | (\attack << 2) | \hp
 	.endm
 
 	.macro level_up_move level, move
-	.2byte (\level << 9) | \move
+	.short (\level << 9) | \move
 	.endm
 
 	.macro evo_entry method, parameter, target_species
-	.2byte \method
-	.2byte \parameter
-	.2byte \target_species
-	.2byte 0 @ padding
+	.short \method
+	.short \parameter
+	.short \target_species
+	.short 0 @ padding
 	.endm
 
 	.macro empty_evo_entries count
@@ -39,7 +39,7 @@
 	.endm
 
 	.macro egg_moves_begin species
-	.2byte 20000 + \species
+	.short 20000 + \species
 	.endm
 
 @ If the min level equals the max level, only one level argument is needed.
@@ -52,5 +52,5 @@
 	.byte \max_level
 	.endif
 
-	.2byte \species
+	.short \species
 	.endm

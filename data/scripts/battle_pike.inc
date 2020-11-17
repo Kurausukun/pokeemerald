@@ -44,7 +44,7 @@ BattleFrontier_BattlePikeRoomNormal_EventScript_SetBrainRoomObjPos:: @ 82C3ECF
 
 BattleFrontier_BattlePikeRoom_OnWarp: @ 82C3EDE
 	map_script_2 VAR_TEMP_4, 0, BattleFrontier_BattlePikeRoomNormal_EventScript_InitRoomObjects
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePikeRoomNormal_EventScript_InitRoomObjects:: @ 82C3EE8
 	setvar VAR_OBJ_GFX_ID_1, OBJ_EVENT_GFX_LINK_RECEPTIONIST

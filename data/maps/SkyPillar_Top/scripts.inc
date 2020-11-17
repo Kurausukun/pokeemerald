@@ -39,7 +39,7 @@ SkyPillar_Top_EventScript_ShowRayquaza:: @ 823970F
 
 SkyPillar_Top_OnWarp: @ 8239713
 	map_script_2 VAR_SKY_PILLAR_STATE, 0, SkyPillar_Top_EventScript_RayquazaFaceDown
-	.2byte 0
+	.short 0
 
 SkyPillar_Top_EventScript_RayquazaFaceDown:: @ 823971D
 	turnobject LOCALID_RAYQUAZA_SLEEPING, DIR_SOUTH

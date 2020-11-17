@@ -9,7 +9,7 @@ BattleFrontier_BattlePyramidLobby_MapScripts:: @ 8250716
 @ Unused. Pyramid uses Dome's OnWarp (presumably by mistake). Their effects are identical
 BattleFrontier_BattlePyramidLobby_OnWarp: @ 8250721
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattlePyramidLobby_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePyramidLobby_EventScript_TurnPlayerNorth: @ 825072B
 	setvar VAR_TEMP_1, 1
@@ -22,7 +22,7 @@ BattleFrontier_BattlePyramidLobby_OnFrame: @ 8250735
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattlePyramidLobby_EventScript_ResumeChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, BattleFrontier_BattlePyramidLobby_EventScript_WonChallenge
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, BattleFrontier_BattlePyramidLobby_EventScript_LostChallenge
-	.2byte 0
+	.short 0
 
 BattleFrontier_BattlePyramidLobby_EventScript_GetChallengeStatus:: @ 825075F
 	frontier_getstatus

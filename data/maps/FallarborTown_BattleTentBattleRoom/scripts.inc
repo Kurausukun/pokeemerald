@@ -36,7 +36,7 @@ FallarborTown_BattleTentBattleRoom_EventScript_SetPlayerGfxFemale:: @ 82008D2
 
 FallarborTown_BattleTentBattleRoom_OnFrame: @ 82008DD
 	map_script_2 VAR_TEMP_0, 0, FallarborTown_BattleTentBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 FallarborTown_BattleTentBattleRoom_EventScript_EnterRoom:: @ 82008E7
 	lockall
@@ -237,7 +237,7 @@ FallarborTown_BattleTentBattleRoom_Movement_AttendantReturnToPos: @ 8200BAB
 
 FallarborTown_BattleTentBattleRoom_OnWarp: @ 8200BB0
 	map_script_2 VAR_TEMP_1, 0, FallarborTown_BattleTentBattleRoom_EventScript_SetUpObjects
-	.2byte 0
+	.short 0
 
 FallarborTown_BattleTentBattleRoom_EventScript_SetUpObjects:: @ 8200BBA
 	hideobjectat OBJ_EVENT_ID_PLAYER, MAP_FALLARBOR_TOWN_BATTLE_TENT_BATTLE_ROOM

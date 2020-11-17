@@ -23,7 +23,7 @@ Route127_OnLoad: @ 81F6A14
 
 Route127_OnFrame: @ 81F6A2B
 	map_script_2 VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_EndEventAndCleanup_1
-	.2byte 0
+	.short 0
 
 Route127_EventScript_Camden:: @ 81F6A35
 	trainerbattle_single TRAINER_CAMDEN, Route127_Text_CamdenIntro, Route127_Text_CamdenDefeat

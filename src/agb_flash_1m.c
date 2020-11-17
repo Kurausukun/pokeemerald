@@ -1,3 +1,4 @@
+#include "global.h"
 #include "gba/gba.h"
 #include "gba/flash_internal.h"
 
@@ -5,6 +6,9 @@ static const char AgbLibFlashVersion[] = "FLASH1M_V103";
 
 const struct FlashSetupInfo * const sSetupInfos[] =
 {
+#ifdef PORTABLE
+    &DUMMY_SAVE,
+#endif
     &MX29L010,
     &LE26FV10N1TS,
     &DefaultFlash

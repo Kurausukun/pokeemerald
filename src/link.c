@@ -1833,7 +1833,7 @@ void LinkPlayerFromBlock(u32 who)
     }
 }
 
-bool8 HandleLinkConnection(void)
+/*bool8 HandleLinkConnection(void)
 {
     bool32 r4;
     bool32 r5;
@@ -1860,7 +1860,7 @@ bool8 HandleLinkConnection(void)
         }
     }
     return FALSE;
-}
+}*/
 
 void SetWirelessCommType1(void)
 {

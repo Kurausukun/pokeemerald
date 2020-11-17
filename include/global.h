@@ -1,8 +1,54 @@
 #ifndef GUARD_GLOBAL_H
 #define GUARD_GLOBAL_H
 
+#include <stdio.h>
 #include <string.h>
 #include <limits.h>
+
+#ifndef NO_UNDERSCORE_HACK
+#define REG_BASE       _REG_BASE
+#define VRAM_          _VRAM_
+#define OAM            _OAM
+#define REG_BASE       _REG_BASE
+#define PLTT           _PLTT
+#define SOUND_INFO_PTR _SOUND_INFO_PTR
+#define INTR_CHECK     _INTR_CHECK
+#define INTR_VECTOR    _INTR_VECTOR
+#define fopen         _fopen
+#define fseek         _fseek
+#define fclose        _fclose
+#define fread         _fread
+#define fwrite        _fwrite
+#define puts           _puts
+#define memcpy         _memcpy
+#define memset         _memset
+#define strcmp         _strcmp
+#define strcpy         _strcpy
+#define getc           _getc
+#define printf         _printf
+#define CpuSet         _CpuSet
+#define CpuFastSet     _CpuFastSet
+#define DmaSet         _DmaSet
+#define BgAffineSet    _BgAffineSet
+#define ObjAffineSet   _ObjAffineSet
+#define SoftReset _SoftReset
+#define LZ77UnCompVram _LZ77UnCompVram
+#define LZ77UnCompWram _LZ77UnCompWram
+#define AgbMain _AgbMain
+#define gIntrTable _gIntrTable
+#define VBlankIntrWait _VBlankIntrWait
+#define ConvertBcdToBinary _ConvertBcdToBinary
+#define DoSoftReset _DoSoftReset
+#define Platform_GetKeyInput _Platform_GetKeyInput
+#define Platform_GetStatus _Platform_GetStatus
+#define Platform_SetStatus _Platform_SetStatus
+#define Platform_GetDateTime _Platform_GetDateTime
+#define Platform_SetDateTime _Platform_SetDateTime
+#define Platform_GetTime _Platform_GetTime
+#define Platform_SetTime _Platform_SetTime
+#define Platform_SetAlarm _Platform_SetAlarm
+#endif // No_UNDERSCORE_HACK
+
 #include "config.h" // we need to define config before gba headers as print stuff needs the functions nulled before defines.
 #include "gba/gba.h"
 #include "constants/global.h"
@@ -17,6 +63,7 @@
 #define asm_comment(x) asm volatile("@ -- " x " -- ")
 #define asm_unified(x) asm(".syntax unified\n" x "\n.syntax divided")
 #define NAKED __attribute__((naked))
+#define ALIGN32 __attribute__((aligned(4)))
 
 // IDE support
 #if defined (__APPLE__) || defined (__CYGWIN__) || defined (_MSC_VER)
@@ -31,6 +78,9 @@
 #define INCBIN_S8 INCBIN
 #define INCBIN_S16 INCBIN
 #define INCBIN_S32 INCBIN
+void * memcpy(void *, const void *, size_t);
+void * memset(void *, int, size_t);
+int strcmp (const char *, const char *);
 #endif // IDE support
 
 #define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
@@ -66,8 +116,8 @@
 // Converts a Q24.8 fixed-point format number to a regular integer
 #define Q_24_8_TO_INT(n) ((int)((n) >> 8))
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) >= (b) ? (a) : (b))
+#define mymin(a, b) ((a) < (b) ? (a) : (b))
+#define mymymax(a, b) ((a) >= (b) ? (a) : (b))
 
 #if MODERN
 #define abs(x) (((x) < 0) ? -(x) : (x))
@@ -159,7 +209,7 @@ struct Time
     /*0x02*/ s8 hours;
     /*0x03*/ s8 minutes;
     /*0x04*/ s8 seconds;
-};
+} ALIGN32;
 
 struct Pokedex
 {
@@ -325,7 +375,7 @@ struct BattleDomeTrainer
     u16 isEliminated:1;
     u16 eliminatedAt:2;
     u16 forfeited:3;
-};
+} ALIGN32;
 
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 
@@ -543,7 +593,7 @@ struct Pokeblock
     u8 bitter;
     u8 sour;
     u8 feel;
-};
+} ALIGN32;
 
 struct Roamer
 {
@@ -593,7 +643,7 @@ struct MailStruct
     /*0x1A*/ u8 trainerId[TRAINER_ID_LENGTH];
     /*0x1E*/ u16 species;
     /*0x20*/ u16 itemId;
-};
+} ALIGN32;
 
 struct MauvilleManCommon
 {

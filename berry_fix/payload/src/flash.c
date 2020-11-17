@@ -42,7 +42,7 @@ EWRAM_DATA struct PokemonStorage gPokemonStorage = {};
 #define SAVEBLOCK_CHUNK(structure, chunkNum)                                \
 {                                                                           \
     (u8 *)&structure + chunkNum * SECTOR_DATA_SIZE,                         \
-    min(sizeof(structure) - chunkNum * SECTOR_DATA_SIZE, SECTOR_DATA_SIZE)  \
+    mymin(sizeof(structure) - chunkNum * SECTOR_DATA_SIZE, SECTOR_DATA_SIZE)  \
 }                                                                           \
 
 static const struct SaveBlockChunk sSaveBlockChunks[] =

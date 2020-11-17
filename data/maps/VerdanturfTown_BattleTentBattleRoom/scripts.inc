@@ -36,7 +36,7 @@ VerdanturfTown_BattleTentBattleRoom_EventScript_SetPlayerGfxFemale:: @ 8202333
 
 VerdanturfTown_BattleTentBattleRoom_OnFrame: @ 820233E
 	map_script_2 VAR_TEMP_0, 0, VerdanturfTown_BattleTentBattleRoom_EventScript_EnterRoom
-	.2byte 0
+	.short 0
 
 VerdanturfTown_BattleTentBattleRoom_EventScript_EnterRoom:: @ 8202348
 	showobjectat LOCALID_PLAYER, MAP_VERDANTURF_TOWN_BATTLE_TENT_BATTLE_ROOM
@@ -135,7 +135,7 @@ VerdanturfTown_BattleTentBattleRoom_EventScript_PauseChallenge:: @ 820251F
 
 VerdanturfTown_BattleTentBattleRoom_OnWarp: @ 8202541
 	map_script_2 VAR_TEMP_1, 0, VerdanturfTown_BattleTentBattleRoom_EventScript_SetUpObjects
-	.2byte 0
+	.short 0
 
 VerdanturfTown_BattleTentBattleRoom_EventScript_SetUpObjects:: @ 820254B
 	hideobjectat LOCALID_PLAYER, MAP_VERDANTURF_TOWN_BATTLE_TENT_BATTLE_ROOM

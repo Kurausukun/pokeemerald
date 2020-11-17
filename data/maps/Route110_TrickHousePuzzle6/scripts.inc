@@ -9,7 +9,7 @@ Route110_TrickHousePuzzle6_OnTransition: @ 826DDB2
 
 Route110_TrickHousePuzzle6_OnWarp: @ 826DDB6
 	map_script_2 VAR_TEMP_0, VAR_TEMP_0, Route110_TrickHousePuzzle6_EventScript_InitPuzzle
-	.2byte 0
+	.short 0
 
 Route110_TrickHousePuzzle6_EventScript_InitPuzzle:: @ 826DDC0
 	special RotatingGate_InitPuzzleAndGraphics

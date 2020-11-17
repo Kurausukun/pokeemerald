@@ -73,7 +73,7 @@ PetalburgCity_Gym_EventScript_DontMoveNormanToFront:: @ 8204985
 
 PetalburgCity_Gym_OnWarp: @ 820498B
 	map_script_2 VAR_PETALBURG_GYM_STATE, 1, PetalburgCity_Gym_EventScript_TurnPlayerNorth
-	.2byte 0
+	.short 0
 
 PetalburgCity_Gym_EventScript_TurnPlayerNorth:: @ 8204995
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
@@ -81,7 +81,7 @@ PetalburgCity_Gym_EventScript_TurnPlayerNorth:: @ 8204995
 
 PetalburgCity_Gym_OnFrame: @ 820499A
 	map_script_2 VAR_PETALBURG_GYM_STATE, 1, PetalburgCity_Gym_EventScript_ReturnFromWallyTutorial
-	.2byte 0
+	.short 0
 
 PetalburgCity_Gym_EventScript_ReturnFromWallyTutorial:: @ 82049A4
 	lockall
