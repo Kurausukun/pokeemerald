@@ -267,7 +267,7 @@ $(foreach src, $(REGULAR_DATA_ASM_SRCS), $(eval $(call DATA_ASM_DEP,$(patsubst $
 endif
 
 $(SONG_BUILDDIR)/%.o: $(SONG_SUBDIR)/%.s
-	$(ASM_PSEUDO_OP_CONV) <$ | $(AS) $(ASFLAGS) -I sound -o $@
+	$(ASM_PSEUDO_OP_CONV) $< | $(AS) $(ASFLAGS) -I sound -o $@
 
 $(OBJ_DIR)/sym_bss.ld: sym_bss.txt
 	$(RAMSCRGEN) .bss $< ENGLISH > $@

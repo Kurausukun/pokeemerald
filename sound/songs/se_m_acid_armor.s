@@ -13,7 +13,7 @@
 	.global	se_m_acid_armor
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_acid_armor_1:
 	.byte	KEYSH , se_m_acid_armor_key+0
@@ -186,14 +186,14 @@ se_m_acid_armor_1:
 	.byte	W06
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_acid_armor:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_acid_armor_pri	@ Priority
-	.byte	se_m_acid_armor_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_acid_armor_pri	
+	.byte	se_m_acid_armor_rev	
 
 	.word	se_m_acid_armor_grp
 

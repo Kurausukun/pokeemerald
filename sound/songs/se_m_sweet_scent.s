@@ -13,7 +13,7 @@
 	.global	se_m_sweet_scent
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_sweet_scent_1:
 	.byte	KEYSH , se_m_sweet_scent_key+0
@@ -89,7 +89,7 @@ se_m_sweet_scent_1:
 	.byte	W02
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_sweet_scent_2:
 	.byte	KEYSH , se_m_sweet_scent_key+0
@@ -175,14 +175,14 @@ se_m_sweet_scent_2:
 	.byte		EOT   
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_sweet_scent:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_sweet_scent_pri	@ Priority
-	.byte	se_m_sweet_scent_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_sweet_scent_pri	
+	.byte	se_m_sweet_scent_rev	
 
 	.word	se_m_sweet_scent_grp
 

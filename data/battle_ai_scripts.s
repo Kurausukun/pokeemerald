@@ -8,7 +8,7 @@
 #include "constants/pokemon.h"
 	.include "asm/macros/battle_ai_script.inc"
 
-	.section script_data, "aw", %progbits
+	.section script_data
 
 	.align 2
 gBattleAI_ScriptsTable:: @ 82DBEF8

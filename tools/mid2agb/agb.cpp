@@ -416,7 +416,7 @@ void PrintControllerOp(const Event& event)
 
 void PrintAgbTrack(std::vector<Event>& events)
 {
-    std::fprintf(g_outputFile, "\n@**************** Track %u (Midi-Chn.%u) ****************@\n\n", g_agbTrack, g_midiChan + 1);
+    //std::fprintf(g_outputFile, "\n@**************** Track %u (Midi-Chn.%u) ****************@\n\n", g_agbTrack, g_midiChan + 1);
     std::fprintf(g_outputFile, "%s_%u:\n", g_asmLabel.c_str(), g_agbTrack);
 
     int wholeNoteCount = 0;
@@ -528,7 +528,7 @@ void PrintAgbFooter()
 {
     int trackCount = g_agbTrack - 1;
 
-    std::fprintf(g_outputFile, "\n@******************************************************@\n");
+    //std::fprintf(g_outputFile, "\n@******************************************************@\n");
     std::fprintf(g_outputFile, "\t.align\t2\n");
     std::fprintf(g_outputFile, "\n%s:\n", g_asmLabel.c_str());
     std::fprintf(g_outputFile, "\t.byte\t%u\t\n", trackCount);

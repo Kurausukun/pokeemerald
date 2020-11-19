@@ -13,7 +13,7 @@
 	.global	se_m_moonlight
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_moonlight_1:
 	.byte	KEYSH , se_m_moonlight_key+0
@@ -116,7 +116,7 @@ se_m_moonlight_1_004:
 	 .word	se_m_moonlight_1_004
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_moonlight_2:
 	.byte	KEYSH , se_m_moonlight_key+0
@@ -201,14 +201,14 @@ se_m_moonlight_2_002:
 	.byte	W24
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_moonlight:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_moonlight_pri	@ Priority
-	.byte	se_m_moonlight_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_moonlight_pri	
+	.byte	se_m_moonlight_rev	
 
 	.word	se_m_moonlight_grp
 

@@ -56,7 +56,7 @@
 	.include "asm/macros/event.inc"
 	.include "constants/constants.inc"
 
-	.section script_data, "aw", %progbits
+	.section script_data
 
 @ 81DB67C
 	.include "data/script_cmd_table.inc"

@@ -13,7 +13,7 @@
 	.global	se_m_teeter_dance
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_teeter_dance_1:
 	.byte	KEYSH , se_m_teeter_dance_key+0
@@ -64,7 +64,7 @@ se_m_teeter_dance_1:
 	.byte	W06
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_teeter_dance_2:
 	.byte	KEYSH , se_m_teeter_dance_key+0
@@ -104,14 +104,14 @@ se_m_teeter_dance_2:
 	.byte	W06
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_teeter_dance:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_teeter_dance_pri	@ Priority
-	.byte	se_m_teeter_dance_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_teeter_dance_pri	
+	.byte	se_m_teeter_dance_rev	
 
 	.word	se_m_teeter_dance_grp
 

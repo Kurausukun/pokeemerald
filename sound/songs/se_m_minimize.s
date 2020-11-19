@@ -13,7 +13,7 @@
 	.global	se_m_minimize
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_minimize_1:
 	.byte	KEYSH , se_m_minimize_key+0
@@ -149,14 +149,14 @@ se_m_minimize_1:
 	.byte	W02
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_minimize:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_minimize_pri	@ Priority
-	.byte	se_m_minimize_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_minimize_pri	
+	.byte	se_m_minimize_rev	
 
 	.word	se_m_minimize_grp
 

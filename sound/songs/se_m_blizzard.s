@@ -13,7 +13,7 @@
 	.global	se_m_blizzard
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_blizzard_1:
 	.byte	KEYSH , se_m_blizzard_key+0
@@ -87,14 +87,14 @@ se_m_blizzard_1_B1:
 	 .word	se_m_blizzard_1_B1
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_blizzard:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_blizzard_pri	@ Priority
-	.byte	se_m_blizzard_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_blizzard_pri	
+	.byte	se_m_blizzard_rev	
 
 	.word	se_m_blizzard_grp
 

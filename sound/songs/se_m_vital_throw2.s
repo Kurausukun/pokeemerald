@@ -13,7 +13,7 @@
 	.global	se_m_vital_throw2
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_vital_throw2_1:
 	.byte	KEYSH , se_m_vital_throw2_key+0
@@ -72,7 +72,7 @@ se_m_vital_throw2_1:
 	.byte		        c_v-64
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_vital_throw2_2:
 	.byte	KEYSH , se_m_vital_throw2_key+0
@@ -91,14 +91,14 @@ se_m_vital_throw2_2:
 	.byte	W12
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_vital_throw2:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_vital_throw2_pri	@ Priority
-	.byte	se_m_vital_throw2_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_vital_throw2_pri	
+	.byte	se_m_vital_throw2_rev	
 
 	.word	se_m_vital_throw2_grp
 

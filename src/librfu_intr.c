@@ -413,6 +413,6 @@ static void Callback_Dummy_ID(void (*callbackId)(void))
 #ifndef PORTABLE
     asm("bx r0");
 #else
-    callbackID();
+    callbackId();
 #endif
 }

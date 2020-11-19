@@ -13,7 +13,7 @@
 	.global	se_m_icy_wind
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_icy_wind_1:
 	.byte	KEYSH , se_m_icy_wind_key+0
@@ -34,7 +34,7 @@ se_m_icy_wind_1:
 	.byte	W03
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_icy_wind_2:
 	.byte	KEYSH , se_m_icy_wind_key+0
@@ -55,14 +55,14 @@ se_m_icy_wind_2:
 	.byte	W02
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_icy_wind:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_icy_wind_pri	@ Priority
-	.byte	se_m_icy_wind_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_icy_wind_pri	
+	.byte	se_m_icy_wind_rev	
 
 	.word	se_m_icy_wind_grp
 

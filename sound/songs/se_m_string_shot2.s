@@ -13,7 +13,7 @@
 	.global	se_m_string_shot2
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_string_shot2_1:
 	.byte	KEYSH , se_m_string_shot2_key+0
@@ -91,7 +91,7 @@ se_m_string_shot2_1:
 	.byte	W06
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_string_shot2_2:
 	.byte	KEYSH , se_m_string_shot2_key+0
@@ -117,14 +117,14 @@ se_m_string_shot2_2_000:
 	 .word	se_m_string_shot2_2_000
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_string_shot2:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_string_shot2_pri	@ Priority
-	.byte	se_m_string_shot2_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_string_shot2_pri	
+	.byte	se_m_string_shot2_rev	
 
 	.word	se_m_string_shot2_grp
 

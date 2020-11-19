@@ -11,7 +11,7 @@
 	.include "asm/macros/battle_script.inc"
 	.include "constants/constants.inc"
 
-	.section script_data, "aw", %progbits
+	.section script_data
 	
 .align 2
 gBattleScriptsForMoveEffects:: @ 82D86A8

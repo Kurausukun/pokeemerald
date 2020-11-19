@@ -13,7 +13,7 @@
 	.global	se_m_milk_drink
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_milk_drink_1:
 	.byte	KEYSH , se_m_milk_drink_key+0
@@ -93,7 +93,7 @@ se_m_milk_drink_1:
 	.byte	W06
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_milk_drink_2:
 	.byte	KEYSH , se_m_milk_drink_key+0
@@ -112,14 +112,14 @@ se_m_milk_drink_2:
 	.byte	W06
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_milk_drink:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_milk_drink_pri	@ Priority
-	.byte	se_m_milk_drink_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_milk_drink_pri	
+	.byte	se_m_milk_drink_rev	
 
 	.word	se_m_milk_drink_grp
 

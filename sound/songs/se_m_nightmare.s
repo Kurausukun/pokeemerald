@@ -13,7 +13,7 @@
 	.global	se_m_nightmare
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_nightmare_1:
 	.byte	KEYSH , se_m_nightmare_key+0
@@ -63,7 +63,7 @@ se_m_nightmare_1:
 	.byte	W15
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_nightmare_2:
 	.byte	KEYSH , se_m_nightmare_key+0
@@ -129,14 +129,14 @@ se_m_nightmare_2:
 	.byte	W18
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_nightmare:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_nightmare_pri	@ Priority
-	.byte	se_m_nightmare_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_nightmare_pri	
+	.byte	se_m_nightmare_rev	
 
 	.word	se_m_nightmare_grp
 

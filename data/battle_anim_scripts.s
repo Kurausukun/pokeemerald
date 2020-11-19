@@ -7,7 +7,7 @@
 	.include "asm/macros/battle_anim_script.inc"
 	.include "constants/constants.inc"
 
-	.section script_data, "aw", %progbits
+	.section script_data
 
 	.align 2
 gMovesWithQuietBGM::

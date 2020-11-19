@@ -13,7 +13,7 @@
 	.global	se_m_flamethrower
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_flamethrower_1:
 	.byte	KEYSH , se_m_flamethrower_key+0
@@ -132,7 +132,7 @@ se_m_flamethrower_1_000:
 	.byte		EOT   , Cn3 
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_flamethrower_2:
 	.byte	KEYSH , se_m_flamethrower_key+0
@@ -158,14 +158,14 @@ se_m_flamethrower_2:
 	.byte	W24
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_flamethrower:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_flamethrower_pri	@ Priority
-	.byte	se_m_flamethrower_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_flamethrower_pri	
+	.byte	se_m_flamethrower_rev	
 
 	.word	se_m_flamethrower_grp
 

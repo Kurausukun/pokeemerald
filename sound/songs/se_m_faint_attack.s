@@ -13,7 +13,7 @@
 	.global	se_m_faint_attack
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_faint_attack_1:
 	.byte	KEYSH , se_m_faint_attack_key+0
@@ -73,14 +73,14 @@ se_m_faint_attack_1:
 	.byte	W03
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_faint_attack:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_faint_attack_pri	@ Priority
-	.byte	se_m_faint_attack_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_faint_attack_pri	
+	.byte	se_m_faint_attack_rev	
 
 	.word	se_m_faint_attack_grp
 

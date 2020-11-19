@@ -13,7 +13,7 @@
 	.global	se_m_waterfall
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_waterfall_1:
 	.byte	KEYSH , se_m_waterfall_key+0
@@ -92,7 +92,7 @@ se_m_waterfall_1:
 	.byte	W02
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_waterfall_2:
 	.byte	KEYSH , se_m_waterfall_key+0
@@ -120,14 +120,14 @@ se_m_waterfall_2_000:
 	.byte	W06
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_waterfall:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_waterfall_pri	@ Priority
-	.byte	se_m_waterfall_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_waterfall_pri	
+	.byte	se_m_waterfall_rev	
 
 	.word	se_m_waterfall_grp
 

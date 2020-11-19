@@ -13,7 +13,7 @@
 	.global	se_m_sky_uppercut
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_sky_uppercut_1:
 	.byte	KEYSH , se_m_sky_uppercut_key+0
@@ -66,7 +66,7 @@ se_m_sky_uppercut_1:
 	.byte	W02
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_sky_uppercut_2:
 	.byte	KEYSH , se_m_sky_uppercut_key+0
@@ -86,14 +86,14 @@ se_m_sky_uppercut_2:
 	.byte	W06
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_sky_uppercut:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_sky_uppercut_pri	@ Priority
-	.byte	se_m_sky_uppercut_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_sky_uppercut_pri	
+	.byte	se_m_sky_uppercut_rev	
 
 	.word	se_m_sky_uppercut_grp
 

@@ -430,7 +430,11 @@ void rfu_REQ_configSystem(u16 availSlotFlag, u8 maxMFrame, u8 mcTimer)
         u16 IMEBackup = REG_IME;
 
         REG_IME = 0;
+#ifndef PORTABLE
         gRfuStatic->linkEmergencyLimit = Div(600, mcTimer);
+#else
+        gRfuStatic->linkEmergencyLimit = 600 / mcTimer;
+#endif
         REG_IME = IMEBackup;
     }
 }

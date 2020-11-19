@@ -13,7 +13,7 @@
 	.global	se_m_yawn
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_yawn_1:
 	.byte		VOL   , 110*se_m_yawn_mvl/mxv
@@ -85,7 +85,7 @@ se_m_yawn_1:
 	.byte	W02
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_yawn_2:
 	.byte	KEYSH , se_m_yawn_key+0
@@ -110,14 +110,14 @@ se_m_yawn_2:
 	.byte	W03
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_yawn:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_yawn_pri	@ Priority
-	.byte	se_m_yawn_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_yawn_pri	
+	.byte	se_m_yawn_rev	
 
 	.word	se_m_yawn_grp
 

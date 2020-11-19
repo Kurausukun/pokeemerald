@@ -13,7 +13,7 @@
 	.global	se_m_thunder_wave
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_thunder_wave_1:
 	.byte	KEYSH , se_m_thunder_wave_key+0
@@ -65,7 +65,7 @@ se_m_thunder_wave_1:
 	.byte	W21
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_thunder_wave_2:
 	.byte	KEYSH , se_m_thunder_wave_key+0
@@ -89,14 +89,14 @@ se_m_thunder_wave_2:
 	.byte	W24
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_thunder_wave:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_thunder_wave_pri	@ Priority
-	.byte	se_m_thunder_wave_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_thunder_wave_pri	
+	.byte	se_m_thunder_wave_rev	
 
 	.word	se_m_thunder_wave_grp
 

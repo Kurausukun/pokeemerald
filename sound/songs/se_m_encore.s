@@ -13,7 +13,7 @@
 	.global	se_m_encore
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_encore_1:
 	.byte	KEYSH , se_m_encore_key+0
@@ -42,14 +42,14 @@ se_m_encore_1:
 	.byte	W04
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_encore:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_encore_pri	@ Priority
-	.byte	se_m_encore_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_encore_pri	
+	.byte	se_m_encore_rev	
 
 	.word	se_m_encore_grp
 

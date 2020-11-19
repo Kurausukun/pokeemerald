@@ -4,7 +4,7 @@
 	.include "asm/macros/contest_ai_script.inc"
 	.include "constants/constants.inc"
 
-	.section script_data, "aw", %progbits
+	.section script_data
 
 	enum_start
 	enum MON_1

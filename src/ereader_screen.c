@@ -41,7 +41,6 @@ static void sub_81D5084(u8);
 struct Unk03006370 gUnknown_03006370;
 
 extern const u8 gUnknown_089A3470[];
-extern const u8 gMultiBootProgram_BerryGlitchFix_Start[];
 
 static void sub_81D4D50(struct Unk03006370 *arg0, int arg1, u32 *arg2)
 {
@@ -329,8 +328,6 @@ static void sub_81D5084(u8 taskId)
         break;
     case 8:
         AddTextPrinterToWindow1(gJPText_Connecting);
-        // XXX: This (u32*) cast is discarding the const qualifier from gUnknown_089A3470
-        sub_81D4D50(&gUnknown_03006370, gMultiBootProgram_BerryGlitchFix_Start - gUnknown_089A3470, (u32*)gUnknown_089A3470);
         data->unk8 = 9;
         break;
     case 9:

@@ -13,7 +13,7 @@
 	.global	se_m_confuse_ray
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_confuse_ray_1:
 	.byte	KEYSH , se_m_confuse_ray_key+0
@@ -101,14 +101,14 @@ se_m_confuse_ray_1:
 	.byte	W04
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_confuse_ray:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_confuse_ray_pri	@ Priority
-	.byte	se_m_confuse_ray_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_confuse_ray_pri	
+	.byte	se_m_confuse_ray_rev	
 
 	.word	se_m_confuse_ray_grp
 

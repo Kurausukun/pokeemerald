@@ -12,7 +12,6 @@
 #include "main_menu.h"
 #include "palette.h"
 #include "reset_rtc_screen.h"
-#include "berry_fix_program.h"
 #include "sound.h"
 #include "sprite.h"
 #include "task.h"
@@ -45,7 +44,6 @@ static void Task_TitleScreenPhase3(u8);
 static void CB2_GoToMainMenu(void);
 static void CB2_GoToClearSaveDataScreen(void);
 static void CB2_GoToResetRtcScreen(void);
-static void CB2_GoToBerryFixScreen(void);
 static void CB2_GoToCopyrightScreen(void);
 static void UpdateLegendaryMarkingColor(u8);
 
@@ -743,13 +741,7 @@ static void Task_TitleScreenPhase3(u8 taskId)
         FadeOutBGM(4);
         BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
         SetMainCallback2(CB2_GoToResetRtcScreen);
-    }
-    else if (JOY_HELD(BERRY_UPDATE_BUTTON_COMBO) == BERRY_UPDATE_BUTTON_COMBO)
-    {
-        FadeOutBGM(4);
-        BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 0x10, RGB_BLACK);
-        SetMainCallback2(CB2_GoToBerryFixScreen);
-    }   
+    }  
     else
     {
         SetGpuReg(REG_OFFSET_BG2Y_L, 0);
@@ -792,15 +784,6 @@ static void CB2_GoToResetRtcScreen(void)
 {
     if (!UpdatePaletteFade())
         SetMainCallback2(CB2_InitResetRtcScreen);
-}
-
-static void CB2_GoToBerryFixScreen(void)
-{
-    if (!UpdatePaletteFade())
-    {
-        m4aMPlayAllStop();
-        SetMainCallback2(CB2_InitBerryFixProgram);
-    }
 }
 
 static void UpdateLegendaryMarkingColor(u8 frameNum)

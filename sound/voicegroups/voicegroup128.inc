@@ -1,4 +1,4 @@
-	.align 2
+	.align 4
 voicegroup128:: @ 869D6F4
 	voice_directsound_no_resample 60, 0, DirectSoundWaveData_bicycle_bell, 255, 249, 0, 165  @ 869D6F4
 	voice_directsound_alt 60, 0, DirectSoundWaveData_bicycle_bell, 255, 0, 255, 165  @ 869D700

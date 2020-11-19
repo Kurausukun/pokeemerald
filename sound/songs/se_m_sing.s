@@ -13,7 +13,7 @@
 	.global	se_m_sing
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_sing_1:
 	.byte	KEYSH , se_m_sing_key+0
@@ -94,7 +94,7 @@ se_m_sing_1_001:
 	.byte	W06
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_sing_2:
 	.byte	KEYSH , se_m_sing_key+0
@@ -181,14 +181,14 @@ se_m_sing_2_001:
 	.byte		MOD   , 0
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_sing:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_sing_pri	@ Priority
-	.byte	se_m_sing_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_sing_pri	
+	.byte	se_m_sing_rev	
 
 	.word	se_m_sing_grp
 

@@ -13,7 +13,7 @@
 	.global	se_m_hyper_beam2
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_hyper_beam2_1:
 	.byte	KEYSH , se_m_hyper_beam2_key+0
@@ -74,7 +74,7 @@ se_m_hyper_beam2_1:
 	.byte	W02
 	.byte	FINE
 
-@********************** Track  2 **********************@
+
 
 se_m_hyper_beam2_2:
 	.byte	KEYSH , se_m_hyper_beam2_key+0
@@ -98,14 +98,14 @@ se_m_hyper_beam2_2_000:
 	 .word	se_m_hyper_beam2_2_000
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_hyper_beam2:
-	.byte	2	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_hyper_beam2_pri	@ Priority
-	.byte	se_m_hyper_beam2_rev	@ Reverb.
+	.byte	2	
+	.byte	0	
+	.byte	se_m_hyper_beam2_pri	
+	.byte	se_m_hyper_beam2_rev	
 
 	.word	se_m_hyper_beam2_grp
 

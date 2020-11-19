@@ -704,7 +704,7 @@ static bool8 MainState_Exit(void)
         SetMainCallback2(sNamingScreen->returnCallback);
         DestroyTask(FindTaskIdByFunc(Task_NamingScreen));
 #ifdef PORTABLE
-        NamingScreen_TurnOffScreen();
+        ResetVHBlank();
         // Fix Use after free issues with sNamingScreen caused by sprites calling their callbacks which attempt to read from sNamingScreen.
         ResetSpriteData();
 #endif

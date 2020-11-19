@@ -13,7 +13,7 @@
 	.global	se_m_dizzy_punch
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_dizzy_punch_1:
 	.byte	KEYSH , se_m_dizzy_punch_key+0
@@ -63,14 +63,14 @@ se_m_dizzy_punch_1:
 	.byte		VOL   , 90*se_m_dizzy_punch_mvl/mxv
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_dizzy_punch:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_dizzy_punch_pri	@ Priority
-	.byte	se_m_dizzy_punch_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_dizzy_punch_pri	
+	.byte	se_m_dizzy_punch_rev	
 
 	.word	se_m_dizzy_punch_grp
 

@@ -117,7 +117,7 @@ int strcmp (const char *, const char *);
 #define Q_24_8_TO_INT(n) ((int)((n) >> 8))
 
 #define mymin(a, b) ((a) < (b) ? (a) : (b))
-#define mymymax(a, b) ((a) >= (b) ? (a) : (b))
+#define mymax(a, b) ((a) >= (b) ? (a) : (b))
 
 #if MODERN
 #define abs(x) (((x) < 0) ? -(x) : (x))

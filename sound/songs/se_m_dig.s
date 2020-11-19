@@ -13,7 +13,7 @@
 	.global	se_m_dig
 	.align	2
 
-@********************** Track  1 **********************@
+
 
 se_m_dig_1:
 	.byte	KEYSH , se_m_dig_key+0
@@ -50,14 +50,14 @@ se_m_dig_1:
 	.byte	W03
 	.byte	FINE
 
-@******************************************************@
+
 	.align	2
 
 se_m_dig:
-	.byte	1	@ NumTrks
-	.byte	0	@ NumBlks
-	.byte	se_m_dig_pri	@ Priority
-	.byte	se_m_dig_rev	@ Reverb.
+	.byte	1	
+	.byte	0	
+	.byte	se_m_dig_pri	
+	.byte	se_m_dig_rev	
 
 	.word	se_m_dig_grp
 
