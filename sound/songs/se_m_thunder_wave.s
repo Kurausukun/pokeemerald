@@ -98,9 +98,9 @@ se_m_thunder_wave:
 	.byte	se_m_thunder_wave_pri	
 	.byte	se_m_thunder_wave_rev	
 
-	.word	se_m_thunder_wave_grp
+	.4byte	se_m_thunder_wave_grp
 
-	.word	se_m_thunder_wave_1
-	.word	se_m_thunder_wave_2
+	.4byte	se_m_thunder_wave_1
+	.4byte	se_m_thunder_wave_2
 
 	.end

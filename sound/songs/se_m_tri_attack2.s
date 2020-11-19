@@ -116,9 +116,9 @@ se_m_tri_attack2:
 	.byte	se_m_tri_attack2_pri	
 	.byte	se_m_tri_attack2_rev	
 
-	.word	se_m_tri_attack2_grp
+	.4byte	se_m_tri_attack2_grp
 
-	.word	se_m_tri_attack2_1
-	.word	se_m_tri_attack2_2
+	.4byte	se_m_tri_attack2_1
+	.4byte	se_m_tri_attack2_2
 
 	.end

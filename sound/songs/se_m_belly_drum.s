@@ -65,8 +65,8 @@ se_m_belly_drum:
 	.byte	se_m_belly_drum_pri	
 	.byte	se_m_belly_drum_rev	
 
-	.word	se_m_belly_drum_grp
+	.4byte	se_m_belly_drum_grp
 
-	.word	se_m_belly_drum_1
+	.4byte	se_m_belly_drum_1
 
 	.end

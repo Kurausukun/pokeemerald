@@ -143,8 +143,8 @@ se_m_dragon_rage:
 	.byte	se_m_dragon_rage_pri	
 	.byte	se_m_dragon_rage_rev	
 
-	.word	se_m_dragon_rage_grp
+	.4byte	se_m_dragon_rage_grp
 
-	.word	se_m_dragon_rage_1
+	.4byte	se_m_dragon_rage_1
 
 	.end

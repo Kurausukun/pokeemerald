@@ -122,9 +122,9 @@ se_m_grasswhistle:
 	.byte	se_m_grasswhistle_pri	
 	.byte	se_m_grasswhistle_rev	
 
-	.word	se_m_grasswhistle_grp
+	.4byte	se_m_grasswhistle_grp
 
-	.word	se_m_grasswhistle_1
-	.word	se_m_grasswhistle_2
+	.4byte	se_m_grasswhistle_1
+	.4byte	se_m_grasswhistle_2
 
 	.end

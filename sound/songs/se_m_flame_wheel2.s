@@ -91,9 +91,9 @@ se_m_flame_wheel2:
 	.byte	se_m_flame_wheel2_pri	
 	.byte	se_m_flame_wheel2_rev	
 
-	.word	se_m_flame_wheel2_grp
+	.4byte	se_m_flame_wheel2_grp
 
-	.word	se_m_flame_wheel2_1
-	.word	se_m_flame_wheel2_2
+	.4byte	se_m_flame_wheel2_1
+	.4byte	se_m_flame_wheel2_2
 
 	.end

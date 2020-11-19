@@ -97,9 +97,9 @@ se_m_snore:
 	.byte	se_m_snore_pri	
 	.byte	se_m_snore_rev	
 
-	.word	se_m_snore_grp
+	.4byte	se_m_snore_grp
 
-	.word	se_m_snore_1
-	.word	se_m_snore_2
+	.4byte	se_m_snore_1
+	.4byte	se_m_snore_2
 
 	.end

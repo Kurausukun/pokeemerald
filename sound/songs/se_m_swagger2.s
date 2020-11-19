@@ -49,8 +49,8 @@ se_m_swagger2:
 	.byte	se_m_swagger2_pri	
 	.byte	se_m_swagger2_rev	
 
-	.word	se_m_swagger2_grp
+	.4byte	se_m_swagger2_grp
 
-	.word	se_m_swagger2_1
+	.4byte	se_m_swagger2_1
 
 	.end

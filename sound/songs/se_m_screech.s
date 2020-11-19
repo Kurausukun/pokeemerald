@@ -104,9 +104,9 @@ se_m_screech:
 	.byte	se_m_screech_pri	
 	.byte	se_m_screech_rev	
 
-	.word	se_m_screech_grp
+	.4byte	se_m_screech_grp
 
-	.word	se_m_screech_1
-	.word	se_m_screech_2
+	.4byte	se_m_screech_1
+	.4byte	se_m_screech_2
 
 	.end

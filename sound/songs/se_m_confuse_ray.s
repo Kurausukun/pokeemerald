@@ -110,8 +110,8 @@ se_m_confuse_ray:
 	.byte	se_m_confuse_ray_pri	
 	.byte	se_m_confuse_ray_rev	
 
-	.word	se_m_confuse_ray_grp
+	.4byte	se_m_confuse_ray_grp
 
-	.word	se_m_confuse_ray_1
+	.4byte	se_m_confuse_ray_1
 
 	.end

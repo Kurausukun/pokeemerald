@@ -195,8 +195,8 @@ se_m_acid_armor:
 	.byte	se_m_acid_armor_pri	
 	.byte	se_m_acid_armor_rev	
 
-	.word	se_m_acid_armor_grp
+	.4byte	se_m_acid_armor_grp
 
-	.word	se_m_acid_armor_1
+	.4byte	se_m_acid_armor_1
 
 	.end

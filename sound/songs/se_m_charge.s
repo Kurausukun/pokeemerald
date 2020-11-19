@@ -179,8 +179,8 @@ se_m_charge:
 	.byte	se_m_charge_pri	
 	.byte	se_m_charge_rev	
 
-	.word	se_m_charge_grp
+	.4byte	se_m_charge_grp
 
-	.word	se_m_charge_1
+	.4byte	se_m_charge_1
 
 	.end

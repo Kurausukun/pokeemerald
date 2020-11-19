@@ -79,8 +79,8 @@ se_m_uproar:
 	.byte	se_m_uproar_pri	
 	.byte	se_m_uproar_rev	
 
-	.word	se_m_uproar_grp
+	.4byte	se_m_uproar_grp
 
-	.word	se_m_uproar_1
+	.4byte	se_m_uproar_1
 
 	.end

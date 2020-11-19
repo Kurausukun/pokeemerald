@@ -209,8 +209,8 @@ se_m_psybeam2:
 	.byte	se_m_psybeam2_pri	
 	.byte	se_m_psybeam2_rev	
 
-	.word	se_m_psybeam2_grp
+	.4byte	se_m_psybeam2_grp
 
-	.word	se_m_psybeam2_1
+	.4byte	se_m_psybeam2_1
 
 	.end

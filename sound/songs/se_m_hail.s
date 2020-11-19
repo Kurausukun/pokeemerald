@@ -90,9 +90,9 @@ se_m_hail:
 	.byte	se_m_hail_pri	
 	.byte	se_m_hail_rev	
 
-	.word	se_m_hail_grp
+	.4byte	se_m_hail_grp
 
-	.word	se_m_hail_1
-	.word	se_m_hail_2
+	.4byte	se_m_hail_1
+	.4byte	se_m_hail_2
 
 	.end

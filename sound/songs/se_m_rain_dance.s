@@ -109,8 +109,8 @@ se_m_rain_dance:
 	.byte	se_m_rain_dance_pri	
 	.byte	se_m_rain_dance_rev	
 
-	.word	se_m_rain_dance_grp
+	.4byte	se_m_rain_dance_grp
 
-	.word	se_m_rain_dance_1
+	.4byte	se_m_rain_dance_1
 
 	.end

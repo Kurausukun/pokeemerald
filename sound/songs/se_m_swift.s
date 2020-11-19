@@ -103,9 +103,9 @@ se_m_swift:
 	.byte	se_m_swift_pri	
 	.byte	se_m_swift_rev	
 
-	.word	se_m_swift_grp
+	.4byte	se_m_swift_grp
 
-	.word	se_m_swift_1
-	.word	se_m_swift_2
+	.4byte	se_m_swift_1
+	.4byte	se_m_swift_2
 
 	.end

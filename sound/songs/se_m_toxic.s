@@ -80,8 +80,8 @@ se_m_toxic:
 	.byte	se_m_toxic_pri	
 	.byte	se_m_toxic_rev	
 
-	.word	se_m_toxic_grp
+	.4byte	se_m_toxic_grp
 
-	.word	se_m_toxic_1
+	.4byte	se_m_toxic_1
 
 	.end

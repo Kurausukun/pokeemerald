@@ -158,8 +158,8 @@ se_m_teleport:
 	.byte	se_m_teleport_pri	
 	.byte	se_m_teleport_rev	
 
-	.word	se_m_teleport_grp
+	.4byte	se_m_teleport_grp
 
-	.word	se_m_teleport_1
+	.4byte	se_m_teleport_1
 
 	.end

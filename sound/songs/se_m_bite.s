@@ -92,9 +92,9 @@ se_m_bite:
 	.byte	se_m_bite_pri	
 	.byte	se_m_bite_rev	
 
-	.word	se_m_bite_grp
+	.4byte	se_m_bite_grp
 
-	.word	se_m_bite_1
-	.word	se_m_bite_2
+	.4byte	se_m_bite_1
+	.4byte	se_m_bite_2
 
 	.end

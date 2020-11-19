@@ -35,8 +35,8 @@ se_win_open:
 	.byte	se_win_open_pri	
 	.byte	se_win_open_rev	
 
-	.word	se_win_open_grp
+	.4byte	se_win_open_grp
 
-	.word	se_win_open_1
+	.4byte	se_win_open_1
 
 	.end

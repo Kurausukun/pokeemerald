@@ -95,9 +95,9 @@ se_m_sky_uppercut:
 	.byte	se_m_sky_uppercut_pri	
 	.byte	se_m_sky_uppercut_rev	
 
-	.word	se_m_sky_uppercut_grp
+	.4byte	se_m_sky_uppercut_grp
 
-	.word	se_m_sky_uppercut_1
-	.word	se_m_sky_uppercut_2
+	.4byte	se_m_sky_uppercut_1
+	.4byte	se_m_sky_uppercut_2
 
 	.end

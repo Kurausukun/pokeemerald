@@ -77,9 +77,9 @@ se_m_thunderbolt2:
 	.byte	se_m_thunderbolt2_pri	
 	.byte	se_m_thunderbolt2_rev	
 
-	.word	se_m_thunderbolt2_grp
+	.4byte	se_m_thunderbolt2_grp
 
-	.word	se_m_thunderbolt2_1
-	.word	se_m_thunderbolt2_2
+	.4byte	se_m_thunderbolt2_1
+	.4byte	se_m_thunderbolt2_2
 
 	.end

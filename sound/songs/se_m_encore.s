@@ -51,8 +51,8 @@ se_m_encore:
 	.byte	se_m_encore_pri	
 	.byte	se_m_encore_rev	
 
-	.word	se_m_encore_grp
+	.4byte	se_m_encore_grp
 
-	.word	se_m_encore_1
+	.4byte	se_m_encore_1
 
 	.end

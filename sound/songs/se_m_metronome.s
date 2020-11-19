@@ -72,8 +72,8 @@ se_m_metronome:
 	.byte	se_m_metronome_pri	
 	.byte	se_m_metronome_rev	
 
-	.word	se_m_metronome_grp
+	.4byte	se_m_metronome_grp
 
-	.word	se_m_metronome_1
+	.4byte	se_m_metronome_1
 
 	.end

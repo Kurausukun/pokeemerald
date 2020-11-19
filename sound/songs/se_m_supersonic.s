@@ -154,8 +154,8 @@ se_m_supersonic:
 	.byte	se_m_supersonic_pri	
 	.byte	se_m_supersonic_rev	
 
-	.word	se_m_supersonic_grp
+	.4byte	se_m_supersonic_grp
 
-	.word	se_m_supersonic_1
+	.4byte	se_m_supersonic_1
 
 	.end

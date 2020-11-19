@@ -102,8 +102,8 @@ se_m_surf:
 	.byte	se_m_surf_pri	
 	.byte	se_m_surf_rev	
 
-	.word	se_m_surf_grp
+	.4byte	se_m_surf_grp
 
-	.word	se_m_surf_1
+	.4byte	se_m_surf_1
 
 	.end

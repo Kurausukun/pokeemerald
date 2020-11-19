@@ -64,9 +64,9 @@ se_m_icy_wind:
 	.byte	se_m_icy_wind_pri	
 	.byte	se_m_icy_wind_rev	
 
-	.word	se_m_icy_wind_grp
+	.4byte	se_m_icy_wind_grp
 
-	.word	se_m_icy_wind_1
-	.word	se_m_icy_wind_2
+	.4byte	se_m_icy_wind_1
+	.4byte	se_m_icy_wind_2
 
 	.end

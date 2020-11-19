@@ -100,17 +100,17 @@ se_m_encore2_1_000:
 	.byte	W02
 	.byte	PEND
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte	PATT
-	 .word	se_m_encore2_1_000
+	 .4byte	se_m_encore2_1_000
 	.byte		VOL   , 96*se_m_encore2_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
@@ -166,8 +166,8 @@ se_m_encore2:
 	.byte	se_m_encore2_pri	
 	.byte	se_m_encore2_rev	
 
-	.word	se_m_encore2_grp
+	.4byte	se_m_encore2_grp
 
-	.word	se_m_encore2_1
+	.4byte	se_m_encore2_1
 
 	.end

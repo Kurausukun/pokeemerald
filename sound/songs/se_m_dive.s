@@ -115,9 +115,9 @@ se_m_dive:
 	.byte	se_m_dive_pri	
 	.byte	se_m_dive_rev	
 
-	.word	se_m_dive_grp
+	.4byte	se_m_dive_grp
 
-	.word	se_m_dive_1
-	.word	se_m_dive_2
+	.4byte	se_m_dive_1
+	.4byte	se_m_dive_2
 
 	.end

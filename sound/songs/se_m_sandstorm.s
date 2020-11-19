@@ -230,7 +230,7 @@ se_m_sandstorm_2_000:
 	.byte		        Cn3 , v100
 	.byte	W03
 	.byte	PATT
-	 .word	se_m_sandstorm_2_000
+	 .4byte	se_m_sandstorm_2_000
 	.byte	W02
 	.byte		N03   , Cn3 , v076
 	.byte	W04
@@ -282,9 +282,9 @@ se_m_sandstorm:
 	.byte	se_m_sandstorm_pri	
 	.byte	se_m_sandstorm_rev	
 
-	.word	se_m_sandstorm_grp
+	.4byte	se_m_sandstorm_grp
 
-	.word	se_m_sandstorm_1
-	.word	se_m_sandstorm_2
+	.4byte	se_m_sandstorm_1
+	.4byte	se_m_sandstorm_2
 
 	.end

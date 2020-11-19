@@ -58,8 +58,8 @@ se_m_rock_throw:
 	.byte	se_m_rock_throw_pri	
 	.byte	se_m_rock_throw_rev	
 
-	.word	se_m_rock_throw_grp
+	.4byte	se_m_rock_throw_grp
 
-	.word	se_m_rock_throw_1
+	.4byte	se_m_rock_throw_1
 
 	.end

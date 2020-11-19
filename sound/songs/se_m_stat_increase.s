@@ -275,9 +275,9 @@ se_m_stat_increase:
 	.byte	se_m_stat_increase_pri	
 	.byte	se_m_stat_increase_rev	
 
-	.word	se_m_stat_increase_grp
+	.4byte	se_m_stat_increase_grp
 
-	.word	se_m_stat_increase_1
-	.word	se_m_stat_increase_2
+	.4byte	se_m_stat_increase_1
+	.4byte	se_m_stat_increase_2
 
 	.end

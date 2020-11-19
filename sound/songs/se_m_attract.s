@@ -118,9 +118,9 @@ se_m_attract:
 	.byte	se_m_attract_pri	
 	.byte	se_m_attract_rev	
 
-	.word	se_m_attract_grp
+	.4byte	se_m_attract_grp
 
-	.word	se_m_attract_1
-	.word	se_m_attract_2
+	.4byte	se_m_attract_1
+	.4byte	se_m_attract_2
 
 	.end

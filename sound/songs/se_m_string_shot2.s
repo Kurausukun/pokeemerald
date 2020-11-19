@@ -112,9 +112,9 @@ se_m_string_shot2_2_000:
 	.byte	W12
 	.byte	PEND
 	.byte	PATT
-	 .word	se_m_string_shot2_2_000
+	 .4byte	se_m_string_shot2_2_000
 	.byte	PATT
-	 .word	se_m_string_shot2_2_000
+	 .4byte	se_m_string_shot2_2_000
 	.byte	FINE
 
 
@@ -126,9 +126,9 @@ se_m_string_shot2:
 	.byte	se_m_string_shot2_pri	
 	.byte	se_m_string_shot2_rev	
 
-	.word	se_m_string_shot2_grp
+	.4byte	se_m_string_shot2_grp
 
-	.word	se_m_string_shot2_1
-	.word	se_m_string_shot2_2
+	.4byte	se_m_string_shot2_1
+	.4byte	se_m_string_shot2_2
 
 	.end

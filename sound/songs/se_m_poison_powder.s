@@ -51,8 +51,8 @@ se_m_poison_powder:
 	.byte	se_m_poison_powder_pri	
 	.byte	se_m_poison_powder_rev	
 
-	.word	se_m_poison_powder_grp
+	.4byte	se_m_poison_powder_grp
 
-	.word	se_m_poison_powder_1
+	.4byte	se_m_poison_powder_1
 
 	.end

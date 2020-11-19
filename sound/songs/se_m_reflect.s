@@ -207,7 +207,7 @@ se_m_reflect_2_000:
 	.byte	W02
 	.byte	PEND
 	.byte	PATT
-	 .word	se_m_reflect_2_000
+	 .4byte	se_m_reflect_2_000
 	.byte		VOL   , 60*se_m_reflect_mvl/mxv
 	.byte	W01
 	.byte		        20*se_m_reflect_mvl/mxv
@@ -259,9 +259,9 @@ se_m_reflect:
 	.byte	se_m_reflect_pri	
 	.byte	se_m_reflect_rev	
 
-	.word	se_m_reflect_grp
+	.4byte	se_m_reflect_grp
 
-	.word	se_m_reflect_1
-	.word	se_m_reflect_2
+	.4byte	se_m_reflect_1
+	.4byte	se_m_reflect_2
 
 	.end

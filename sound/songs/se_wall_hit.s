@@ -34,8 +34,8 @@ se_wall_hit:
 	.byte	se_wall_hit_pri	
 	.byte	se_wall_hit_rev	
 
-	.word	se_wall_hit_grp
+	.4byte	se_wall_hit_grp
 
-	.word	se_wall_hit_1
+	.4byte	se_wall_hit_1
 
 	.end

@@ -70,8 +70,8 @@ se_m_swagger:
 	.byte	se_m_swagger_pri	
 	.byte	se_m_swagger_rev	
 
-	.word	se_m_swagger_grp
+	.4byte	se_m_swagger_grp
 
-	.word	se_m_swagger_1
+	.4byte	se_m_swagger_1
 
 	.end

@@ -92,9 +92,9 @@ se_m_brick_break:
 	.byte	se_m_brick_break_pri	
 	.byte	se_m_brick_break_rev	
 
-	.word	se_m_brick_break_grp
+	.4byte	se_m_brick_break_grp
 
-	.word	se_m_brick_break_1
-	.word	se_m_brick_break_2
+	.4byte	se_m_brick_break_1
+	.4byte	se_m_brick_break_2
 
 	.end

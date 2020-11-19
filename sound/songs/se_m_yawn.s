@@ -119,9 +119,9 @@ se_m_yawn:
 	.byte	se_m_yawn_pri	
 	.byte	se_m_yawn_rev	
 
-	.word	se_m_yawn_grp
+	.4byte	se_m_yawn_grp
 
-	.word	se_m_yawn_1
-	.word	se_m_yawn_2
+	.4byte	se_m_yawn_1
+	.4byte	se_m_yawn_2
 
 	.end

@@ -61,8 +61,8 @@ se_m_sketch:
 	.byte	se_m_sketch_pri	
 	.byte	se_m_sketch_rev	
 
-	.word	se_m_sketch_grp
+	.4byte	se_m_sketch_grp
 
-	.word	se_m_sketch_1
+	.4byte	se_m_sketch_1
 
 	.end

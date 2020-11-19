@@ -39,8 +39,8 @@ se_dex_scroll:
 	.byte	se_dex_scroll_pri	
 	.byte	se_dex_scroll_rev	
 
-	.word	se_dex_scroll_grp
+	.4byte	se_dex_scroll_grp
 
-	.word	se_dex_scroll_1
+	.4byte	se_dex_scroll_1
 
 	.end

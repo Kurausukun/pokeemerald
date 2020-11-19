@@ -197,9 +197,9 @@ se_m_petal_dance:
 	.byte	se_m_petal_dance_pri	
 	.byte	se_m_petal_dance_rev	
 
-	.word	se_m_petal_dance_grp
+	.4byte	se_m_petal_dance_grp
 
-	.word	se_m_petal_dance_1
-	.word	se_m_petal_dance_2
+	.4byte	se_m_petal_dance_1
+	.4byte	se_m_petal_dance_2
 
 	.end

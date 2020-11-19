@@ -328,9 +328,9 @@ se_m_reversal:
 	.byte	se_m_reversal_pri	
 	.byte	se_m_reversal_rev	
 
-	.word	se_m_reversal_grp
+	.4byte	se_m_reversal_grp
 
-	.word	se_m_reversal_1
-	.word	se_m_reversal_2
+	.4byte	se_m_reversal_1
+	.4byte	se_m_reversal_2
 
 	.end

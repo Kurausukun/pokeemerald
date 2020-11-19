@@ -136,9 +136,9 @@ se_m_psybeam:
 	.byte	se_m_psybeam_pri	
 	.byte	se_m_psybeam_rev	
 
-	.word	se_m_psybeam_grp
+	.4byte	se_m_psybeam_grp
 
-	.word	se_m_psybeam_1
-	.word	se_m_psybeam_2
+	.4byte	se_m_psybeam_1
+	.4byte	se_m_psybeam_2
 
 	.end
