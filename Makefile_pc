@@ -60,7 +60,7 @@ ROM := pokeemerald.exe
 OBJ_DIR := build/pc
 LIBPATH := -L "$(dir $(shell $(CC) -print-file-name=libgcc.a))" -L "$(dir $(shell $(CC) -print-file-name=libc.a))"
 
-CPPFLAGS := -iquote include -Wno-trigraphs -D NONMATCHING -D PORTABLE -D MODERN=$(MODERN) -I$(SDL_DIR)/include -L$(SDL_DIR)/lib
+CPPFLAGS := -iquote include -iquote $(GFLIB_SUBDIR) -Wno-trigraphs -D NONMATCHING -D PORTABLE -D MODERN=$(MODERN) -I$(SDL_DIR)/include -L$(SDL_DIR)/lib
 
 LDFLAGS = -Map ../../$(MAP)
 
@@ -203,7 +203,7 @@ sound/%.bin: sound/%.aif ; $(AIF) $< $@
 ifeq ($(NODEP),1)
 $(C_BUILDDIR)/%.o: c_dep :=
 else
-$(C_BUILDDIR)/%.o: c_dep = $(shell $(SCANINC) -I include $(C_SUBDIR)/$*.c)
+$(C_BUILDDIR)/%.o: c_dep = $(shell [[ -f $(C_SUBDIR)/$*.c ]] && $(SCANINC) -I include -I gflib $(C_SUBDIR)/$*.c)
 endif
 
 ifeq ($(DINFO),1)
