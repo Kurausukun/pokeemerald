@@ -224,7 +224,7 @@ bool8 SiiRtcSetStatus(struct SiiRtcInfo *rtc)
     sLocked = TRUE;
     
 #ifdef PORTABLE
-    Platform_SetStatus(rtc)
+    Platform_SetStatus(rtc);
 #else
     GPIO_PORT_DATA = SCK_HI;
     GPIO_PORT_DATA = SCK_HI | CS_HI;

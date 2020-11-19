@@ -360,6 +360,7 @@ static void CloseTrainerCard(u8 taskId)
     DestroyTask(taskId);
 #ifdef PORTABLE
     SetVBlankHBlankCallbacksToNull(); // UB: Fixes use after free of sData in VBlank callback
+#endif
 }
 
 // States for Task_TrainerCard. Skips the initial states, which are done once in order

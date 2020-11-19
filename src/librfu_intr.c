@@ -390,17 +390,29 @@ static void STWI_init_slave(void)
 NAKED
 static void Callback_Dummy_M(int reqCommandId, int error, void (*callbackM)())
 {
+#ifndef PORTABLE
     asm("bx r2");
+#else
+    callbackM(reqCommandId);
+#endif
 }
 
 NAKED
 static void Callback_Dummy_S(u16 reqCommandId, void (*callbackS)(u16))
 {
+#ifndef PORTABLE
     asm("bx r1");
+#else
+    callbackS(reqCommandId);
+#endif
 }
 
 NAKED
 static void Callback_Dummy_ID(void (*callbackId)(void))
 {
+#ifndef PORTABLE
     asm("bx r0");
+#else
+    callbackID();
+#endif
 }
