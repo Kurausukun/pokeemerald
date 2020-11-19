@@ -200,9 +200,9 @@ se_m_cosmic_power:
 	.byte	se_m_cosmic_power_pri	
 	.byte	se_m_cosmic_power_rev	
 
-	.word	se_m_cosmic_power_grp
+	.4byte	se_m_cosmic_power_grp
 
-	.word	se_m_cosmic_power_1
-	.word	se_m_cosmic_power_2
+	.4byte	se_m_cosmic_power_1
+	.4byte	se_m_cosmic_power_2
 
 	.end

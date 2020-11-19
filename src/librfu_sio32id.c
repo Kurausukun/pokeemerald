@@ -19,7 +19,7 @@ struct RfuSIO32Id gRfuSIO32Id;
 
 static const u16 Sio32ConnectionData[] = { 0x494e, 0x544e, 0x4e45, 0x4f44 }; // NINTENDO
 static const char Sio32IDLib_Var[] = "Sio32ID_030820";
-
+/*
 s32 AgbRFU_checkID(u8 maxTries)
 {
     u16 ieBak;
@@ -172,3 +172,4 @@ static void Sio32IDIntr(void)
             REG_SIOCNT |= SIO_ENABLE;
     }
 }
+*/

@@ -72,8 +72,8 @@ se_m_dizzy_punch:
 	.byte	se_m_dizzy_punch_pri	
 	.byte	se_m_dizzy_punch_rev	
 
-	.word	se_m_dizzy_punch_grp
+	.4byte	se_m_dizzy_punch_grp
 
-	.word	se_m_dizzy_punch_1
+	.4byte	se_m_dizzy_punch_1
 
 	.end

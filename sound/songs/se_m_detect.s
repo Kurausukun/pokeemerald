@@ -88,8 +88,8 @@ se_m_detect:
 	.byte	se_m_detect_pri	
 	.byte	se_m_detect_rev	
 
-	.word	se_m_detect_grp
+	.4byte	se_m_detect_grp
 
-	.word	se_m_detect_1
+	.4byte	se_m_detect_1
 
 	.end

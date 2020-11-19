@@ -50,8 +50,8 @@ se_m_bubble:
 	.byte	se_m_bubble_pri	
 	.byte	se_m_bubble_rev	
 
-	.word	se_m_bubble_grp
+	.4byte	se_m_bubble_grp
 
-	.word	se_m_bubble_1
+	.4byte	se_m_bubble_1
 
 	.end

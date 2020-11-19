@@ -138,9 +138,9 @@ se_m_nightmare:
 	.byte	se_m_nightmare_pri	
 	.byte	se_m_nightmare_rev	
 
-	.word	se_m_nightmare_grp
+	.4byte	se_m_nightmare_grp
 
-	.word	se_m_nightmare_1
-	.word	se_m_nightmare_2
+	.4byte	se_m_nightmare_1
+	.4byte	se_m_nightmare_2
 
 	.end

@@ -109,7 +109,7 @@ se_m_waterfall_2_000:
 	.byte	W06
 	.byte	PEND
 	.byte	PATT
-	 .word	se_m_waterfall_2_000
+	 .4byte	se_m_waterfall_2_000
 	.byte		N06   , Cn3 , v032
 	.byte	W06
 	.byte		        Gn2 
@@ -129,9 +129,9 @@ se_m_waterfall:
 	.byte	se_m_waterfall_pri	
 	.byte	se_m_waterfall_rev	
 
-	.word	se_m_waterfall_grp
+	.4byte	se_m_waterfall_grp
 
-	.word	se_m_waterfall_1
-	.word	se_m_waterfall_2
+	.4byte	se_m_waterfall_1
+	.4byte	se_m_waterfall_2
 
 	.end

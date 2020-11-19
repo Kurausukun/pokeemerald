@@ -80,9 +80,9 @@ se_m_spit_up:
 	.byte	se_m_spit_up_pri	
 	.byte	se_m_spit_up_rev	
 
-	.word	se_m_spit_up_grp
+	.4byte	se_m_spit_up_grp
 
-	.word	se_m_spit_up_1
-	.word	se_m_spit_up_2
+	.4byte	se_m_spit_up_1
+	.4byte	se_m_spit_up_2
 
 	.end

@@ -51,8 +51,8 @@ se_m_crabhammer:
 	.byte	se_m_crabhammer_pri	
 	.byte	se_m_crabhammer_rev	
 
-	.word	se_m_crabhammer_grp
+	.4byte	se_m_crabhammer_grp
 
-	.word	se_m_crabhammer_1
+	.4byte	se_m_crabhammer_1
 
 	.end

@@ -54,8 +54,8 @@ se_m_ember:
 	.byte	se_m_ember_pri	
 	.byte	se_m_ember_rev	
 
-	.word	se_m_ember_grp
+	.4byte	se_m_ember_grp
 
-	.word	se_m_ember_1
+	.4byte	se_m_ember_1
 
 	.end

@@ -158,8 +158,8 @@ se_m_minimize:
 	.byte	se_m_minimize_pri	
 	.byte	se_m_minimize_rev	
 
-	.word	se_m_minimize_grp
+	.4byte	se_m_minimize_grp
 
-	.word	se_m_minimize_1
+	.4byte	se_m_minimize_1
 
 	.end

@@ -122,8 +122,8 @@ se_m_lick:
 	.byte	se_m_lick_pri	
 	.byte	se_m_lick_rev	
 
-	.word	se_m_lick_grp
+	.4byte	se_m_lick_grp
 
-	.word	se_m_lick_1
+	.4byte	se_m_lick_1
 
 	.end

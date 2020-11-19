@@ -60,8 +60,8 @@ se_m_flatter:
 	.byte	se_m_flatter_pri	
 	.byte	se_m_flatter_rev	
 
-	.word	se_m_flatter_grp
+	.4byte	se_m_flatter_grp
 
-	.word	se_m_flatter_1
+	.4byte	se_m_flatter_1
 
 	.end

@@ -73,8 +73,8 @@ se_m_string_shot:
 	.byte	se_m_string_shot_pri	
 	.byte	se_m_string_shot_rev	
 
-	.word	se_m_string_shot_grp
+	.4byte	se_m_string_shot_grp
 
-	.word	se_m_string_shot_1
+	.4byte	se_m_string_shot_1
 
 	.end

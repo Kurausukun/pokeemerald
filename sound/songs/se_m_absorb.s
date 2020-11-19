@@ -66,8 +66,8 @@ se_m_absorb:
 	.byte	se_m_absorb_pri	
 	.byte	se_m_absorb_rev	
 
-	.word	se_m_absorb_grp
+	.4byte	se_m_absorb_grp
 
-	.word	se_m_absorb_1
+	.4byte	se_m_absorb_1
 
 	.end

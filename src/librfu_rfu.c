@@ -123,6 +123,7 @@ static const char str_checkMbootLL[] = "RFU-MBOOT";
         *_dst++ = *_src++;                          \
 } while (0)
 
+/*
 u16 rfu_initializeAPI(u32 *APIBuffer, u16 buffByteSize, IntrFunc *sioIntrTable_p, bool8 copyInterruptToRam)
 {
     u16 i;
@@ -315,6 +316,7 @@ u16 rfu_getRFUStatus(u8 *rfuState)
         *rfuState = 0xFF;
     return 0;
 }
+*/
 
 /*
  * RFU Multiboot images are loaded into IWRAM
@@ -327,6 +329,7 @@ u16 rfu_getRFUStatus(u8 *rfuState)
  * }
  * Returns 1 if the packet to inherit is malformed.
  */
+/*
 u16 rfu_MBOOT_CHILD_inheritanceLinkStatus(void)
 {
     const char *s1 = str_checkMbootLL;
@@ -2169,14 +2172,7 @@ static void rfu_STC_NI_receive_Receiver(u8 bm_slot_id, const struct RfuLocalStru
     else if (llsf_NI->slotState == LCOM_NI_START)
     {
         if (state == SLOT_STATE_RECV_START)
-        {
-            state_check = 1;
-        }
-        else
-        {
-            rfu_STC_NI_initSlot_asRecvControllData(bm_slot_id, recvSlot);
-            if (slotStatus_NI->recv.state != SLOT_STATE_RECV_START)
-                return;
+
             state_check = 1;
         }
     }
@@ -2307,3 +2303,4 @@ void rfu_REQ_noise(void)
     STWI_set_Callback_M(rfu_STC_REQ_callback);
     STWI_send_TestModeREQ(1, 0);
 }
+*/

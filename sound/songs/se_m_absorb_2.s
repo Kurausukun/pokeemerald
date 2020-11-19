@@ -147,9 +147,9 @@ se_m_absorb_2:
 	.byte	se_m_absorb_2_pri	
 	.byte	se_m_absorb_2_rev	
 
-	.word	se_m_absorb_2_grp
+	.4byte	se_m_absorb_2_grp
 
-	.word	se_m_absorb_2_1
-	.word	se_m_absorb_2_2
+	.4byte	se_m_absorb_2_1
+	.4byte	se_m_absorb_2_2
 
 	.end

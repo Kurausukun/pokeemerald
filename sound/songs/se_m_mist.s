@@ -87,8 +87,8 @@ se_m_mist:
 	.byte	se_m_mist_pri	
 	.byte	se_m_mist_rev	
 
-	.word	se_m_mist_grp
+	.4byte	se_m_mist_grp
 
-	.word	se_m_mist_1
+	.4byte	se_m_mist_1
 
 	.end

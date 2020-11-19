@@ -118,8 +118,8 @@ se_m_whirlpool:
 	.byte	se_m_whirlpool_pri	
 	.byte	se_m_whirlpool_rev	
 
-	.word	se_m_whirlpool_grp
+	.4byte	se_m_whirlpool_grp
 
-	.word	se_m_whirlpool_1
+	.4byte	se_m_whirlpool_1
 
 	.end

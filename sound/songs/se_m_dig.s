@@ -59,8 +59,8 @@ se_m_dig:
 	.byte	se_m_dig_pri	
 	.byte	se_m_dig_rev	
 
-	.word	se_m_dig_grp
+	.4byte	se_m_dig_grp
 
-	.word	se_m_dig_1
+	.4byte	se_m_dig_1
 
 	.end

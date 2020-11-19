@@ -76,8 +76,8 @@ se_m_heal_bell:
 	.byte	se_m_heal_bell_pri	
 	.byte	se_m_heal_bell_rev	
 
-	.word	se_m_heal_bell_grp
+	.4byte	se_m_heal_bell_grp
 
-	.word	se_m_heal_bell_1
+	.4byte	se_m_heal_bell_1
 
 	.end

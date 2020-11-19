@@ -242,9 +242,9 @@ se_m_haze:
 	.byte	se_m_haze_pri	
 	.byte	se_m_haze_rev	
 
-	.word	se_m_haze_grp
+	.4byte	se_m_haze_grp
 
-	.word	se_m_haze_1
-	.word	se_m_haze_2
+	.4byte	se_m_haze_1
+	.4byte	se_m_haze_2
 
 	.end

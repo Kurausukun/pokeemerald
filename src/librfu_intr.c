@@ -11,6 +11,7 @@ static void Callback_Dummy_M(int reqCommandId, int error, void (*callbackM)());
 static void Callback_Dummy_S(u16 reqCommandId, void (*callbackS)(u16));
 static void Callback_Dummy_ID(void (*callbackId)(void));
 
+/*
 void IntrSIO32(void)
 {
     if (gSTWIStatus->state == 10)
@@ -26,6 +27,7 @@ void IntrSIO32(void)
             sio32intr_clock_slave();
     }
 }
+*/
 
 static void sio32intr_clock_master(void)
 {

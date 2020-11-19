@@ -47,8 +47,8 @@ se_dex_page:
 	.byte	se_dex_page_pri	
 	.byte	se_dex_page_rev	
 
-	.word	se_dex_page_grp
+	.4byte	se_dex_page_grp
 
-	.word	se_dex_page_1
+	.4byte	se_dex_page_1
 
 	.end

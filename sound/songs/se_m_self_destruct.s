@@ -67,8 +67,8 @@ se_m_self_destruct:
 	.byte	se_m_self_destruct_pri	
 	.byte	se_m_self_destruct_rev	
 
-	.word	se_m_self_destruct_grp
+	.4byte	se_m_self_destruct_grp
 
-	.word	se_m_self_destruct_1
+	.4byte	se_m_self_destruct_1
 
 	.end

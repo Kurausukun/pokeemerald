@@ -50,8 +50,8 @@ se_m_bonemerang:
 	.byte	se_m_bonemerang_pri	
 	.byte	se_m_bonemerang_rev	
 
-	.word	se_m_bonemerang_grp
+	.4byte	se_m_bonemerang_grp
 
-	.word	se_m_bonemerang_1
+	.4byte	se_m_bonemerang_1
 
 	.end

@@ -189,9 +189,9 @@ se_m_sand_tomb:
 	.byte	se_m_sand_tomb_pri	
 	.byte	se_m_sand_tomb_rev	
 
-	.word	se_m_sand_tomb_grp
+	.4byte	se_m_sand_tomb_grp
 
-	.word	se_m_sand_tomb_1
-	.word	se_m_sand_tomb_2
+	.4byte	se_m_sand_tomb_1
+	.4byte	se_m_sand_tomb_2
 
 	.end

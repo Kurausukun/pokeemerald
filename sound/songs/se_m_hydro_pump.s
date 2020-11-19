@@ -116,9 +116,9 @@ se_m_hydro_pump:
 	.byte	se_m_hydro_pump_pri	
 	.byte	se_m_hydro_pump_rev	
 
-	.word	se_m_hydro_pump_grp
+	.4byte	se_m_hydro_pump_grp
 
-	.word	se_m_hydro_pump_1
-	.word	se_m_hydro_pump_2
+	.4byte	se_m_hydro_pump_1
+	.4byte	se_m_hydro_pump_2
 
 	.end

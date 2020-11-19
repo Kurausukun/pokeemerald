@@ -124,8 +124,8 @@ se_m_bubble_beam2:
 	.byte	se_m_bubble_beam2_pri	
 	.byte	se_m_bubble_beam2_rev	
 
-	.word	se_m_bubble_beam2_grp
+	.4byte	se_m_bubble_beam2_grp
 
-	.word	se_m_bubble_beam2_1
+	.4byte	se_m_bubble_beam2_1
 
 	.end

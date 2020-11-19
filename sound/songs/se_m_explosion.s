@@ -110,9 +110,9 @@ se_m_explosion:
 	.byte	se_m_explosion_pri	
 	.byte	se_m_explosion_rev	
 
-	.word	se_m_explosion_grp
+	.4byte	se_m_explosion_grp
 
-	.word	se_m_explosion_1
-	.word	se_m_explosion_2
+	.4byte	se_m_explosion_1
+	.4byte	se_m_explosion_2
 
 	.end

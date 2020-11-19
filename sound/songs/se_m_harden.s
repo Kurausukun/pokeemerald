@@ -66,9 +66,9 @@ se_m_harden:
 	.byte	se_m_harden_pri	
 	.byte	se_m_harden_rev	
 
-	.word	se_m_harden_grp
+	.4byte	se_m_harden_grp
 
-	.word	se_m_harden_1
-	.word	se_m_harden_2
+	.4byte	se_m_harden_1
+	.4byte	se_m_harden_2
 
 	.end

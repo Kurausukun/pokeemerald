@@ -89,8 +89,8 @@ se_m_charm:
 	.byte	se_m_charm_pri	
 	.byte	se_m_charm_rev	
 
-	.word	se_m_charm_grp
+	.4byte	se_m_charm_grp
 
-	.word	se_m_charm_1
+	.4byte	se_m_charm_1
 
 	.end

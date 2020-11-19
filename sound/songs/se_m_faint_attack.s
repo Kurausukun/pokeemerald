@@ -82,8 +82,8 @@ se_m_faint_attack:
 	.byte	se_m_faint_attack_pri	
 	.byte	se_m_faint_attack_rev	
 
-	.word	se_m_faint_attack_grp
+	.4byte	se_m_faint_attack_grp
 
-	.word	se_m_faint_attack_1
+	.4byte	se_m_faint_attack_1
 
 	.end

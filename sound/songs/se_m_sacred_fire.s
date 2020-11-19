@@ -97,9 +97,9 @@ se_m_sacred_fire:
 	.byte	se_m_sacred_fire_pri	
 	.byte	se_m_sacred_fire_rev	
 
-	.word	se_m_sacred_fire_grp
+	.4byte	se_m_sacred_fire_grp
 
-	.word	se_m_sacred_fire_1
-	.word	se_m_sacred_fire_2
+	.4byte	se_m_sacred_fire_1
+	.4byte	se_m_sacred_fire_2
 
 	.end

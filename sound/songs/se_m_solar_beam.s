@@ -157,8 +157,8 @@ se_m_solar_beam:
 	.byte	se_m_solar_beam_pri	
 	.byte	se_m_solar_beam_rev	
 
-	.word	se_m_solar_beam_grp
+	.4byte	se_m_solar_beam_grp
 
-	.word	se_m_solar_beam_1
+	.4byte	se_m_solar_beam_1
 
 	.end

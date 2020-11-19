@@ -202,9 +202,9 @@ se_m_twister:
 	.byte	se_m_twister_pri	
 	.byte	se_m_twister_rev	
 
-	.word	se_m_twister_grp
+	.4byte	se_m_twister_grp
 
-	.word	se_m_twister_1
-	.word	se_m_twister_2
+	.4byte	se_m_twister_1
+	.4byte	se_m_twister_2
 
 	.end

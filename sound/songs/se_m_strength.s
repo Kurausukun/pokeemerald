@@ -76,9 +76,9 @@ se_m_strength:
 	.byte	se_m_strength_pri	
 	.byte	se_m_strength_rev	
 
-	.word	se_m_strength_grp
+	.4byte	se_m_strength_grp
 
-	.word	se_m_strength_1
-	.word	se_m_strength_2
+	.4byte	se_m_strength_1
+	.4byte	se_m_strength_2
 
 	.end

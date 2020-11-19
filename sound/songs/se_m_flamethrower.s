@@ -83,11 +83,11 @@ se_m_flamethrower_1_000:
 	.byte	W03
 	.byte	PEND
 	.byte	PATT
-	 .word	se_m_flamethrower_1_000
+	 .4byte	se_m_flamethrower_1_000
 	.byte	PATT
-	 .word	se_m_flamethrower_1_000
+	 .4byte	se_m_flamethrower_1_000
 	.byte	PATT
-	 .word	se_m_flamethrower_1_000
+	 .4byte	se_m_flamethrower_1_000
 	.byte		PAN   , c_v+4
 	.byte	W03
 	.byte		        c_v-5
@@ -167,9 +167,9 @@ se_m_flamethrower:
 	.byte	se_m_flamethrower_pri	
 	.byte	se_m_flamethrower_rev	
 
-	.word	se_m_flamethrower_grp
+	.4byte	se_m_flamethrower_grp
 
-	.word	se_m_flamethrower_1
-	.word	se_m_flamethrower_2
+	.4byte	se_m_flamethrower_1
+	.4byte	se_m_flamethrower_2
 
 	.end

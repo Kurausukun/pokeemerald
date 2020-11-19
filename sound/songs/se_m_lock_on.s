@@ -62,8 +62,8 @@ se_m_lock_on:
 	.byte	se_m_lock_on_pri	
 	.byte	se_m_lock_on_rev	
 
-	.word	se_m_lock_on_grp
+	.4byte	se_m_lock_on_grp
 
-	.word	se_m_lock_on_1
+	.4byte	se_m_lock_on_1
 
 	.end

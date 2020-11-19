@@ -55,8 +55,8 @@ se_m_bubble3:
 	.byte	se_m_bubble3_pri	
 	.byte	se_m_bubble3_rev	
 
-	.word	se_m_bubble3_grp
+	.4byte	se_m_bubble3_grp
 
-	.word	se_m_bubble3_1
+	.4byte	se_m_bubble3_1
 
 	.end

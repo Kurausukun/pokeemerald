@@ -127,9 +127,9 @@ se_m_morning_sun:
 	.byte	se_m_morning_sun_pri	
 	.byte	se_m_morning_sun_rev	
 
-	.word	se_m_morning_sun_grp
+	.4byte	se_m_morning_sun_grp
 
-	.word	se_m_morning_sun_1
-	.word	se_m_morning_sun_2
+	.4byte	se_m_morning_sun_1
+	.4byte	se_m_morning_sun_2
 
 	.end

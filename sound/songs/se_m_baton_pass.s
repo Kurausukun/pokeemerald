@@ -161,9 +161,9 @@ se_m_baton_pass:
 	.byte	se_m_baton_pass_pri	
 	.byte	se_m_baton_pass_rev	
 
-	.word	se_m_baton_pass_grp
+	.4byte	se_m_baton_pass_grp
 
-	.word	se_m_baton_pass_1
-	.word	se_m_baton_pass_2
+	.4byte	se_m_baton_pass_1
+	.4byte	se_m_baton_pass_2
 
 	.end

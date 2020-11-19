@@ -184,9 +184,9 @@ se_m_sweet_scent:
 	.byte	se_m_sweet_scent_pri	
 	.byte	se_m_sweet_scent_rev	
 
-	.word	se_m_sweet_scent_grp
+	.4byte	se_m_sweet_scent_grp
 
-	.word	se_m_sweet_scent_1
-	.word	se_m_sweet_scent_2
+	.4byte	se_m_sweet_scent_1
+	.4byte	se_m_sweet_scent_2
 
 	.end

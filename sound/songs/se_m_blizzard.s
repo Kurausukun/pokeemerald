@@ -84,7 +84,7 @@ se_m_blizzard_1_B1:
 	.byte		PAN   , c_v-11
 	.byte	W03
 	.byte	GOTO
-	 .word	se_m_blizzard_1_B1
+	 .4byte	se_m_blizzard_1_B1
 	.byte	FINE
 
 
@@ -96,8 +96,8 @@ se_m_blizzard:
 	.byte	se_m_blizzard_pri	
 	.byte	se_m_blizzard_rev	
 
-	.word	se_m_blizzard_grp
+	.4byte	se_m_blizzard_grp
 
-	.word	se_m_blizzard_1
+	.4byte	se_m_blizzard_1
 
 	.end

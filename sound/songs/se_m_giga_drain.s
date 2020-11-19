@@ -74,8 +74,8 @@ se_m_giga_drain:
 	.byte	se_m_giga_drain_pri	
 	.byte	se_m_giga_drain_rev	
 
-	.word	se_m_giga_drain_grp
+	.4byte	se_m_giga_drain_grp
 
-	.word	se_m_giga_drain_1
+	.4byte	se_m_giga_drain_1
 
 	.end

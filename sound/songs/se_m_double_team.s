@@ -64,8 +64,8 @@ se_m_double_team:
 	.byte	se_m_double_team_pri	
 	.byte	se_m_double_team_rev	
 
-	.word	se_m_double_team_grp
+	.4byte	se_m_double_team_grp
 
-	.word	se_m_double_team_1
+	.4byte	se_m_double_team_1
 
 	.end

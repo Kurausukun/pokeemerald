@@ -121,9 +121,9 @@ se_m_milk_drink:
 	.byte	se_m_milk_drink_pri	
 	.byte	se_m_milk_drink_rev	
 
-	.word	se_m_milk_drink_grp
+	.4byte	se_m_milk_drink_grp
 
-	.word	se_m_milk_drink_1
-	.word	se_m_milk_drink_2
+	.4byte	se_m_milk_drink_1
+	.4byte	se_m_milk_drink_2
 
 	.end

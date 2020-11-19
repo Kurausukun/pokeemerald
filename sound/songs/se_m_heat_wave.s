@@ -198,9 +198,9 @@ se_m_heat_wave:
 	.byte	se_m_heat_wave_pri	
 	.byte	se_m_heat_wave_rev	
 
-	.word	se_m_heat_wave_grp
+	.4byte	se_m_heat_wave_grp
 
-	.word	se_m_heat_wave_1
-	.word	se_m_heat_wave_2
+	.4byte	se_m_heat_wave_1
+	.4byte	se_m_heat_wave_2
 
 	.end

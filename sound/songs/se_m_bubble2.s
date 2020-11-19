@@ -52,9 +52,9 @@ se_m_bubble2:
 	.byte	se_m_bubble2_pri	
 	.byte	se_m_bubble2_rev	
 
-	.word	se_m_bubble2_grp
+	.4byte	se_m_bubble2_grp
 
-	.word	se_m_bubble2_1
-	.word	se_m_bubble2_2
+	.4byte	se_m_bubble2_1
+	.4byte	se_m_bubble2_2
 
 	.end
