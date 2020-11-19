@@ -17,7 +17,7 @@ export AS := $(PREFIX)as
 export CPP := $(PREFIX)cpp
 export LD := $(PREFIX)ld
 
-SDL_DIR := /home/kurausukun/pokeemerald/SDL2-2.0.12/i686-w64-mingw32
+SDL_DIR := /home/mcboy/SierraPcFork/SDL2-2.0.12/i686-w64-mingw32
 ASM_PSEUDO_OP_CONV := sed -e 's/\.4byte/\.int/g;s/\.2byte/\.short/g'
 
 ifeq ($(OS),Windows_NT)
