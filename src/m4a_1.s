@@ -1913,6 +1913,7 @@ gUnknown_03001300:
     .space 0x40
     .size gUnknown_03001300, .-gUnknown_03001300
 
+    .section ewram_data
     .global gMPlayTrack_BGM
 gMPlayTrack_BGM:
     .space 0x320
