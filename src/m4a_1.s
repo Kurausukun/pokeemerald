@@ -1932,3 +1932,8 @@ gMPlayTrack_SE2:
 gMPlayTrack_SE3:
     .space 0x50
     .size gMPlayTrack_SE3, .-gMPlayTrack_SE3
+
+    .global gMPlayTrack_BGM2
+gMPlayTrack_BGM2:
+    .space 0x2D0
+    .size gMPlayTrack_BGM2, .-gMPlayTrack_BGM2

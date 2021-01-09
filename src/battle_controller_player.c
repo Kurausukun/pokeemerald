@@ -37,6 +37,7 @@
 #include "constants/rgb.h"
 
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
+extern struct MusicPlayerInfo gMPlayInfo_BGM2;
 
 // this file's functions
 static void PlayerHandleGetMonData(void);
@@ -1009,9 +1010,9 @@ static void sub_8058B40(void)
         if (!gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_1_x20)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK)
-                m4aMPlayContinue(&gMPlayInfo_BGM);
+                m4aMPlayContinue(&gMPlayInfo_BGM2);
             else
-                m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0x100);
+                m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 0x100);
         }
         gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_1_x20 = 1;
         r9 = TRUE;
@@ -1074,7 +1075,7 @@ static void sub_8058FC0(void)
     if (!gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].specialAnimActive
         && !IsCryPlayingOrClearCrySongs())
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0x100);
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 0x100);
         HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], gActiveBattler);
         PlayerBufferExecCompleted();
     }
@@ -1101,7 +1102,7 @@ void c3_0802FDF4(u8 taskId)
 {
     if (!IsCryPlayingOrClearCrySongs())
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0x100);
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 0x100);
         DestroyTask(taskId);
     }
 }

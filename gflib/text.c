@@ -958,10 +958,16 @@ u16 RenderText(struct TextPrinter *textPrinter)
                 textPrinter->printerTemplate.currentY = textPrinter->printerTemplate.y;
                 return 2;
             case EXT_CTRL_CODE_PAUSE_MUSIC:
-                m4aMPlayStop(&gMPlayInfo_BGM);
+                if (gMain.inBattle)
+                    m4aMPlayStop(&gMPlayInfo_BGM2);
+                else
+                    m4aMPlayStop(&gMPlayInfo_BGM);
                 return 2;
             case EXT_CTRL_CODE_RESUME_MUSIC:
-                m4aMPlayContinue(&gMPlayInfo_BGM);
+                if (gMain.inBattle)
+                    m4aMPlayContinue(&gMPlayInfo_BGM2);
+                else
+                    m4aMPlayContinue(&gMPlayInfo_BGM2);
                 return 2;
             case EXT_CTRL_CODE_CLEAR:
                 width = *textPrinter->printerTemplate.currentChar;

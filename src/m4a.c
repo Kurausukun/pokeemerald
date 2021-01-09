@@ -15,6 +15,7 @@ struct CgbChannel gCgbChans[4];
 struct MusicPlayerTrack gPokemonCryTracks[MAX_POKEMON_CRIES * 2];
 struct PokemonCrySong gPokemonCrySong;
 struct MusicPlayerInfo gMPlayInfo_BGM;
+struct MusicPlayerInfo gMPlayInfo_BGM2;
 struct MusicPlayerInfo gMPlayInfo_SE1;
 struct MusicPlayerInfo gMPlayInfo_SE2;
 struct MusicPlayerInfo gMPlayInfo_SE3;

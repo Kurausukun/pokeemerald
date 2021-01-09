@@ -1,6 +1,6 @@
 ENTRY(Start)
 
-gNumMusicPlayers = 4;
+gNumMusicPlayers = 5;
 gMaxLines = 0;
 
 /* Modify the following load addresses as needed to make more room. Alternately, delete both the

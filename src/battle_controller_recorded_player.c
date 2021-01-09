@@ -26,6 +26,7 @@
 #include "constants/songs.h"
 
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
+extern struct MusicPlayerInfo gMPlayInfo_BGM2;
 
 // this file's functions
 static void RecordedPlayerHandleGetMonData(void);
@@ -314,11 +315,11 @@ static void sub_8189D40(void)
             if ((gBattleTypeFlags & BATTLE_TYPE_LINK) && (gBattleTypeFlags & BATTLE_TYPE_MULTI))
             {
                 if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_LEFT)
-                    m4aMPlayContinue(&gMPlayInfo_BGM);
+                    m4aMPlayContinue(&gMPlayInfo_BGM2);
             }
             else
             {
-                m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0x100);
+                m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 0x100);
             }
 
         }

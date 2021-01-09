@@ -23,6 +23,7 @@
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 extern struct MusicPlayerInfo gMPlayInfo_SE1;
 extern struct MusicPlayerInfo gMPlayInfo_SE2;
+extern struct MusicPlayerInfo gMPlayInfo_BGM2;
 
 extern const u16 gMovesWithQuietBGM[];
 extern const u8 *const gBattleAnims_Moves[];
@@ -1877,7 +1878,7 @@ void LaunchBattleAnimation(const u8 *const animsTable[], u16 tableId, bool8 isMo
         {
             if (tableId == gMovesWithQuietBGM[i])
             {
-                m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 128);
+                m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 128);
                 break;
             }
         }
@@ -2143,7 +2144,7 @@ static void ScriptCmd_end(void)
 
     if (!continuousAnim) // May have been used for debug?
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 256);
         if (!IsContest())
         {
             sub_80A8278();

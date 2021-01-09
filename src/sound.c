@@ -32,6 +32,7 @@ extern struct MusicPlayerInfo gMPlayInfo_BGM;
 extern struct MusicPlayerInfo gMPlayInfo_SE1;
 extern struct MusicPlayerInfo gMPlayInfo_SE2;
 extern struct MusicPlayerInfo gMPlayInfo_SE3;
+extern struct MusicPlayerInfo gMPlayInfo_BGM2;
 extern struct ToneData gCryTable[];
 extern struct ToneData gCryTable2[];
 
@@ -188,7 +189,10 @@ bool8 IsNotWaitingForBGMStop(void)
 void PlayFanfareByFanfareNum(u8 fanfareNum)
 {
     u16 songNum;
-    m4aMPlayStop(&gMPlayInfo_BGM);
+    if (gMain.inBattle)
+        m4aMPlayStop(&gMPlayInfo_BGM2);
+    else
+        m4aMPlayStop(&gMPlayInfo_BGM);
     songNum = sFanfares[fanfareNum].songNum;
     sFanfareCounter = sFanfares[fanfareNum].duration;
     m4aSongNumStart(songNum);
@@ -204,7 +208,12 @@ bool8 WaitFanfare(bool8 stop)
     else
     {
         if (!stop)
-            m4aMPlayContinue(&gMPlayInfo_BGM);
+        {
+            if (gMain.inBattle)
+                m4aMPlayContinue(&gMPlayInfo_BGM2);
+            else
+                m4aMPlayContinue(&gMPlayInfo_BGM);
+        }
         else
             m4aSongNumStart(MUS_DUMMY);
 
@@ -249,7 +258,10 @@ static void Task_Fanfare(u8 taskId)
     }
     else
     {
-        m4aMPlayContinue(&gMPlayInfo_BGM);
+        if (gMain.inBattle)
+            m4aMPlayContinue(&gMPlayInfo_BGM2);
+        else
+            m4aMPlayContinue(&gMPlayInfo_BGM);
         DestroyTask(taskId);
     }
 }
@@ -266,47 +278,70 @@ void FadeInNewBGM(u16 songNum, u8 speed)
         songNum = 0;
     if (songNum == MUS_NONE)
         songNum = 0;
-    m4aSongNumStart(songNum);
-    m4aMPlayImmInit(&gMPlayInfo_BGM);
-    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0);
-    m4aSongNumStop(songNum);
-    m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
+    if (gMain.inBattle)
+    {
+        m4aSongNumStart(songNum);
+        m4aMPlayImmInit(&gMPlayInfo_BGM2);
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 0);
+        m4aSongNumStop(songNum);
+        m4aMPlayFadeIn(&gMPlayInfo_BGM2, speed);
+    }
+    else
+    {
+        m4aSongNumStart(songNum);
+        m4aMPlayImmInit(&gMPlayInfo_BGM);
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 0);
+        m4aSongNumStop(songNum);
+        m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
+    }
 }
 
 void FadeOutBGMTemporarily(u8 speed)
 {
-    m4aMPlayFadeOutTemporarily(&gMPlayInfo_BGM, speed);
+    if (gMain.inBattle)
+        m4aMPlayFadeOutTemporarily(&gMPlayInfo_BGM2, speed);
+    else
+        m4aMPlayFadeOutTemporarily(&gMPlayInfo_BGM, speed);
 }
 
 bool8 IsBGMPausedOrStopped(void)
 {
-    if (gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE)
+    if ((gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE) && (gMPlayInfo_BGM2.status & MUSICPLAYER_STATUS_PAUSE))
         return TRUE;
-    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
+    if (!((gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK)) && !(gMPlayInfo_BGM2.status & MUSICPLAYER_STATUS_TRACK))
         return TRUE;
     return FALSE;
 }
 
 void FadeInBGM(u8 speed)
 {
-    m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
+    if (gMain.inBattle)
+        m4aMPlayFadeIn(&gMPlayInfo_BGM2, speed);
+    else
+        m4aMPlayFadeIn(&gMPlayInfo_BGM, speed);
 }
 
 void FadeOutBGM(u8 speed)
 {
-    m4aMPlayFadeOut(&gMPlayInfo_BGM, speed);
+    if (gMain.inBattle)
+        m4aMPlayFadeOut(&gMPlayInfo_BGM2, speed);
+    else
+        m4aMPlayFadeOut(&gMPlayInfo_BGM, speed);
 }
 
 bool8 IsBGMStopped(void)
 {
-    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
+    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK) && (!(gMPlayInfo_BGM2.status & MUSICPLAYER_STATUS_TRACK)))
         return TRUE;
     return FALSE;
 }
 
 void PlayCry1(u16 species, s8 pan)
 {
-    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+    if (gMain.inBattle)
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 85);
+    else
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
     PlayCryInternal(species, pan, CRY_VOLUME, 10, 0);
     gPokemonCryBGMDuckingCounter = 2;
     RestoreBGMVolumeAfterPokemonCry();
@@ -325,7 +360,10 @@ void PlayCry3(u16 species, s8 pan, u8 mode)
     }
     else
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+        if (gMain.inBattle)
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 85);
+        else
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
         PlayCryInternal(species, pan, CRY_VOLUME, 10, mode);
         gPokemonCryBGMDuckingCounter = 2;
         RestoreBGMVolumeAfterPokemonCry();
@@ -341,7 +379,7 @@ void PlayCry4(u16 species, s8 pan, u8 mode)
     else
     {
         if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-            m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 85);
         PlayCryInternal(species, pan, CRY_VOLUME, 10, mode);
     }
 }
@@ -354,7 +392,10 @@ void PlayCry6(u16 species, s8 pan, u8 mode) // not present in R/S
     }
     else
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+        if (gMain.inBattle)
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 85);
+        else
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
         PlayCryInternal(species, pan, CRY_VOLUME, 10, mode);
         gPokemonCryBGMDuckingCounter = 2;
     }
@@ -362,7 +403,10 @@ void PlayCry6(u16 species, s8 pan, u8 mode) // not present in R/S
 
 void PlayCry5(u16 species, u8 mode)
 {
-    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
+    if (gMain.inBattle)
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 85);
+    else
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 85);
     PlayCryInternal(species, 0, CRY_VOLUME, 10, mode);
     gPokemonCryBGMDuckingCounter = 2;
     RestoreBGMVolumeAfterPokemonCry();
@@ -546,7 +590,10 @@ static void Task_DuckBGMForPokemonCry(u8 taskId)
 
     if (!IsPokemonCryPlaying(gMPlay_PokemonCry))
     {
-        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
+        if (gMain.inBattle)
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM2, 0xFFFF, 256);
+        else
+            m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
         DestroyTask(taskId);
     }
 }
@@ -611,9 +658,9 @@ bool8 IsSEPlaying(void)
 
 bool8 IsBGMPlaying(void)
 {
-    if (gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE)
+    if ((gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_PAUSE) && (gMPlayInfo_BGM2.status & MUSICPLAYER_STATUS_PAUSE))
         return FALSE;
-    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK))
+    if (!(gMPlayInfo_BGM.status & MUSICPLAYER_STATUS_TRACK) && !(gMPlayInfo_BGM2.status & MUSICPLAYER_STATUS_TRACK))
         return FALSE;
     return TRUE;
 }
