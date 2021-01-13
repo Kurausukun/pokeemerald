@@ -1,6 +1,6 @@
 	.equiv ID_NUMBER, 0x68736d53
 
-	.equiv PCM_DMA_BUF_SIZE, 1584
+	.equiv PCM_DMA_BUF_SIZE, 3696
 
 	.equiv C_V, 0x40
 

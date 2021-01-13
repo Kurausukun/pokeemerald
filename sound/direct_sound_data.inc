@@ -2201,3 +2201,7 @@ DirectSoundWaveData_sc88pro_castanets::
     .align 2
 DirectSoundWaveData_sc88pro_high_wood_block::
     .incbin "sound/direct_sound_samples/sc88pro_high_wood_block.bin"
+
+	.align 2
+DirectSoundWaveData_sc88pro_tuba_51_short::
+	.incbin "sound/direct_sound_samples/sc88pro_tuba_51_short.bin"
