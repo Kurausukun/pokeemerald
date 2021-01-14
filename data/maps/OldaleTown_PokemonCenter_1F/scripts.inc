@@ -20,6 +20,8 @@ OldaleTown_PokemonCenter_1F_EventScript_Nurse:: @ 81FC01A
 
 OldaleTown_PokemonCenter_1F_EventScript_Gentleman:: @ 81FC028
 	msgbox OldaleTown_PokemonCenter_1F_Text_TrainersCanUsePC, MSGBOX_NPC
+	giveitem ITEM_POKE_RADAR
+	closemessage
 	end
 
 OldaleTown_PokemonCenter_1F_EventScript_Boy:: @ 81FC031
