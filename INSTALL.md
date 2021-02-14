@@ -1,18 +1,18 @@
 # Instructions
 
-These instructions explain how to set up the tools required to build **pokeemerald**, which assembles the source files into a ROM.
+These instructions explain how to set up the tools required to build **pokeemerald**, which compiles the source files into a ROM.
 
 If you run into trouble, ask for help on Discord or IRC (see [README.md](README.md)).
 
 ## Windows
-Windows has instructions for building with three possible terminals, providing 3 different options in case the user stumbled upon unexpected errors.
+Windows has instructions for building with three possible terminals, providing 3 different options in case the user stumbles upon unexpected errors.
 - [Windows 10 (WSL1)](#windows-10-wsl1) (**Fastest, highly recommended**, Windows 10 only)
 - [Windows (msys2)](#windows-msys2) (Second fastest)
 - [Windows (Cygwin)](#windows-cygwin) (Slowest)
 
 Unscientific benchmarks suggest **msys2 is 2x slower** than WSL1, and **Cygwin is 5-6x slower** than WSL1.
 
-> Note for advanced users: **WSL2** is an option and is even faster than **WSL1** if files are stored on the WSL2 file system, but some tools may have trouble interacting with the WSL2 file system over the network drive. For example, tools which use Qt versions before 5.15.2 such as [porymap](https://github.com/huderlem/porymap) may [have problems with parsing the `\\wsl$` network drive path](https://bugreports.qt.io/browse/QTBUG-86277).
+> Note for advanced users: **WSL2** is an option and is even faster than **WSL1** if files are stored on the WSL2 file system, but there is a [known bug](https://bugreports.qt.io/browse/QTBUG-86277) in older versions of Qt (including the one used to build the current release of Porymap) which causes it to break on paths with the `$` character in them; this means that in the current release version of Porymap, a workaround is necessary Once a new release of Porymap comes out, WSL2 will be 100% safe to use; if you build your own Porymap with a newer version of Qt, it is already safe to use.
 
 All of the Windows instructions assume that the default drive is C:\\. If this differs to your actual drive letter, then replace C with the correct drive letter when reading the instructions.
 
@@ -25,7 +25,7 @@ WSL1 is the preferred terminal to build **pokeemerald**. The following instructi
 - Otherwise, **open WSL** and go to [Choosing where to store pokeemerald (WSL1)](#Choosing-where-to-store-pokeemerald-WSL1).
 
 ### Installing WSL1
-1. Open [Windows Powershell **as Administrator**](https://i.imgur.com/QKmVbP9.png), and run the following command (Right Click or Shift+Insert is paste in the Powershell).
+1. Open [Windows Powershell **as Administrator**](https://i.imgur.com/QKmVbP9.png), and run the following command (Right Click or Shift+Insert is paste in Powershell).
 
     ```powershell
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -52,7 +52,7 @@ Some tips before proceeding:
 1. Open **Ubuntu** (e.g. using Search).
 2. WSL/Ubuntu will set up its own installation when it runs for the first time. Once WSL/Ubuntu finishes installing, it will ask for a username and password (to be input in).
 
-    > Note: When typing in the password, there will be no visible response, but the terminal will still read in input.
+    > Note: When typing in the password, there will be no visible response, but the terminal will still read input; this is normal.
 
 3. Update WSL/Ubuntu before continuing. Do this by running the following command:
 
@@ -70,22 +70,17 @@ Some tips before proceeding:
     ```
     > Note: If the above command does not work, try the above command but replacing `apt` with `apt-get`.
 
-### Choosing where to store pokeemerald (WSL1)
-WSL has its own file system that's not natively accessible from Windows, but Windows files *are* accessible from WSL. So you're going to want to install pokeemerald within Windows. 
+### Navigating in a \*nix environment
+To navigate the a \*nix-type filesystem, you use `cd` (short for "change directory"). Using it is as simple as typing `cd` followed by the directory you wish to travel to (to travel "up" a directory, use `..`). Both relative and absolute paths work with `cd`. 
 
-For example, say you want to store pokeemerald (and agbcc) in **C:\Users\\_\<user>_\Desktop\decomps**. If pokeemerald and/or agbcc hasn't been installed yet, then enter the following command, where *\<user>* is your **Windows** username:
-```bash
-cd /mnt/c/Users/<user>/Desktop/decomps
-```
-Note that the directory **must exist** in Windows. If you want to store pokeemerald in a dedicated folder that doesn't exist (e.g. the example provided above), then create the folder (e.g. using Windows Explorer) before executing the `cd` command.
+### Choosing where to store pokeemerald (WSL1)
+You can open the WSL shell by either searching for the name of the distribution (e.g. Ubuntu, Debian, etc.) in the Windows Start Menu search bar, which will open the shell in the `home` directory of the Linux distribution, or by opening a `cmd` or PowerShell window and typing `bash`. Additionally, if your desired directory is in the Windows native filesystem, you can simply navigate to that directory and right-click while holding shift; this should bring up an option called **Open Linux shell here**, which will give you a WSL window that is in the directory you navigated to.
+
+In WSL1, you can store your directory anywhere you want without worrying about performance, but in WSL2, you must store your directory in the native WSL2 filesystem rather than your native Windows filesystem, otherwise performance will suffer greatly.
 
 > Note 1: The Windows C:\ drive is called /mnt/c/ in WSL.  
 > Note 2: If the path has spaces, then the path must be wrapped with quotations, e.g. `cd "/mnt/c/users/<user>/Desktop/decomp folder"`.  
-> Note 3: Windows path names are case-insensitive so adhering to capitalization isn't needed  
-> Note 4: If pokeemerald is already installed, then run the following command instead (for the provided example path):
-> ```bash
-> cd /mnt/c/Users/<user>/Desktop/decomps/pokeemerald
-> ```
+> Note 3: Windows command lines accept both forward (`/`) and back ('\\') slashes, but WSL only accepts forward (`/`) slashes--be careful.
 
 If this works, then proceed to [Installation](#installation).
 
@@ -122,7 +117,7 @@ Note that in msys2, Copy is Ctrl+Insert and Paste is Shift+Insert.
     cd Downloads
     ```
 
-    > Note 1: While not shown, msys uses forward slashes `/` instead of backwards slashes `\` as the directory separator.  
+    > Note 1: Windows command lines accept both forward (`/`) and back ('\\') slashes, but msys only accepts forward (`/`) slashes--be careful.
     > Note 2: If the path has spaces, then the path must be wrapped with quotations, e.g. `cd "Downloads/My Downloads"`.  
     > Note 3: Windows path names are case-insensitive so adhering to capitalization isn’t needed.   
     > Note 4: If libpng was saved elsewhere, you will need to specify the full path to where libpng was downloaded, e.g. `cd c:/devkitpro/msys2` if it was saved there.
@@ -144,20 +139,10 @@ Note that in msys2, Copy is Ctrl+Insert and Paste is Shift+Insert.
     ```
 
 ### Choosing where to store pokeemerald (msys2)
-At this point, you can choose a folder to store pokeemerald into. If you're okay with storing pokeemerald in the user profile folder, then proceed to [Installation](#installation). Otherwise, you'll need to account for where pokeemerald is stored when changing directory to the pokeemerald folder.
+At this point, you can choose a folder to store pokeemerald into. If you're okay with storing pokeemerald in the user profile folder, then proceed to [Installation](#installation). Otherwise, you'll need to account for where pokeemerald is stored when changing directory to the pokeemerald folder. If you haven't already, see the [Navigating in a \*nix Environment](#navigating-in-a-\*nix-environment) for information on how to get around.
 
-For example, say you want to store pokeemerald (and agbcc) in **C:\Users\\_\<user>_\Desktop\decomps**. If pokeemerald and/or agbcc hasn't been installed yet, then enter the following command to **change directory** to the desired folder:
-
-```bash
-cd Desktop/decomps
-```
-
-Note that the directory **must exist** in Windows. If you want to store pokeemerald in a dedicated folder that doesn't exist (e.g. the example provided above), then create the folder (e.g. using Windows Explorer) before executing the `cd` command.
-
-> Note: If pokeemerald is already installed, then run the following command instead (for the provided example path):
-> ```bash
-> cd Desktop/decomps/pokeemerald
-> ```
+> Note 1: If the path has spaces, then the path must be wrapped with quotations, e.g. `cd "c:/users/<user>/Desktop/decomp folder"`.  
+> Note 2: Windows path names are case-insensitive so adhering to capitalization isn't needed.  
 
 If this works, then proceed to [Installation](#installation).
 
@@ -210,20 +195,11 @@ Note that in Cygwin, Copy is Ctrl+Insert and Paste is Shift+Insert.
 
 ### Choosing where to store pokeemerald (Cygwin)
 
-Cygwin has its own file system that's within Windows, at **C:\cygwin64\home\\_\<user>_**. If you don't want to store pokeemerald there, you'll need to account for where pokeemerald is stored when **changing directory** to the pokeemerald folder.
+Cygwin has its own file system that's within Windows, at **C:\cygwin64\home\\_\<user>_**. If you don't want to store pokeemerald there, you'll need to account for where pokeemerald is stored when **changing directory** to the pokeemerald folder. If you haven't already, see the [Navigating in a \*nix Environment](#navigating-in-a-\*nix-environment) for information on how to get around.
 
-For example, if you want to store pokeemerald (and agbcc) in **C:\Users\\_\<user>_\Desktop\decomps**, enter this command, where *\<user>* is your **Windows** username:
-```bash
-cd c:/Users/<user>/Desktop/decomps
-```
-Note that the directory **must exist** in Windows. If you want to store pokeemerald in a dedicated folder that doesn't exist (e.g. the example provided above), then create the folder (e.g. using Windows Explorer) before executing the `cd` command.
-
-> Note 1: If the path has spaces, then the path must be wrapped with quotations, e.g. `cd "c:/users/<user>/Desktop/decomp folder"`.  
-> Note 2: Windows path names are case-insensitive so adhering to capitalization isn't needed  
-> Note 3: If pokeemerald is already installed, then run the following command instead (for the provided example path):
-> ```bash
-> cd c:/Users/<user>/Desktop/decomps/pokeemerald
-> ```
+> Note 1: If the path has spaces, then the path must be wrapped with quotations, e.g. `cd "c:/users/<user>/Desktop/decomp folder"`.
+> Note 2: Windows path names are case-insensitive so adhering to capitalization isn't needed.
+> Note 3: The C:\\ drive in cygwin is represented as /cygdrive/c.
 
 If this works, then proceed to [Installation](#installation). Otherwise, ask for help on Discord or IRC (see [README.md](README.md)).
 
