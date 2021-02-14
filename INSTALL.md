@@ -71,7 +71,7 @@ Some tips before proceeding:
     > Note: If the above command does not work, try the above command but replacing `apt` with `apt-get`.
 
 ### Navigating in a \*nix Environment
-To navigate the a \*nix-type filesystem, you use `cd` (short for "change directory"). Using it is as simple as typing `cd` followed by the directory you wish to travel to (to travel "up" a directory, use `..`). Both relative and absolute paths work with `cd`. If you are curious about more detailed operation, a man page can be found [here](https://linuxcommand.org/lc3_man_pages/cdh.html).
+To navigate a \*nix-type filesystem, you use `cd` (short for "change directory"). Using it is as simple as typing `cd` followed by the directory you wish to travel to (to travel "up" a directory, use `..`). Both relative and absolute paths work with `cd`. If you are curious about more detailed operation, a man page can be found [here](https://linuxcommand.org/lc3_man_pages/cdh.html).
 
 ### Choosing where to store pokeemerald (WSL1)
 You can open the WSL shell by either searching for the name of the distribution (e.g. Ubuntu, Debian, etc.) in the Windows Start Menu search bar, which will open the shell in the `home` directory of the Linux distribution, or by opening a `cmd` or PowerShell window and typing `bash`. Additionally, if your desired directory is in the Windows native filesystem, you can simply navigate to that directory and right-click while holding shift; this should bring up an option called **Open Linux shell here**, which will give you a WSL window that is in the directory you navigated to.
