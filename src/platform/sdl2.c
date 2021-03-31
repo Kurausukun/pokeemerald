@@ -944,63 +944,76 @@ static const uint16_t bgMapSizes[][2] =
     {64, 64},
 };
 
-static void RenderBGScanline(int bgNum, uint16_t control, uint16_t hoffs, uint16_t voffs, int lineNum, uint32_t *line)
+static void RenderBGScanline(int bgNum, uint16_t control, uint16_t hoffs, uint16_t voffs, int lineNum, uint32_t* line)
 {
-    unsigned int charBaseBlock = (control >> 2) & 3;
-    unsigned int screenBaseBlock = (control >> 8) & 0x1F;
-    //bool is8bit = (control >> 7) & 1;
-    unsigned int mapWidth = bgMapSizes[control >> 14][0];
-    unsigned int mapHeight = bgMapSizes[control >> 14][1];
-    unsigned int mapWidthInPixels = mapWidth * 8;
-    unsigned int mapHeightInPixels = mapHeight * 8;
+	unsigned int charBaseBlock = (control >> 2) & 3;
+	unsigned int screenBaseBlock = (control >> 8) & 0x1F;
+	unsigned int bitsPerPixel = ((control >> 7) & 1) ? 8 : 4;
+	unsigned int mapWidth = bgMapSizes[control >> 14][0];
+	unsigned int mapHeight = bgMapSizes[control >> 14][1];
+	unsigned int mapWidthInPixels = mapWidth * 8;
+	unsigned int mapHeightInPixels = mapHeight * 8;
 
-    uint8_t *bgtiles = (uint8_t *)(VRAM_ + charBaseBlock * 0x4000);
-    uint16_t *bgmap = (uint16_t *)(VRAM_ + screenBaseBlock * 0x800);
-    uint16_t *pal = (uint16_t *)PLTT;
+	uint8_t* bgtiles = (uint8_t*)BG_CHAR_ADDR(charBaseBlock);
+	uint16_t* bgmap = (uint16_t*)BG_SCREEN_ADDR(screenBaseBlock);
+	uint16_t* pal = (uint16_t*)PLTT;
 
-    hoffs &= 0x1FF;
-    voffs &= 0x1FF;
+	hoffs &= 0x1FF;
+	voffs &= 0x1FF;
 
-    for (unsigned int x = 0; x < DISPLAY_WIDTH; x++)
-    {
-        // adjust for scroll
-        unsigned int xx = (x + hoffs) & 0x1FF;
-        unsigned int yy = (lineNum + voffs) & 0x1FF;
+	for (unsigned int x = 0; x < DISPLAY_WIDTH; x++)
+	{
+		// adjust for scroll
+		unsigned int xx = (x + hoffs) & 0x1FF;
+		unsigned int yy = (lineNum + voffs) & 0x1FF;
 
-        if (xx > mapWidthInPixels || yy > mapHeightInPixels)
-        {
-            //if (!(control & (1 << 13)))
-            //    continue;
-        }
-            
-        xx %= mapWidthInPixels;
-        yy %= mapHeightInPixels;
+		if (xx > mapWidthInPixels || yy > mapHeightInPixels)
+		{
+			//if (!(control & (1 << 13)))
+			//    continue;
+		}
 
-        unsigned int mapX = xx / 8;
-        unsigned int mapY = yy / 8;
-        uint16_t entry = bgmap[mapY * 32 + mapX];
+		xx %= mapWidthInPixels;
+		yy %= mapHeightInPixels;
 
-        unsigned int tileNum = entry & 0x3FF;
-        unsigned int paletteNum = (entry >> 12) & 0xF;
-        
-        unsigned int tileX = xx % 8;
-        unsigned int tileY = yy % 8;
+		unsigned int mapX = xx / 8;
+		unsigned int mapY = yy / 8;
+		uint16_t entry = bgmap[mapY * 32 + mapX];
 
-        // Flip if necessary
-        if (entry & (1 << 10))
-            tileX = 7 - tileX;
-        if (entry & (1 << 11))
-            tileY = 7 - tileY;
+		unsigned int tileNum = entry & 0x3FF;
+		unsigned int paletteNum = (entry >> 12) & 0xF;
 
-        uint8_t pixel = bgtiles[(tileNum * 32) + (tileY * 4) + (tileX / 2)];
-        if (tileX & 1)
-            pixel >>= 4;
-        else
-            pixel &= 0xF;
+		unsigned int tileX = xx % 8;
+		unsigned int tileY = yy % 8;
 
-        if (pixel != 0 /*&& !(line[x] & (0xFF << 24))*/)
-            line[x] = ConvertPixel(pal[16 * paletteNum + pixel]);
-    }
+		// Flip if necessary
+		if (entry & (1 << 10))
+			tileX = 7 - tileX;
+		if (entry & (1 << 11))
+			tileY = 7 - tileY;
+
+		uint16_t tileLoc = tileNum * (bitsPerPixel * 8);
+		uint16_t tileLocY = tileY * bitsPerPixel;
+		uint16_t tileLocX = tileX;
+		if (bitsPerPixel == 4)
+			tileLocX /= 2;
+
+		uint8_t pixel = bgtiles[tileLoc + tileLocY + tileLocX];
+
+		if (bitsPerPixel == 4) {
+			if (tileX & 1)
+				pixel >>= 4;
+			else
+				pixel &= 0xF;
+
+			// Why is this check for (pixel != 0) here?
+			if (pixel != 0 /*&& !(line[x] & (0xFF << 24))*/)
+				line[x] = ConvertPixel(pal[16 * paletteNum + pixel]);
+		}
+		else {
+			line[x] = ConvertPixel(pal[pixel]);
+		}
+	}
 }
 
 static inline uint32_t getBgX(int bgNumber)
