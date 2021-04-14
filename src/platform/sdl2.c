@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 
     SDL_memset(&want, 0, sizeof(want)); /* or SDL_zero(want) */
     want.freq = 42048;
-    want.format = AUDIO_S8;
+    want.format = AUDIO_S32;
     want.channels = 2;
     want.samples = 1024;
 
@@ -151,8 +151,8 @@ int main(int argc, char **argv)
         SDL_Log("Failed to open audio: %s", SDL_GetError());
     else
     {
-        if (want.format != AUDIO_S8) /* we let this one thing change. */
-            SDL_Log("We didn't get Signed8 audio format.");
+        if (want.format != AUDIO_S32) /* we let this one thing change. */
+            SDL_Log("We didn't get Signed32 audio format.");
         SDL_PauseAudio(0);
     }
     

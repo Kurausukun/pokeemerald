@@ -6,8 +6,8 @@
 #define VCOUNT_VBLANK 160
 #define TOTAL_SCANLINES 228
 
-static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSource *chan, struct WaveData2 *wav, s8 *outBuffer, u16 samplesPerFrame, s32 sampleRateReciprocal);
-void SampleMixer(struct SoundMixerState *mixer, u32 scanlineLimit, u16 samplesPerFrame, s8 *outBuffer, u8 dmaCounter, u16 maxBufSize);
+static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSource *chan, struct WaveData2 *wav, s32 *outBuffer, u16 samplesPerFrame, s32 sampleRateReciprocal);
+void SampleMixer(struct SoundMixerState *mixer, u32 scanlineLimit, u16 samplesPerFrame, s32 *outBuffer, u8 dmaCounter, u16 maxBufSize);
 static inline bool32 TickEnvelope(struct MixerSource *chan, struct WaveData2 *wav);
 
 void RunMixerFrame(void) {
@@ -34,7 +34,7 @@ void RunMixerFrame(void) {
 	mixer->cgbMixerFunc();
 	
 	s32 samplesPerFrame = mixer->samplesPerFrame;
-	s8 *outBuffer = mixer->outBuffer;
+	s32 *outBuffer = mixer->outBuffer;
 	s32 dmaCounter = mixer->dmaCounter;
 	
 	if (dmaCounter > 1) {
@@ -48,14 +48,14 @@ void RunMixerFrame(void) {
 
 
 //__attribute__((target("thumb")))
-void SampleMixer(struct SoundMixerState *mixer, u32 scanlineLimit, u16 samplesPerFrame, s8 *outBuffer, u8 dmaCounter, u16 maxBufSize) {
+void SampleMixer(struct SoundMixerState *mixer, u32 scanlineLimit, u16 samplesPerFrame, s32 *outBuffer, u8 dmaCounter, u16 maxBufSize) {
 	u32 reverb;
 	if (reverb = mixer->reverb) {
 		// The vanilla reverb effect outputs a mono sound from four sources:
 		//  - L/R channels as they were mixer->framesPerDmaCycle frames ago
 		//  - L/R channels as they were (mixer->framesPerDmaCycle - 1) frames ago
-		s8 *tmp1 = outBuffer;
-		s8 *tmp2;
+		s32 *tmp1 = outBuffer;
+		s32 *tmp2;
 		if (dmaCounter == 2) {
 			tmp2 = mixer->outBuffer;
 		} else {
@@ -215,7 +215,7 @@ static inline bool32 TickEnvelope(struct MixerSource *chan, struct WaveData2 *wa
 }
 
 //__attribute__((target("thumb")))
-static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSource *chan, struct WaveData2 *wav, s8 *outBuffer, u16 samplesPerFrame, s32 sampleRateReciprocal) {/*, [[[]]]) {*/
+static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSource *chan, struct WaveData2 *wav, s32 *outBuffer, u16 samplesPerFrame, s32 sampleRateReciprocal) {/*, [[[]]]) {*/
 	uf8 v = chan->envelopeVol * (mixer->masterVol + 1) / 16U;
 	chan->envelopeVolR = chan->rightVol * v / 256U;
 	chan->envelopeVolL = chan->leftVol * v / 256U;
@@ -242,8 +242,8 @@ static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSour
 		for (u16 i = 0; i < samplesPerFrame; i++, outBuffer++) {
 			sf8 c = *(current++);
 			
-			outBuffer[0] += FLOOR_DIV_POW2(c * envR, 256);
-			outBuffer[MIXED_AUDIO_BUFFER_SIZE] += FLOOR_DIV_POW2(c * envL, 256);
+			outBuffer[0] += (c * envR) << 16;
+			outBuffer[MIXED_AUDIO_BUFFER_SIZE] += (c * envL, 256) << 16;
 			
 			if (--samplesLeftInWav == 0) {
 				samplesLeftInWav = loopLen;
@@ -281,8 +281,8 @@ static inline void GenerateAudio(struct SoundMixerState *mixer, struct MixerSour
 			// and the next sample. Also cancel out the 9.23 stuff
 			s32 sample = FLOOR_DIV_POW2(finePos * m, 1 << 23) + b;
 			
-			outBuffer[0] += FLOOR_DIV_POW2(sample * envR, 256);
-			outBuffer[MIXED_AUDIO_BUFFER_SIZE] += FLOOR_DIV_POW2(sample * envL, 256);
+			outBuffer[0] += (sample * envR) << 16;
+			outBuffer[MIXED_AUDIO_BUFFER_SIZE] += (sample * envL) << 16;
 			
 			finePos += romSamplesPerOutputSample;
 			unsigned newCoarsePos = (u32)finePos / (1U << 23);

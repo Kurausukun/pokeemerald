@@ -748,10 +748,10 @@ void m4aSoundVSync(void)
 	if(mixer->lockStatus-PLAYER_UNLOCKED <= 1)
 	{
 		s32 samplesPerFrame = mixer->samplesPerFrame;
-		s8 *outBuffer = mixer->outBuffer;
+		s32 *outBuffer = mixer->outBuffer;
 		s32 dmaCounter = mixer->dmaCounter;
-		s8 * stereoBuffer = _calloc(2, samplesPerFrame);
-		s8 * temp = stereoBuffer;
+		s32 * stereoBuffer = _calloc(2, samplesPerFrame * 4);
+		s32 * temp = stereoBuffer;
 
 		if (dmaCounter > 1) {
 			outBuffer += samplesPerFrame * (mixer->framesPerDmaCycle - (dmaCounter - 1));
@@ -762,7 +762,7 @@ void m4aSoundVSync(void)
 			*temp++ = outBuffer[0];
 			outBuffer++;
 		}
-		_SDL_QueueAudio(1, stereoBuffer, samplesPerFrame*2);
+		_SDL_QueueAudio(1, stereoBuffer, samplesPerFrame * 8);
 		if((s8)(--mixer->dmaCounter) <= 0)
 			mixer->dmaCounter = mixer->framesPerDmaCycle;
 		_free(stereoBuffer);

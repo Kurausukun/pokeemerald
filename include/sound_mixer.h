@@ -109,7 +109,7 @@ struct SoundMixerState {
 	void *reversed4;
 	void *reserved5;
 	struct MixerSource chans[MAX_SAMPLE_CHANNELS];
-	__attribute__((aligned(4))) s8 outBuffer[MIXED_AUDIO_BUFFER_SIZE * 2];
+	__attribute__((aligned(4))) s32 outBuffer[MIXED_AUDIO_BUFFER_SIZE * 2];
 	//s8 outBuffer[MIXED_AUDIO_BUFFER_SIZE * 2];
 };
 
