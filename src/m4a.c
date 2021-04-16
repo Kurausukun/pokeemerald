@@ -5,7 +5,7 @@ extern const u8 gCgb3Vol[];
 
 #define BSS_CODE __attribute__((section(".bss.code")))
 
-BSS_CODE ALIGNED(4) char SoundMainRAM_Buffer[0xB3C] = {0};
+BSS_CODE ALIGNED(4) char SoundMainRAM_Buffer[0xB40] = {0};
 BSS_CODE ALIGNED(4) u32 hq_buffer_ptr[0xE0] = {0};
 
 struct SoundInfo gSoundInfo;
