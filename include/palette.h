@@ -30,20 +30,22 @@ struct PaletteFadeControl
 {
     u32 multipurpose1;
     u8 delayCounter:6;
-    u16 y:5; // blend coefficient
-    u16 targetY:5; // target blend coefficient
-    u16 blendColor:15;
-    bool16 active:1;
-    u16 multipurpose2:6;
-    bool16 yDec:1; // whether blend coefficient is decreasing
-    bool16 bufferTransferDisabled:1;
     u16 mode:2;
+    u16 deltaY:6; // rate of change of blend coefficient
+    bool16 active:1;
+    bool16 yDec:1; // whether blend coefficient is decreasing
+    u16 targetY:6; // target blend coefficient
+    bool16 bufferTransferDisabled:1;
     bool16 shouldResetBlendRegisters:1;
+    u16 multipurpose2:6;
     bool16 hardwareFadeFinishing:1;
-    u16 softwareFadeFinishingCounter:5;
-    bool16 softwareFadeFinishing:1;
     bool16 objPaletteToggle:1;
-    u8 deltaY:4; // rate of change of blend coefficient
+    u16 blendColor:15;
+    bool8 yChanged:1;
+    u16 softwareFadeFinishingCounter:3;
+    bool16 doEndDelay:1;
+    u16 y; // blend coefficient
+    u16 denominator;
 };
 
 extern struct PaletteFadeControl gPaletteFade;
@@ -59,12 +61,16 @@ void TransferPlttBuffer(void);
 u8 UpdatePaletteFade(void);
 void ResetPaletteFade(void);
 void ReadPlttIntoBuffers(void);
+void ResetPaletteFadedBuffer(u32 selectedPalettes);
+void CopyFadedIntoUnfadedBuffer(u32 selectedPalettes);
 bool8 BeginNormalPaletteFade(u32, s8, u8, u8, u16);
+bool8 BeginNormalPaletteFadeForDuration(u32 selectedPalettes, u16 fadeDuration, u8 startY, u8 targetY, u16 blendColor, u32 doEndDelay);
 bool8 unref_sub_8073D3C(u32, u8, u8, u8, u16);
 void unref_sub_8073D84(u8, u32 *);
 void ResetPaletteStructByUid(u16);
 void ResetPaletteStruct(u8);
 void ResetPaletteFadeControl(void);
+void BlendPalettesFine(u32 selectedPalettes, u32 coeff, u32 color);
 void unref_sub_8074168(u16);
 void unref_sub_8074194(u16);
 void InvertPlttBuffer(u32);
@@ -73,6 +79,7 @@ void UnfadePlttBuffer(u32);
 void BeginFastPaletteFade(u8);
 void BeginHardwarePaletteFade(u8, u8, u8, u8, u8);
 void BlendPalettes(u32 selectedPalettes, u8 coeff, u16 color);
+
 void BlendPalettesUnfaded(u32, u8, u16);
 void BlendPalettesGradually(u32 selectedPalettes, s8 delay, u8 coeff, u8 coeffTarget, u16 color, u8 priority, u8 id);
 void TintPalette_GrayScale(u16 *palette, u16 count);
