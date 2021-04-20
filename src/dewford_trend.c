@@ -8,6 +8,7 @@
 #include "text.h"
 #include "tv.h"
 #include "string_util.h"
+#include "wild_encounter.h"
 #include "constants/easy_chat.h"
 
 /*
@@ -195,7 +196,12 @@ bool8 TrySetTrendyPhrase(u16 *phrase)
                     TryPutTrendWatcherOnAir(phrase);
 
                 // If i is 0, the given phrase is the new current phrase
-                return (i == 0);
+                if (i == 0)
+                {
+                    GetFeebasTiles();
+                    return TRUE;
+                }
+                return FALSE;
             }
         }
 

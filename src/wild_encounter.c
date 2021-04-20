@@ -38,7 +38,8 @@ static bool8 IsAbilityAllowingEncounter(u8 level);
 
 // EWRAM vars
 EWRAM_DATA static u8 sWildEncountersDisabled = 0;
-EWRAM_DATA static u32 sFeebasRngValue = 0;
+EWRAM_DATA u32 sFeebasRngValue = 0;
+EWRAM_DATA u16 gFeebasTiles[6][2] = {0};
 
 #include "data/wild_encounters.h"
 
@@ -50,6 +51,28 @@ const u16 gRoute119WaterTileData[] =
     0, 0x2D, 0,
     0x2E, 0x5B, 0x83,
     0x5C, 0x8B, 0x12A,
+};
+
+static const u16 gRoute119MetatileTable[] =
+{
+    [0x02C - 0x02C] = 0x2A9,
+    [0x034 - 0x02C] = 0x2CB,
+    [0x03C - 0x02C] = 0x2AA,
+    [0x11D - 0x02C] = 0x31B,
+    [0x125 - 0x02C] = 0x31A,
+    [0x12C - 0x02C] = 0x318,
+    [0x12D - 0x02C] = 0x319,
+    [0x170 - 0x02C] = 0x308,
+    [0x178 - 0x02C] = 0x2FD,
+    [0x179 - 0x02C] = 0x305,
+    [0x189 - 0x02C] = 0x31F,
+    [0x190 - 0x02C] = 0x310,
+    [0x192 - 0x02C] = 0x31E,
+    [0x198 - 0x02C] = 0x311,
+    [0x19A - 0x02C] = 0x30D,
+    [0x20F - 0x02C] = 0x2D3,
+    [0x266 - 0x02C] = 0x312,
+    [0x267 - 0x02C] = 0x315
 };
 
 // code
@@ -84,43 +107,20 @@ static u16 GetRoute119WaterTileNum(s16 x, s16 y, u8 section)
 
 static bool8 CheckFeebas(void)
 {
-    u8 i;
-    u16 feebasSpots[NUM_FEEBAS_SPOTS];
     s16 x;
     s16 y;
-    u8 route119Section = 0;
-    u16 waterTileNum;
+    u8 i;
 
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE119)
-     && gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE119))
+    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE119) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE119))
     {
         GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
-        x -= 7;
-        y -= 7;
-
-        if (y >= gRoute119WaterTileData[3 * 0 + 0] && y <= gRoute119WaterTileData[3 * 0 + 1])
-            route119Section = 0;
-        if (y >= gRoute119WaterTileData[3 * 1 + 0] && y <= gRoute119WaterTileData[3 * 1 + 1])
-            route119Section = 1;
-        if (y >= gRoute119WaterTileData[3 * 2 + 0] && y <= gRoute119WaterTileData[3 * 2 + 1])
-            route119Section = 2;
 
         if (Random() % 100 > 49) // 50% chance of encountering Feebas
             return FALSE;
-
-        FeebasSeedRng(gSaveBlock1Ptr->dewfordTrends[0].rand);
-        for (i = 0; i != NUM_FEEBAS_SPOTS;)
-        {
-            feebasSpots[i] = FeebasRandom() % 447;
-            if (feebasSpots[i] == 0)
-                feebasSpots[i] = 447;
-            if (feebasSpots[i] < 1 || feebasSpots[i] >= 4)
-                i++;
-        }
-        waterTileNum = GetRoute119WaterTileNum(x, y, route119Section);
+        
         for (i = 0; i < NUM_FEEBAS_SPOTS; i++)
         {
-            if (waterTileNum == feebasSpots[i])
+            if (x == gFeebasTiles[i][0] && y == gFeebasTiles[i][1])
                 return TRUE;
         }
     }
@@ -136,6 +136,59 @@ static u16 FeebasRandom(void)
 static void FeebasSeedRng(u16 seed)
 {
     sFeebasRngValue = seed;
+}
+
+#define nWaterTiles 447
+void GetFeebasTiles(void)
+{
+    u32 nFeebasGenerated = 0;
+    u32 nFeebasHighlighted = 0;
+    u32 currentWaterTile = 0;
+    u32 feebasTiles[NUM_FEEBAS_SPOTS];
+    u32 x;
+    u32 y;
+    u32 i;
+
+    FeebasSeedRng(gSaveBlock1Ptr->dewfordTrends[0].rand);
+
+    for (; nFeebasGenerated < NUM_FEEBAS_SPOTS; nFeebasGenerated++)
+    {
+        u32 randomTile = FeebasRandom() % nWaterTiles;
+        if (randomTile == 0)
+            randomTile = nWaterTiles;
+        if (randomTile == 0 || randomTile > 3)
+            feebasTiles[nFeebasGenerated] = randomTile;
+    }
+
+    for (y = 0; y < 140; y++)
+    {
+        for (x = 0; x < 40; x++)
+        {
+            if (MetatileBehavior_IsSurfableAndNotWaterfall(MapHeaderGetMetatileBehaviorAt(x, y, MAP_GROUP(ROUTE119), MAP_NUM(ROUTE119))))
+            {
+                currentWaterTile++;
+                if (nFeebasHighlighted < NUM_FEEBAS_SPOTS)
+                {
+                    for (i = 0; i < NUM_FEEBAS_SPOTS; i++)
+                    {
+                        if (currentWaterTile == feebasTiles[i])
+                        {
+                            gFeebasTiles[i][0] = x + 7;
+                            gFeebasTiles[i][1] = y + 7;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#undef nWaterTiles
+
+void HighlightFeebasTiles(void)
+{
+    u32 i;
+    for (i = 0; i < NUM_FEEBAS_SPOTS; i++)
+        MapGridSetMetatileIdAt(gFeebasTiles[i][0], gFeebasTiles[i][1], gRoute119MetatileTable[MapGridGetMetatileIdAt(gFeebasTiles[i][0], gFeebasTiles[i][1]) - 0x2C]);
 }
 
 static u8 ChooseWildMonIndex_Land(void)
