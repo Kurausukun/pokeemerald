@@ -2543,6 +2543,7 @@ _081DDD90:
 
 	.align 2, 0 @ Don't pad with nop.
 
+	.bss
 	.global gMPlayTrack_BGM
 gMPlayTrack_BGM:
 	.space 0x320
