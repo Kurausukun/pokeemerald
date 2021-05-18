@@ -1262,3 +1262,96 @@ $(MID_SUBDIR)/se_m_leer.s: %.s: %.mid
 
 $(MID_SUBDIR)/se_dex_search.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G127 -v100 -P5
+
+$(MID_SUBDIR)/se_dex_page.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G127 -v090 -P5
+
+$(MID_SUBDIR)/se_dex_scroll.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G127 -v040 -P5
+
+$(MID_SUBDIR)/se_m_thunderbolt.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v120 -P4
+
+$(MID_SUBDIR)/se_m_thunderbolt2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v100 -P4
+
+$(MID_SUBDIR)/se_m_absorb_2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_absorb.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_acid_armor.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_attract.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_attract2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_barrier.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v095 -P4
+
+$(MID_SUBDIR)/se_m_baton_pass.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v100 -P4
+
+$(MID_SUBDIR)/se_m_belly_drum.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v115 -P4
+
+$(MID_SUBDIR)/se_m_bite.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_blizzard.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_blizzard2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_bonemerang.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_brick_break.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_bubble.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v095 -P4
+
+$(MID_SUBDIR)/se_m_bubble2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_bubble3.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v095 -P4
+
+$(MID_SUBDIR)/se_m_bubble_beam.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_bubble_beam2.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v120 -P4
+
+$(MID_SUBDIR)/se_m_charge.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v090 -P4
+
+$(MID_SUBDIR)/se_m_charm.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v100 -P4
+
+$(MID_SUBDIR)/se_m_confuse_ray.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v127 -P4
+
+$(MID_SUBDIR)/se_m_cosmic_power.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_crabhammer.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v100 -P4
+
+$(MID_SUBDIR)/se_m_detect.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v100 -P4
+
+$(MID_SUBDIR)/se_m_dig.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v115 -P4
+
+$(MID_SUBDIR)/se_m_dive.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v105 -P4
+
+$(MID_SUBDIR)/se_m_dizzy_punch.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v090 -P4
