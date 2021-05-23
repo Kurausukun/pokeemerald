@@ -831,7 +831,7 @@ SECTIONS {
         sound/songs/midi/se_m_gust.o(.rodata);
         sound/songs/midi/se_m_gust2.o(.rodata);
         sound/songs/midi/se_m_double_slap.o(.rodata);
-        sound/songs/se_m_double_team.o(.rodata);
+        sound/songs/midi/se_m_double_team.o(.rodata);
         sound/songs/midi/se_m_razor_wind.o(.rodata);
         sound/songs/se_m_icy_wind.o(.rodata);
         sound/songs/se_m_thunder_wave.o(.rodata);
@@ -847,7 +847,7 @@ SECTIONS {
         sound/songs/se_m_toxic.o(.rodata);
         sound/songs/se_m_sacred_fire.o(.rodata);
         sound/songs/se_m_sacred_fire2.o(.rodata);
-        sound/songs/se_m_ember.o(.rodata);
+        sound/songs/midi/se_m_ember.o(.rodata);
         sound/songs/midi/se_m_take_down.o(.rodata);
         sound/songs/midi/se_m_blizzard.o(.rodata);
         sound/songs/midi/se_m_blizzard2.o(.rodata);
@@ -867,7 +867,7 @@ SECTIONS {
         sound/songs/se_m_mist.o(.rodata);
         sound/songs/se_m_poison_powder.o(.rodata);
         sound/songs/midi/se_m_bind.o(.rodata);
-        sound/songs/se_m_dragon_rage.o(.rodata);
+        sound/songs/midi/se_m_dragon_rage.o(.rodata);
         sound/songs/se_m_sing.o(.rodata);
         sound/songs/se_m_perish_song.o(.rodata);
         sound/songs/midi/se_m_pay_day.o(.rodata);
@@ -930,7 +930,7 @@ SECTIONS {
         sound/songs/se_m_grasswhistle.o(.rodata);
         sound/songs/se_m_spit_up.o(.rodata);
         sound/songs/midi/se_m_dive.o(.rodata);
-        sound/songs/se_m_earthquake.o(.rodata);
+        sound/songs/midi/se_m_earthquake.o(.rodata);
         sound/songs/se_m_twister.o(.rodata);
         sound/songs/se_m_sweet_scent.o(.rodata);
         sound/songs/se_m_yawn.o(.rodata);

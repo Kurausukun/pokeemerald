@@ -1355,3 +1355,15 @@ $(MID_SUBDIR)/se_m_dive.s: %.s: %.mid
 
 $(MID_SUBDIR)/se_m_dizzy_punch.s: %.s: %.mid
 	$(MID) $< $@ -R$(STD_REVERB) -G128 -v090 -P4
+
+$(MID_SUBDIR)/se_m_double_team.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_dragon_rage.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v120 -P4
+
+$(MID_SUBDIR)/se_m_earthquake.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
+
+$(MID_SUBDIR)/se_m_ember.s: %.s: %.mid
+	$(MID) $< $@ -R$(STD_REVERB) -G128 -v110 -P4
