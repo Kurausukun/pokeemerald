@@ -2173,3 +2173,15 @@ DirectSoundWaveData_sd90_classical_whistle::
 	.align 2
 DirectSoundWaveData_sd90_enhanced_delay_shaku::
 	.incbin "sound/direct_sound_samples/sd90_enhanced_delay_shaku.bin"
+
+	.align 2
+DirectSoundWaveData_ps19_3tp_61::
+	.incbin "sound/direct_sound_samples/ps19_3tp_61.bin"
+
+	.align 2
+DirectSoundWaveData_ps19_3tp_73::
+	.incbin "sound/direct_sound_samples/ps19_3tp_73.bin"
+
+	.align 2
+DirectSoundWaveData_ps19_3tp_83::
+	.incbin "sound/direct_sound_samples/ps19_3tp_83.bin"
