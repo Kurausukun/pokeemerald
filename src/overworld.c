@@ -60,6 +60,7 @@
 #include "wild_encounter.h"
 #include "frontier_util.h"
 #include "constants/abilities.h"
+#include "constants/field_effects.h"
 #include "constants/layouts.h"
 #include "constants/map_types.h"
 #include "constants/region_map_sections.h"
@@ -3218,4 +3219,63 @@ static void SpriteCB_LinkPlayer(struct Sprite *sprite)
         sprite->invisible = ((sprite->data[7] & 4) >> 2);
         sprite->data[7]++;
     }
+}
+
+#define tVolume    task->data[0]
+#define tOrigMapId task->data[1]
+static void Task_UpdateDynamicMusic(u8 taskId)
+{
+    struct Task * task = &gTasks[taskId];
+    u16 currentMapId = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
+    if (currentMapId != tOrigMapId)
+    {
+        m4aMPlayFadeOutFromVol(&gMPlayInfo_BGM, 8, tVolume);
+        DestroyTask(taskId);
+        return;
+    }
+    if (gPlayerAvatar.runningState == NOT_MOVING)
+    {
+        tVolume -= 8;
+        if (tVolume <= 0)
+            tVolume = 0;
+    }
+    else if (gPlayerAvatar.runningState == MOVING)
+    {
+        tVolume += 8;
+        if (tVolume >= 256)
+            tVolume = 256;
+    }
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x180, (u16)tVolume);
+}
+#undef tVolume
+#undef tOrigMapId
+
+void Task_UpdateDynamicMusicWait(u8 taskId)
+{
+    struct Task * task = &gTasks[taskId];
+    if (BGMusicStopped())
+        task->func = Task_UpdateDynamicMusic;
+}
+
+void Task_UpdateDynamicMusicWaitFly(u8 taskId)
+{
+    struct Task * task = &gTasks[taskId];
+    if (!FieldEffectActiveListContains(FLDEFF_FLY_IN))
+    {
+        task->func = Task_UpdateDynamicMusic;
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x180, 0);
+    }
+}
+
+void UpdateDynamicMusic(void)
+{
+    u8 taskId;
+    if (FindTaskIdByFunc(Task_UpdateDynamicMusicWait) != TASK_NONE || FindTaskIdByFunc(Task_UpdateDynamicMusic) != TASK_NONE)
+        return;
+    if (FieldEffectActiveListContains(FLDEFF_FLY_IN) || FieldEffectActiveListContains(FLDEFF_USE_FLY))
+        taskId = CreateTask(Task_UpdateDynamicMusicWaitFly, 64);
+    else
+        taskId = CreateTask(Task_UpdateDynamicMusicWait, 64);
+    gTasks[taskId].data[0] = 256;
+    (u16)gTasks[taskId].data[1] = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
 }
