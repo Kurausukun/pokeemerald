@@ -1584,7 +1584,6 @@ _081DD594:
 	.pool
 	arm_func_end SoundMainRAM_Unk2
 
->>>>>>> 9f2b6ab2f2b7d5937342cef3166a652d882f1d94
 	thumb_func_start SoundMainBTM
 SoundMainBTM:
 	mov r12, r4
