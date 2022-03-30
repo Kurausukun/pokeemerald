@@ -71,10 +71,7 @@
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) >= (b) ? (a) : (b))
-
-#if MODERN
-#define abs(x) (((x) < 0) ? -(x) : (x))
-#endif
+#define ABS(x) (((x) < 0) ? -(x) : (x)) // Capitalized so we do not conflict with the built-in function
 
 // Used in cases where division by 0 can occur in the retail version.
 // Avoids invalid opcodes on some emulators, and the otherwise UB.

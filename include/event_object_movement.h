@@ -421,4 +421,7 @@ bool32 IsVirtualObjectInvisible(u8 virtualObjId);
 void SetVirtualObjectSpriteAnim(u8 virtualObjId, u8 animNum);
 bool32 IsVirtualObjectAnimating(u8 virtualObjId);
 
+s16 GetCurrentDistanceFromPlayer(u8 localId, u8 mapNum, u8 mapGroupId);
+s16 GetPreviousDistanceFromPlayer(u8 localId, u8 mapNum, u8 mapGroupId);
+
 #endif //GUARD_EVENT_OBJECT_MOVEMENT_H

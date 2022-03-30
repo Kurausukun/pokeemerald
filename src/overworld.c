@@ -3223,7 +3223,7 @@ static void SpriteCB_LinkPlayer(struct Sprite *sprite)
 
 #define tVolume    task->data[0]
 #define tOrigMapId task->data[1]
-static void Task_UpdateDynamicMusic(u8 taskId)
+static void Task_UpdateMovementDynamicMusic(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
     u16 currentMapId = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
@@ -3242,40 +3242,116 @@ static void Task_UpdateDynamicMusic(u8 taskId)
     else if (gPlayerAvatar.runningState == MOVING)
     {
         tVolume += 8;
-        if (tVolume >= 256)
+        if (tVolume > 256)
             tVolume = 256;
     }
     m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x180, (u16)tVolume);
 }
-#undef tVolume
-#undef tOrigMapId
 
-void Task_UpdateDynamicMusicWait(u8 taskId)
+void Task_UpdateMovementDynamicMusicWait(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
     if (BGMusicStopped())
-        task->func = Task_UpdateDynamicMusic;
+        task->func = Task_UpdateMovementDynamicMusic;
 }
 
-void Task_UpdateDynamicMusicWaitFly(u8 taskId)
+void Task_UpdateMovementDynamicMusicWaitFly(u8 taskId)
 {
     struct Task * task = &gTasks[taskId];
     if (!FieldEffectActiveListContains(FLDEFF_FLY_IN))
     {
-        task->func = Task_UpdateDynamicMusic;
+        task->func = Task_UpdateMovementDynamicMusic;
         m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x180, 0);
     }
 }
 
-void UpdateDynamicMusic(void)
+void UpdateMovementDynamicMusic(void)
 {
     u8 taskId;
-    if (FindTaskIdByFunc(Task_UpdateDynamicMusicWait) != TASK_NONE || FindTaskIdByFunc(Task_UpdateDynamicMusic) != TASK_NONE)
+    if (FindTaskIdByFunc(Task_UpdateMovementDynamicMusicWait) != TASK_NONE || FindTaskIdByFunc(Task_UpdateMovementDynamicMusic) != TASK_NONE)
         return;
     if (FieldEffectActiveListContains(FLDEFF_FLY_IN) || FieldEffectActiveListContains(FLDEFF_USE_FLY))
-        taskId = CreateTask(Task_UpdateDynamicMusicWaitFly, 64);
+        taskId = CreateTask(Task_UpdateMovementDynamicMusicWaitFly, 64);
     else
-        taskId = CreateTask(Task_UpdateDynamicMusicWait, 64);
+        taskId = CreateTask(Task_UpdateMovementDynamicMusicWait, 64);
     gTasks[taskId].data[0] = 256;
     (u16)gTasks[taskId].data[1] = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
 }
+
+static void Task_UpdateDistanceDynamicMusic(u8 taskId)
+{
+    s16 distance = GetCurrentDistanceFromPlayer(1, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    s16 prevDistance = GetPreviousDistanceFromPlayer(1, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    struct Task * task = &gTasks[taskId];
+    u16 currentMapId = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
+
+    if (currentMapId != tOrigMapId)
+    {
+        m4aMPlayFadeOut(&gMPlayInfo_BGM, 8);
+        DestroyTask(taskId);
+        return;
+    }
+    if (distance < 2)
+    {
+        tVolume += 4;
+        if (tVolume > 256)
+            tVolume = 256;
+    }
+    
+    if (distance > 2 && distance < 6)
+    {
+        if (distance > prevDistance)
+        {
+            tVolume -= 4;
+            if (tVolume <= 256 - distance * 26)
+                tVolume = 256 - distance * 26;
+        }
+        else
+        {
+            tVolume += 4;
+            if (tVolume >= 256 - distance * 26)
+                tVolume = 256 - distance * 26;
+        }
+    }
+    
+    if (distance >= 6)
+    {
+        tVolume -= 4;
+        if (tVolume < 0)
+            tVolume = 0;
+    }
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x20, (u16)tVolume);
+}
+
+void Task_UpdateDistanceDynamicMusicWait(u8 taskId)
+{
+    struct Task * task = &gTasks[taskId];
+    if (BGMusicStopped())
+        task->func = Task_UpdateDistanceDynamicMusic;
+}
+
+void Task_UpdateDistanceDynamicMusicWaitFly(u8 taskId)
+{
+    struct Task * task = &gTasks[taskId];
+    if (!FieldEffectActiveListContains(FLDEFF_FLY_IN))
+    {
+        task->func = Task_UpdateDistanceDynamicMusic;
+        m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x20, 0);
+    }
+}
+
+void UpdateDistanceDynamicMusic(void)
+{
+    u8 taskId;
+    if (FindTaskIdByFunc(Task_UpdateDistanceDynamicMusicWait) != TASK_NONE || FindTaskIdByFunc(Task_UpdateDistanceDynamicMusic) != TASK_NONE)
+        return;
+    if (FieldEffectActiveListContains(FLDEFF_FLY_IN) || FieldEffectActiveListContains(FLDEFF_USE_FLY))
+        taskId = CreateTask(Task_UpdateDistanceDynamicMusicWaitFly, 64);
+    else
+        taskId = CreateTask(Task_UpdateDistanceDynamicMusicWait, 64);
+    gTasks[taskId].data[0] = 0;
+    (u16)gTasks[taskId].data[1] = (gSaveBlock1Ptr->location.mapGroup << 8) | (gSaveBlock1Ptr->location.mapNum);
+}
+
+#undef tVolume
+#undef tOrigMapId

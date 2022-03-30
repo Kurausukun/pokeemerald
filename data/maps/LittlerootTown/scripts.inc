@@ -4,7 +4,6 @@
 .set LOCALID_BIRCH, 8
 
 LittlerootTown_MapScripts::
-	map_script MAP_SCRIPT_ON_RESUME, LittlerootTown_OnResume
 	map_script MAP_SCRIPT_ON_TRANSITION, LittlerootTown_OnTransition
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, LittlerootTown_OnFrame
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, LittlerootTown_OnWarp
@@ -38,9 +37,6 @@ LittlerootTown_MapScripts::
 	@ 2: Entered Rival's bedroom
 	@ 3: Met Rival
 	@ 4: Received Pokedex
-
-LittlerootTown_OnResume:
-	callnative UpdateDynamicMusic
 
 LittlerootTown_OnTransition:
 	setflag FLAG_VISITED_LITTLEROOT_TOWN

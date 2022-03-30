@@ -8937,3 +8937,37 @@ u8 MovementAction_Fly_Finish(struct ObjectEvent *objectEvent, struct Sprite *spr
 {
     return TRUE;
 }
+
+#define tPlayerX gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.x
+#define tPlayerY gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.y
+#define tPlayerPrevX gObjectEvents[gPlayerAvatar.objectEventId].previousCoords.x
+#define tPlayerPrevY gObjectEvents[gPlayerAvatar.objectEventId].previousCoords.y
+#define tObjectX object.currentCoords.x
+#define tObjectY object.currentCoords.y
+s16 GetCurrentDistanceFromPlayer(u8 localId, u8 mapNum, u8 mapGroupId)
+{
+    int xDistance, yDistance;
+    struct ObjectEvent object = gObjectEvents[GetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroupId)];
+
+    xDistance = ABS(tPlayerX - tObjectX);
+    yDistance = ABS(tPlayerY - tObjectY);
+
+    return max(xDistance, yDistance);
+}
+
+s16 GetPreviousDistanceFromPlayer(u8 localId, u8 mapNum, u8 mapGroupId)
+{
+    int xDistance, yDistance;
+    struct ObjectEvent object = gObjectEvents[GetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroupId)];
+
+    xDistance = ABS(tPlayerPrevX - tObjectX);
+    yDistance = ABS(tPlayerPrevY - tObjectY);
+
+    return max(xDistance, yDistance);
+}
+#undef tPlayerX
+#undef tPlayerY
+#undef tPlayerPrevX
+#undef tPlayerPrevY
+#undef tObjectX
+#undef tObjectY
