@@ -21,7 +21,7 @@ static u32 PCG32Random(struct PCG32 PCGRng)
     // Calculate output function (XSH RR), uses old state for max ILP
     xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
     rot = oldstate >> 59u;
-    return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+    return PCGRng.value = (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
 u16 Random(void)

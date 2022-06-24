@@ -5,6 +5,7 @@ struct PCG32
 {
     u64 state;
     u64 inc;
+    u32 value;
 };
 
 extern struct PCG32 gPCGRng;
