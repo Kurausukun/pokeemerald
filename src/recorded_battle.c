@@ -134,13 +134,13 @@ void RecordedBattle_SetTrainerInfo(void)
 
     if (sRecordMode == B_RECORD_MODE_RECORDING)
     {
-        gRecordedBattleRngSeed = gRngValue;
+        gRecordedBattleRngSeed = gPCGRng->state;
         sFrontierFacility = VarGet(VAR_FRONTIER_FACILITY);
         sFrontierBrainSymbol = GetFronterBrainSymbol();
     }
     else if (sRecordMode == B_RECORD_MODE_PLAYBACK)
     {
-        gRngValue = gRecordedBattleRngSeed;
+        gPCGRng->state = gRecordedBattleRngSeed;
     }
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)

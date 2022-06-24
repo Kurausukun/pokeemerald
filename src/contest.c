@@ -1292,7 +1292,7 @@ static void Task_ReadyStartLinkContest(u8 taskId)
         GetMultiplayerId();  // unused return value
         DestroyTask(taskId);
         gTasks[eContest.mainTaskId].func = Task_WaitToRaiseCurtainAtStart;
-        gRngValue = gContestRngValue;
+        gPCGRng->state = gContestRngValue;
     }
 }
 
@@ -1707,7 +1707,7 @@ static void Task_AppealSetup(u8 taskId)
     if (++gTasks[taskId].data[0] > 19)
     {
         eContest.turnNumber = 0;
-        eContest.unusedRng = gRngValue;
+        eContest.unusedRng = gPCGRng->state;
         if ((gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK) && IsPlayerLinkLeader())
         {
             s32 i;
@@ -2672,7 +2672,7 @@ static void Task_EndAppeals(u8 taskId)
         SetConestLiveUpdateTVData();
         ContestDebugPrintBitStrings();
     }
-    gContestRngValue = gRngValue;
+    gContestRngValue = gPCGRng->state;
     StringExpandPlaceholders(gStringVar4, gText_AllOutOfAppealTime);
     Contest_StartTextPrinter(gStringVar4, TRUE);
     gTasks[taskId].data[2] = 0;
