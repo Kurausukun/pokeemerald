@@ -7,8 +7,8 @@ struct PCG32
     u64 inc;
 };
 
-extern struct PCG32 * gPCGRng;
-extern struct PCG32 * gPCGRng2;
+extern struct PCG32 gPCGRng;
+extern struct PCG32 gPCGRng2;
 
 //Returns a 16-bit pseudorandom number
 u16 Random(void);
