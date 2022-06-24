@@ -26,10 +26,10 @@ static u32 PCG32Random(struct PCG32 PCGRng)
 
 u16 Random(void)
 {
-    gPCGRng.state = PCG32Random(gPCGRng);
+    u32 temp = PCG32Random(gPCGRng);
     sRandCount++;
-    MgbaPrintf(MGBA_LOG_INFO, "Rng1: %d", gPCGRng.state >> 16);
-    return gPCGRng.state >> 16;
+    MgbaPrintf(MGBA_LOG_INFO, "Rng1: %d", temp >> 16);
+    return temp >> 16;
 }
 
 void SeedRng(u16 seed)
@@ -47,15 +47,15 @@ void SeedRng2(u16 seed)
 
 u16 Random2(void)
 {
-    gPCGRng2.state = PCG32Random(gPCGRng2);
-    MgbaPrintf(MGBA_LOG_INFO, "Rng2: %d", gPCGRng2.state >> 16);
-    return gPCGRng2.state >> 16;
+    u32 temp = PCG32Random(gPCGRng2);
+    MgbaPrintf(MGBA_LOG_INFO, "Rng2: %d", temp >> 16);
+    return temp >> 16;
 }
 
 u32 Random32(void)
 {
-    gPCGRng.state = PCG32Random(gPCGRng);
+    u32 temp = PCG32Random(gPCGRng);
     sRandCount++;
-    MgbaPrintf(MGBA_LOG_INFO, "32: %d", gPCGRng.state);
-    return gPCGRng.state;
+    MgbaPrintf(MGBA_LOG_INFO, "32: %d", temp);
+    return temp;
 }
