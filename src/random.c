@@ -35,14 +35,14 @@ u16 Random(void)
 void SeedRng(u16 seed)
 {
     gPCGRng.state = seed;
-    gPCGRng.inc = REG_TM0CNT_L;
+    gPCGRng.inc = REG_TM1CNT_L;
     sUnknown = 0;
 }
 
 void SeedRng2(u16 seed)
 {
     gPCGRng2.state = seed;
-    gPCGRng.inc = REG_TM1CNT_L;
+    gPCGRng.inc = REG_TM2CNT_L;
 }
 
 u16 Random2(void)
