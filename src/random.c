@@ -6,30 +6,30 @@ EWRAM_DATA static u8 sUnknown = 0;
 EWRAM_DATA static u32 sRandCount = 0;
 
 // IWRAM common
-struct PCG32 gPCGRng;
-struct PCG32 gPCGRng2;
+struct PCG16 gPCGRng;
+struct PCG16 gPCGRng2;
 
-static u32 PCG32Random(struct PCG32 PCGRng)
+static u16 PCG16Random(struct PCG16 PCGRng)
 {
-    u64 oldstate;
-    u32 xorshifted;
-    u32 rot;
+    u32 oldstate;
+    u16 xorshifted;
+    u16 rot;
 
     oldstate = PCGRng.state;
     // Advance internal state
-    PCGRng.state = oldstate * 6364136223846793005ULL + (PCGRng.inc | 1);
+    PCGRng.state = oldstate * 747796405U + (PCGRng.inc | 1u);
     // Calculate output function (XSH RR), uses old state for max ILP
-    xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
-    rot = oldstate >> 59u;
-    return PCGRng.value = (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+    xorshifted = ((oldstate >> 10u) ^ oldstate) >> 12u;
+    rot = oldstate >> 28u;
+    return PCGRng.value = (xorshifted >> rot) | (xorshifted << ((-rot) & 15));
 }
 
 u16 Random(void)
 {
-    u32 temp = PCG32Random(gPCGRng);
+    u16 temp = PCG16Random(gPCGRng);
     sRandCount++;
-    MgbaPrintf(MGBA_LOG_INFO, "Rng1: %d", temp >> 16);
-    return temp >> 16;
+    //MgbaPrintf(MGBA_LOG_INFO, "Rng1: %d", temp >> 16);
+    return temp;
 }
 
 void SeedRng(u16 seed)
@@ -47,15 +47,7 @@ void SeedRng2(u16 seed)
 
 u16 Random2(void)
 {
-    u32 temp = PCG32Random(gPCGRng2);
-    MgbaPrintf(MGBA_LOG_INFO, "Rng2: %d", temp >> 16);
-    return temp >> 16;
-}
-
-u32 Random32(void)
-{
-    u32 temp = PCG32Random(gPCGRng);
-    sRandCount++;
-    MgbaPrintf(MGBA_LOG_INFO, "32: %d", temp);
+    u16 temp = PCG16Random(gPCGRng2);
+    //MgbaPrintf(MGBA_LOG_INFO, "Rng2: %d", temp >> 16);
     return temp;
 }
