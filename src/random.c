@@ -1,6 +1,5 @@
 #include "global.h"
 #include "random.h"
-#include "rtc.h"
 
 EWRAM_DATA static u8 sUnknown = 0;
 EWRAM_DATA static u32 sRandCount = 0;
@@ -31,17 +30,17 @@ u16 Random(void)
     return temp;
 }
 
-void SeedRng(u16 seed)
+void SeedRng(u32 seed)
 {
     gPCGRng.state = seed;
-    gPCGRng.inc = RtcGetSecondCount();
+    gPCGRng.inc = seed;
     sUnknown = 0;
 }
 
-void SeedRng2(u16 seed)
+void SeedRng2(u32 seed)
 {
     gPCGRng2.state = seed;
-    gPCGRng.inc = RtcGetSecondCount();
+    gPCGRng.inc = seed;
 }
 
 u16 Random2(void)
