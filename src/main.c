@@ -69,8 +69,6 @@ u8 gLinkVSyncDisabled;
 u32 IntrMain_Buffer[0x200];
 s8 gPcmDmaCounter;
 
-static EWRAM_DATA u16 sTrainerId = 0;
-
 //EWRAM_DATA void (**gFlashTimerIntrFunc)(void) = NULL;
 
 static void UpdateLinkAndCallCallbacks(void);
@@ -187,24 +185,6 @@ void SetMainCallback2(MainCallback callback)
 {
     gMain.callback2 = callback;
     gMain.state = 0;
-}
-
-void StartTimer1(void)
-{
-    REG_TM1CNT_H = 0x80;
-}
-
-void SeedRngAndSetTrainerId(void)
-{
-    u16 val = REG_TM1CNT_L;
-    SeedRng(val);
-    REG_TM1CNT_H = 0;
-    sTrainerId = val;
-}
-
-u16 GetGeneratedTrainerIdLower(void)
-{
-    return sTrainerId;
 }
 
 void EnableVCountIntrAtLine150(void)
