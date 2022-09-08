@@ -39,6 +39,7 @@
 #include "menu_helpers.h"
 #include "menu_specialized.h"
 #include "metatile_behavior.h"
+#include "move_relearner.h"
 #include "overworld.h"
 #include "palette.h"
 #include "party_menu.h"
@@ -93,7 +94,8 @@ enum {
     MENU_TRADE1,
     MENU_TRADE2,
     MENU_TOSS,
-    MENU_FIELD_MOVES
+    MENU_FIELD_MOVES,
+    MENU_MOVES
 };
 
 // IDs for the action lists that appear when a party mon is selected
@@ -112,6 +114,7 @@ enum {
     ACTIONS_TRADE,
     ACTIONS_SPIN_TRADE,
     ACTIONS_TAKEITEM_TOSS,
+    ACTIONS_MOVES
 };
 
 // In CursorCb_FieldMove, field moves <= FIELD_MOVE_WATERFALL are assumed to line up with the badge flags.
@@ -472,6 +475,7 @@ static void CursorCb_Trade1(u8);
 static void CursorCb_Trade2(u8);
 static void CursorCb_Toss(u8);
 static void CursorCb_FieldMove(u8);
+static void CursorCb_Moves(u8);
 static bool8 SetUpFieldMove_Surf(void);
 static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Waterfall(void);
@@ -1318,6 +1322,24 @@ static void HandleChooseMonSelection(u8 taskId, s8 *slotPtr)
                 PlaySE(SE_SELECT);
                 PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
                 TryTutorSelectedMon(taskId);
+            }
+            break;
+        case PARTY_ACTION_MOVES:
+            if (IsSelectedMonNotEgg((u8 *)slotPtr))
+            {
+                PlaySE(SE_SELECT);
+                PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+                gSpecialVar_0x8004 = *slotPtr;
+                GetNumberOfRelearnableMoves(&gPlayerParty[gSpecialVar_0x8004]);
+                if (gSpecialVar_0x8005 > 0)
+                {
+                    TeachMoveRelearnerMove();
+                    DestroyTask(taskId);
+                }
+                else
+                {
+                    Task_ClosePartyMenu(taskId);
+                }
             }
             break;
         case PARTY_ACTION_GIVE_MAILBOX_MAIL:
@@ -2628,6 +2650,8 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
             AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_MAIL);
         else
             AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_ITEM);
+        
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_MOVES);
     }
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
 }
@@ -3919,6 +3943,12 @@ static bool8 SetUpFieldMove_Dive(void)
         return TRUE;
     }
     return FALSE;
+}
+
+static void CursorCb_Moves(u8 taskId)
+{
+    DestroyTask(taskId);
+    return;
 }
 
 static void CreatePartyMonIconSprite(struct Pokemon *mon, struct PartyMenuBox *menuBox, u32 slot)
