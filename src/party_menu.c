@@ -2609,7 +2609,9 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
-    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_MOVES);
+    
+    if (!InBattlePike() && GetMonData(&gPlayerParty[slotId], MON_DATA_IS_EGG) != TRUE && GetNumberOfRelearnableMoves(&gPlayerParty[slotId]) > 0)
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_MOVES);
 
     // Add field moves to action list
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -3928,6 +3930,10 @@ static bool8 SetUpFieldMove_Dive(void)
 static void CursorCb_Moves(u8 taskId)
 {
     PlaySE(SE_SELECT);
+    gSpecialVar_0x8004 = gPartyMenu.slotId;
+    gSpecialVar_0x8005 = GetNumberOfRelearnableMoves(&gPlayerParty[gSpecialVar_0x8004]);
+    gLastViewedMonIndex = gPartyMenu.slotId;
+    gMain.savedCallback = CB2_ReturnToPartyMenuFromSummaryScreen;
     sPartyMenuInternal->exitCallback = CB2_InitLearnMove;
     Task_ClosePartyMenu(taskId);
 }

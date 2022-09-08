@@ -376,6 +376,7 @@ static void Task_WaitForFadeOut(u8 taskId)
     {
         SetMainCallback2(CB2_InitLearnMove);
         gFieldCallback = FieldCB_ContinueScriptHandleMusic;
+        gMain.savedCallback = CB2_ReturnToField;
         DestroyTask(taskId);
     }
 }
@@ -671,7 +672,7 @@ static void DoMoveRelearnerMain(void)
         if (!gPaletteFade.active)
         {
             FreeMoveRelearnerResources();
-            SetMainCallback2(CB2_ReturnToField);
+            SetMainCallback2(gMain.savedCallback);
         }
         break;
     case MENU_STATE_FADE_FROM_SUMMARY_SCREEN:
