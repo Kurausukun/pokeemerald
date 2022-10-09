@@ -704,7 +704,9 @@ SECTIONS {
         src/mystery_event_msg.o(.rodata);
         data/mystery_gift.o(.rodata);
         src/m4a_tables.o(.rodata);
-        data/sound_data.o(.rodata);
+        data/sound_data_1.o(.rodata);
+        src/voicegrouptest.o(.rodata);
+        data/sound_data_2.o(.rodata);
     } =0
 
     song_data :

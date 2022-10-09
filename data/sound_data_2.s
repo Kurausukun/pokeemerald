@@ -3,7 +3,7 @@
 	.include "asm/macros/m4a.inc"
 	.include "asm/macros/music_voice.inc"
 
-	.include "sound/voice_groups.inc"
+	.include "sound/voice_groups_2.inc"
 	.include "sound/keysplit_tables.inc"
 	.include "sound/programmable_wave_data.inc"
 	.include "sound/music_player_table.inc"
