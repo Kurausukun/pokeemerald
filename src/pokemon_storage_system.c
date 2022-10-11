@@ -545,7 +545,7 @@ struct PokemonStorageSystemData
     struct ItemIcon itemIcons[MAX_ITEM_ICONS];
     u16 movingItemId;
     u16 itemInfoWindowOffset;
-    u8 unkUnused2; // Unused
+    u8 vBlankCopyPending;
     u16 displayMonPalOffset;
     u16 *displayMonTilePtr;
     struct Sprite *displayMonSprite;
@@ -858,6 +858,7 @@ static void PrintMessage(u8 id);
 static void LoadDisplayMonGfx(u16, u32);
 static void SpriteCB_DisplayMonMosaic(struct Sprite *);
 static void SetPartySlotTilemap(u8, bool8);
+static void CopySpriteDuringVBlank(void);
 
 // Tilemap utility
 static void TilemapUtil_SetRect(u8, u16, u16, u16, u16);
@@ -1967,6 +1968,14 @@ static void SpriteCB_ChooseBoxArrow(struct Sprite *sprite)
     }
 }
 
+static void CopySpriteDuringVBlank(void)
+{
+    if (sStorage->vBlankCopyPending)
+    {
+        CpuCopy32(sStorage->tileBuffer, sStorage->displayMonTilePtr, MON_PIC_SIZE);
+        sStorage->vBlankCopyPending = 0;
+    }
+}
 
 //------------------------------------------------------------------------------
 //  SECTION: Main tasks
@@ -1983,6 +1992,7 @@ static void VBlankCB_PokeStorage(void)
     LoadOam();
     ProcessSpriteCopyRequests();
     UnkUtil_Run();
+    CopySpriteDuringVBlank();
     TransferPlttBuffer();
     SetGpuReg(REG_OFFSET_BG2HOFS, sStorage->bg2_X);
 }
@@ -2013,6 +2023,7 @@ static void EnterPokeStorage(u8 boxOption)
         sMovingItemId = ITEM_NONE;
         sStorage->state = 0;
         sStorage->taskId = CreateTask(Task_InitPokeStorage, 3);
+        sStorage->vBlankCopyPending = 0;
         sLastUsedBox = StorageGetCurrentBox();
         SetMainCallback2(CB2_PokeStorage);
     }
@@ -3978,7 +3989,7 @@ static void LoadDisplayMonGfx(u16 species, u32 pid)
     {
         LoadSpecialPokePic(&gMonFrontPicTable[species], sStorage->tileBuffer, species, pid, TRUE);
         LZ77UnCompWram(sStorage->displayMonPalette, sStorage->displayMonPalBuffer);
-        CpuCopy32(sStorage->tileBuffer, sStorage->displayMonTilePtr, MON_PIC_SIZE);
+        sStorage->vBlankCopyPending = 1;
         LoadPalette(sStorage->displayMonPalBuffer, sStorage->displayMonPalOffset, 0x20);
         sStorage->displayMonSprite->invisible = FALSE;
     }
