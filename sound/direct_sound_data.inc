@@ -5837,3 +5837,6 @@ DirectSoundWaveData_hg_hoohclap::
 	.align 2
 DirectSoundWaveData_hg_choirc5::
 	.incbin "sound/direct_sound_samples/hg_choirc5.bin"
+
+DirectSoundWaveData_sc88pro_tuba_51_short::
+	.incbin "sound/direct_sound_samples/sc88pro_tuba_51_short.aif"
