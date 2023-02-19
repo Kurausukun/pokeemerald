@@ -430,6 +430,7 @@ $(ELF): $(OBJ_DIR)/ld_script.ld $(OBJS) libagbsyscall
 
 $(ROM): $(ELF)
 	$(OBJCOPY) -O binary $< $@
+	@echo "current ROM size:" $$(stat -c "%s" $(ROM) | numfmt --to=iec --format="%.2f")
 	$(FIX) $@ -p --silent
 
 modern: all
