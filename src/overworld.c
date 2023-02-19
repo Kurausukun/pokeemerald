@@ -2961,10 +2961,11 @@ bool32 IsSendingKeysOverCable(void)
 
 static u32 GetLinkSendQueueLength(void)
 {
-    if (gWirelessCommType != 0)
-        return gRfu.sendQueue.count;
-    else
-        return gLink.sendQueue.count;
+    //if (gWirelessCommType != 0)
+    //    return gRfu.sendQueue.count;
+    //else
+    //    return gLink.sendQueue.count;
+    return 0;
 }
 
 static void ZeroLinkPlayerObjectEvent(struct LinkPlayerObjectEvent *linkPlayerObjEvent)

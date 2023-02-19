@@ -1,6 +1,5 @@
 gLinkPartnersHeldKeys
 gLinkDebugSeed
-gLocalLinkPlayerBlock
 gLinkErrorOccurred
 gLinkDebugFlags
 gLinkFiller1
@@ -30,6 +29,5 @@ gLinkFiller3
 gLinkFiller4
 gLinkFiller5
 gLastSendQueueCount
-gLink
 gLastRecvQueueCount
 gLinkSavedIme

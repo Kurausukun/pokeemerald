@@ -105,23 +105,24 @@ static void OpenEReaderLink(void)
 
 static bool32 ValidateEReaderConnection(void)
 {
-    volatile u16 backupIME;
-    u16 handshakes[MAX_LINK_PLAYERS];
-
-    backupIME = REG_IME;
-    REG_IME = 0;
-    *(u64 *)handshakes = *(u64 *)gLink.handshakeBuffer;
-    REG_IME = backupIME;
-    
-    // Validate that we are player 1, the EReader is player 2,
-    // and that players 3 and 4 are empty.
-    if (handshakes[0] == SLAVE_HANDSHAKE && handshakes[1] == EREADER_HANDSHAKE
-     && handshakes[2] == 0xFFFF && handshakes[3] == 0xFFFF)
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    //volatile u16 backupIME;
+    //u16 handshakes[MAX_LINK_PLAYERS];
+    //
+    //backupIME = REG_IME;
+    //REG_IME = 0;
+    //*(u64 *)handshakes = *(u64 *)gLink.handshakeBuffer;
+    //REG_IME = backupIME;
+    //
+    //// Validate that we are player 1, the EReader is player 2,
+    //// and that players 3 and 4 are empty.
+    //if (handshakes[0] == SLAVE_HANDSHAKE && handshakes[1] == EREADER_HANDSHAKE
+    // && handshakes[2] == 0xFFFF && handshakes[3] == 0xFFFF)
+    //{
+    //    return TRUE;
+    //}
+    //
+    //return FALSE;
+    return 0;
 }
 
 static bool32 IsChildConnected(void)

@@ -237,7 +237,7 @@ struct BlockRequest
     u32 size;
 };
 
-extern struct Link gLink;
+//extern struct Link gLink;
 extern u16 gRecvCmds[MAX_RFU_PLAYERS][CMD_LENGTH];
 extern u8 gBlockSendBuffer[BLOCK_BUFFER_SIZE];
 extern u16 gLinkType;
@@ -306,7 +306,7 @@ bool32 IsLinkRecvQueueAtOverworldMax(void);
 
 extern u16 gLinkPartnersHeldKeys[6];
 extern u32 gLinkDebugSeed;
-extern struct LinkPlayerBlock gLocalLinkPlayerBlock;
+//extern struct LinkPlayerBlock gLocalLinkPlayerBlock;
 extern bool8 gLinkErrorOccurred;
 extern u32 gLinkDebugFlags;
 extern bool8 gRemoteLinkPlayersNotReceived[MAX_LINK_PLAYERS];
