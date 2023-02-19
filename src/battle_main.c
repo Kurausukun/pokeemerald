@@ -5060,64 +5060,64 @@ static void HandleEndTurn_BattleWon(void)
         BattleStopLowHpSound();
         gBattlescriptCurrInstr = BattleScript_LocalTrainerBattleWon;
 
-        if((trainer.partyFlags & F_TRAINER_PARTY_KANTO_MUS) != 0)
+        //if((trainer.partyFlags & F_TRAINER_PARTY_KANTO_MUS) != 0)
+        //{
+        //    switch (trainer.trainerClass)
+        //    {
+        //        case TRAINER_CLASS_LEADER:
+        //        case TRAINER_CLASS_ELITE_FOUR:
+        //            PlayBGM(MUS_RG_VICTORY_GYM_LEADER);
+        //            break;
+        //        case TRAINER_CLASS_CHAMPION:
+        //            PlayBGM(MUS_VICTORY_LEAGUE);
+        //            break;
+        //        default:
+        //            PlayBGM(MUS_RG_VICTORY_TRAINER);
+        //            break;
+        //    }
+        //}
+        //else if((trainer.partyFlags & F_TRAINER_PARTY_JOHTO_MUS) != 0)
+        //{
+        //    switch (trainer.trainerClass)
+        //    {
+        //        case TRAINER_CLASS_LEADER:
+        //        case TRAINER_CLASS_ELITE_FOUR:
+        //            PlayBGM(MUS_HG_VICTORY_GYM_LEADER);
+        //            break;
+        //        case TRAINER_CLASS_CHAMPION:
+        //            PlayBGM(MUS_VICTORY_LEAGUE);
+        //            break;
+        //        default:
+        //            PlayBGM(MUS_HG_VICTORY_TRAINER);
+        //            break;
+        //    }
+        //}
+        //else
+    //{
+        switch (trainer.trainerClass)
         {
-            switch (trainer.trainerClass)
-            {
-                case TRAINER_CLASS_LEADER:
-                case TRAINER_CLASS_ELITE_FOUR:
-                    PlayBGM(MUS_RG_VICTORY_GYM_LEADER);
-                    break;
-                case TRAINER_CLASS_CHAMPION:
-                    PlayBGM(MUS_VICTORY_LEAGUE);
-                    break;
-                default:
-                    PlayBGM(MUS_RG_VICTORY_TRAINER);
-                    break;
-            }
+        case TRAINER_CLASS_ELITE_FOUR:
+            PlayBGM(MUS_VICTORY_GYM_LEADER);
+            break;
+        case TRAINER_CLASS_CHAMPION:
+            PlayBGM(MUS_VICTORY_LEAGUE);
+            break;
+        case TRAINER_CLASS_TEAM_AQUA:
+        case TRAINER_CLASS_TEAM_MAGMA:
+        case TRAINER_CLASS_AQUA_ADMIN:
+        case TRAINER_CLASS_AQUA_LEADER:
+        case TRAINER_CLASS_MAGMA_ADMIN:
+        case TRAINER_CLASS_MAGMA_LEADER:
+            PlayBGM(MUS_VICTORY_AQUA_MAGMA);
+            break;
+        case TRAINER_CLASS_LEADER:
+            PlayBGM(MUS_VICTORY_GYM_LEADER);
+            break;
+        default:
+            PlayBGM(MUS_VICTORY_TRAINER);
+            break;
         }
-        else if((trainer.partyFlags & F_TRAINER_PARTY_JOHTO_MUS) != 0)
-        {
-            switch (trainer.trainerClass)
-            {
-                case TRAINER_CLASS_LEADER:
-                case TRAINER_CLASS_ELITE_FOUR:
-                    PlayBGM(MUS_HG_VICTORY_GYM_LEADER);
-                    break;
-                case TRAINER_CLASS_CHAMPION:
-                    PlayBGM(MUS_VICTORY_LEAGUE);
-                    break;
-                default:
-                    PlayBGM(MUS_HG_VICTORY_TRAINER);
-                    break;
-            }
-        }
-        else
-        {
-            switch (trainer.trainerClass)
-            {
-            case TRAINER_CLASS_ELITE_FOUR:
-                PlayBGM(MUS_VICTORY_GYM_LEADER);
-                break;
-            case TRAINER_CLASS_CHAMPION:
-                PlayBGM(MUS_VICTORY_LEAGUE);
-                break;
-            case TRAINER_CLASS_TEAM_AQUA:
-            case TRAINER_CLASS_TEAM_MAGMA:
-            case TRAINER_CLASS_AQUA_ADMIN:
-            case TRAINER_CLASS_AQUA_LEADER:
-            case TRAINER_CLASS_MAGMA_ADMIN:
-            case TRAINER_CLASS_MAGMA_LEADER:
-                PlayBGM(MUS_VICTORY_AQUA_MAGMA);
-                break;
-            case TRAINER_CLASS_LEADER:
-                PlayBGM(MUS_VICTORY_GYM_LEADER);
-                break;
-            default:
-                PlayBGM(MUS_VICTORY_TRAINER);
-                break;
-            }
-        }
+    //}
     }
     else
     {

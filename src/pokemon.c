@@ -7654,39 +7654,41 @@ u16 GetBattleBGM(void)
                     return MUS_RG_VS_GYM_LEADER;
                 case TRAINER_CLASS_CHAMPION:
                     return MUS_RG_VS_CHAMPION;
+                case TRAINER_CLASS_RIVAL:
+                    return MUS_VS_RIVAL;
                 default:
                     return MUS_RG_VS_TRAINER;
             }
         }
-        else if((trainer.partyFlags & F_TRAINER_PARTY_JOHTO_MUS) != 0)
-        {
-            switch (trainerClass)
-            {
-                case TRAINER_CLASS_LEADER:
-                    return MUS_HG_VS_GYM_LEADER;
-                case TRAINER_CLASS_ELITE_FOUR:
-                    return MUS_HG_VS_GYM_LEADER;
-                case TRAINER_CLASS_CHAMPION:
-                    return MUS_HG_VS_CHAMPION;
-                default:
-                    return MUS_HG_VS_TRAINER;
-            }
-        }
-        else if((trainer.partyFlags & F_TRAINER_PARTY_SINNOH_MUS) != 0)
-        {
-            switch (trainerClass)
-            {
-                // For now us the FR music, should change for later
-                case TRAINER_CLASS_LEADER:
-                    return MUS_RG_VS_GYM_LEADER;
-                case TRAINER_CLASS_ELITE_FOUR:
-                    return MUS_DP_VS_ELITE_FOUR;
-                case TRAINER_CLASS_CHAMPION:
-                    return MUS_DP_VS_CHAMPION;
-                default:
-                    return MUS_HG_VS_TRAINER;
-            }
-        }
+        //else if((trainer.partyFlags & F_TRAINER_PARTY_JOHTO_MUS) != 0)
+        //{
+        //    switch (trainerClass)
+        //    {
+        //        case TRAINER_CLASS_LEADER:
+        //            return MUS_HG_VS_GYM_LEADER;
+        //        case TRAINER_CLASS_ELITE_FOUR:
+        //            return MUS_HG_VS_GYM_LEADER;
+        //        case TRAINER_CLASS_CHAMPION:
+        //            return MUS_HG_VS_CHAMPION;
+        //        default:
+        //            return MUS_HG_VS_TRAINER;
+        //    }
+        //}
+        //else if((trainer.partyFlags & F_TRAINER_PARTY_SINNOH_MUS) != 0)
+        //{
+        //    switch (trainerClass)
+        //    {
+        //        // For now us the FR music, should change for later
+        //        case TRAINER_CLASS_LEADER:
+        //            return MUS_RG_VS_GYM_LEADER;
+        //        case TRAINER_CLASS_ELITE_FOUR:
+        //            return MUS_DP_VS_ELITE_FOUR;
+        //        case TRAINER_CLASS_CHAMPION:
+        //            return MUS_DP_VS_CHAMPION;
+        //        default:
+        //            return MUS_HG_VS_TRAINER;
+        //    }
+        //}
         else
         {
             switch (trainerClass)
@@ -7704,10 +7706,10 @@ u16 GetBattleBGM(void)
             case TRAINER_CLASS_CHAMPION:
                 return MUS_VS_CHAMPION;
             case TRAINER_CLASS_RIVAL:
-                if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-                    return MUS_VS_RIVAL;
-                if (!StringCompare(trainer.trainerName, gText_BattleWallyName))
-                    return MUS_VS_TRAINER;
+                //if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+                //    return MUS_VS_RIVAL;
+                //if (!StringCompare(trainer.trainerName, gText_BattleWallyName))
+                //    return MUS_VS_TRAINER;
                 return MUS_VS_RIVAL;
             case TRAINER_CLASS_ELITE_FOUR:
                 return MUS_VS_ELITE_FOUR;
