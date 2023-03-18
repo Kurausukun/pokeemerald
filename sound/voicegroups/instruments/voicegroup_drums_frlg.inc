@@ -1,9 +1,5 @@
 	.align 2
-<<<<<<<< HEAD:sound/voicegroups/instruments/voicegroup_drumset_frlg.inc
-voicegroup_drumset_frlg::
-========
 voicegroup_drums_frlg::
->>>>>>>> 3d302e396d56dc364dfc3e7caf7df88e5e23393b:sound/voicegroups/instruments/voicegroup_drums_frlg.inc
 	voice_directsound_no_resample 64, 64, DirectSoundWaveData_drum_and_percussion_kick, 255, 0, 255, 0
 	voice_directsound_no_resample 64, 64, DirectSoundWaveData_sd90_solo_snare, 255, 180, 175, 228
 	voice_directsound_no_resample 64, 64, DirectSoundWaveData_sd90_solo_snare, 255, 0, 255, 242

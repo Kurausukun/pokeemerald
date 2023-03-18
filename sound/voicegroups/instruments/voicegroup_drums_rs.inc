@@ -1,9 +1,5 @@
 	.align 2
-<<<<<<<< HEAD:sound/voicegroups/instruments/voicegroup_drumset_rs.inc
-voicegroup_drumset_rs::
-========
 voicegroup_drums_rs::
->>>>>>>> 3d302e396d56dc364dfc3e7caf7df88e5e23393b:sound/voicegroups/instruments/voicegroup_drums_rs.inc
 	voice_directsound_no_resample 60, 64, DirectSoundWaveData_sc88pro_rnd_kick, 255, 0, 255, 242
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_directsound_no_resample 60, 64, DirectSoundWaveData_sc88pro_rnd_snare, 255, 0, 255, 242
