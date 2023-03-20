@@ -1,6 +1,6 @@
 	.align 2
 voicegroup113::
-	voice_keysplit_all voicegroup_drums_frlg - 0x1B0
+	voice_keysplit_all voicegroup_drums_frlg
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_23, 0, 7, 15, 1
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_25, 0, 7, 15, 1
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_24, 0, 7, 15, 1

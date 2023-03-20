@@ -1,6 +1,6 @@
 	.align 2
 voicegroup045::
-	voice_keysplit_all voicegroup_drums_rs - 0x1B0
+	voice_keysplit_all voicegroup_drums_rs
 	voice_square_1_alt 60, 0, 0, 1, 0, 2, 0, 1
 	voice_square_1_alt 60, 0, 0, 3, 1, 2, 6, 0
 	voice_square_2_alt 60, 0, 3, 1, 2, 6, 0

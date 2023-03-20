@@ -1,6 +1,6 @@
 	.align 2
 voicegroup012::
-	voice_keysplit_all voicegroup_drums_rs - 0x1B0
+	voice_keysplit_all voicegroup_drums_rs
 	voice_keysplit voicegroup_piano, KeySplitTable1
 	voice_directsound 60, 0, DirectSoundWaveData_trinity_30303_mega_bass, 255, 178, 180, 165
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0

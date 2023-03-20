@@ -1,5 +1,5 @@
 	.align 2
-voicegroup_drums_emerald_1::
+.set voicegroup_drums_emerald_1, . - 0x1B0
 	voice_directsound_no_resample 60, 64, DirectSoundWaveData_sc88pro_taiko, 255, 0, 255, 0
 	voice_directsound_no_resample 64, 64, DirectSoundWaveData_sd90_solo_snare, 255, 180, 175, 228
 	voice_directsound_no_resample 64, 64, DirectSoundWaveData_sd90_solo_snare, 255, 0, 255, 242
