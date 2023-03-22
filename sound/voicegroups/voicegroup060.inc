@@ -1,6 +1,6 @@
 	.align 2
 voicegroup060::
-	voice_keysplit_all voicegroup001
+	voice_directsound 60, 0, DirectSoundWaveData_saw, 255, 0, 255, 0
 	voice_keysplit voicegroup005, KeySplitTable1
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
