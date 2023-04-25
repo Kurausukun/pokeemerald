@@ -1225,6 +1225,18 @@ _081DD8BA:
 	strb r0, [r5, o_MusicPlayerTrack_volX]
 	movs r0, 0x16
 	strb r0, [r5, o_MusicPlayerTrack_lfoSpeed]
+	movs r0, 0x3C
+	movs r1, 0x30 @ o_MusicPlayerTrack_portaKey
+	strb r0, [r5, r1]
+	movs r0, 0x0
+	adds r1, 0x1 @ o_MusicPlayerTrack_portaTime
+	strb r0, [r5, r1]
+	adds r1, 0x1 @ o_MusicPlayerTrack_sweepPitch
+	strh r0, [r5, r1]
+	adds r1, 0x2 @ o_MusicPlayerTrack_sweepCounter
+	strh r0, [r5, r1]
+	adds r1, 0x2 @ o_MusicPlayerTrack_sweepLength
+	strh r0, [r5, r1]
 	movs r0, 0x1
 	adds r1, r5, 0x6
 	strb r0, [r1, o_MusicPlayerTrack_ToneData_type - 0x6]
@@ -1463,6 +1475,7 @@ call_r3:
 lt_gClockTable:     .word gClockTable
 lt2_SOUND_INFO_PTR: .word SOUND_INFO_PTR
 lt2_ID_NUMBER:      .word ID_NUMBER
+lt2_MPlayTrack:     .word
 	thumb_func_end MPlayMain
 
 	thumb_func_start TrackStop
@@ -1558,6 +1571,8 @@ ply_note:
 	cmp r0, 0x80
 	bhs _081DDB46
 	strb r0, [r5, o_MusicPlayerTrack_key]
+	movs r2, 0x30 @ o_MusicPlayerTrack_portaKey
+	strb r0, [r5, r2]
 	adds r3, 0x1
 	ldrb r0, [r3]
 	cmp r0, 0x80

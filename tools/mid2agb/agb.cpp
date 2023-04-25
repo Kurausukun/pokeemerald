@@ -341,6 +341,12 @@ void PrintExtendedOp(const Event& event)
     case 0x09:
         PrintOp(event.time, "XCMD  ", "xIECL , %u", event.param2);
         break;
+    case 0x0E:
+        PrintOp(event.time, "XCMD  ", "xPOKY , %u", event.param2);
+        break;
+    case 0x0F:
+        PrintOp(event.time, "XCMD  ", "xPOLN , %u", event.param2);
+        break;
     default:
         PrintWait(event.time);
         break;
@@ -398,6 +404,8 @@ void PrintControllerOp(const Event& event)
         break;
     case 0x1D:
     case 0x1F:
+    case 0x2C:
+    case 0x2D:
         PrintExtendedOp(event);
         break;
     case 0x1E:

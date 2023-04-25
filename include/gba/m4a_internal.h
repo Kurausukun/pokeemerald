@@ -301,7 +301,12 @@ struct MusicPlayerTrack
     u8 pseudoEchoLength;
     struct SoundChannel *chan;
     struct ToneData tone;
-    u8 gap[10];
+    u8 portaKey;
+    u8 portaTime;
+    s16 sweepPitch;
+    u16 sweepCounter;
+    u16 sweepLength;
+    u8 gap[2];
     u16 unk_3A;
     u32 unk_3C;
     u8 *cmdPtr;
@@ -493,5 +498,7 @@ void ply_xleng(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xswee(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xcmd_0C(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xcmd_0D(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
+void ply_xpoky(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
+void ply_xpoln(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 
 #endif // GUARD_GBA_M4A_INTERNAL_H

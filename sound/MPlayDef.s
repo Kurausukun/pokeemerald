@@ -71,6 +71,8 @@
 	.equ	XCMD,	0xcd		@ extend command  ***lib
 	 .equ	xIECV,	0x08		@  imi.echo vol   ***lib
 	 .equ	xIECL,	0x09		@  imi.echo len   ***lib
+	 .equ	xPOKY,	0x0e		@  portamento key
+	 .equ	xPOLN,	0x0f		@  portamento length
 
 	.equ	EOT,	0xce		@ End of Tie
 	.equ	TIE,	0xcf		@

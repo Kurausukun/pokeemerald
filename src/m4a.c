@@ -779,12 +779,27 @@ void TrkVolPitSet(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *tr
 
         if (track->modT == 0)
             x += 16 * track->modM;
+        
+        if (track->portaTime != 0 && track->sweepCounter < track->sweepLength)
+        {
+            int swp = track->portaTime * track->portaTime;
+            track->sweepPitch += (s16)((track->portaKey - track->key) << 6);
+            swp = track->sweepPitch < 0 ? -track->sweepPitch : track->sweepPitch;
+            swp >>= 11;
+            track->sweepLength = swp;
+            x += track->sweepPitch;
+            track->sweepCounter++;
+        }
+            
 
         track->keyM = x >> 8;
         track->pitM = x;
     }
 
-    track->flags &= ~(MPT_FLG_PITSET | MPT_FLG_VOLSET);
+    if (track->portaTime == 0)
+        track->flags &= ~(MPT_FLG_PITSET | MPT_FLG_VOLSET);
+    else
+        track->flags &= ~(MPT_FLG_VOLSET);
 }
 
 u32 MidiKeyToCgbFreq(u8 chanNum, u8 key, u8 fineAdjust)
@@ -1631,6 +1646,19 @@ void ply_xcmd_0D(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *tra
 
     track->unk_3C = unk;
     track->cmdPtr += 4;
+}
+
+void ply_xpoky(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
+{
+    track->portaKey = *track->cmdPtr;
+    track->cmdPtr++;
+}
+
+void ply_xpoln(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
+{
+    track->portaTime = *track->cmdPtr;
+    track->sweepCounter = track->portaTime;
+    track->cmdPtr++;
 }
 
 void DummyFunc(void)

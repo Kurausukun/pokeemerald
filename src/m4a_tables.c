@@ -251,6 +251,8 @@ const u8 gClockTable[] =
 #define xRELE  0x07
 #define xIECV  0x08
 #define xIECL  0x09
+#define xPOKY  0x0e
+#define xPOLN  0x0f
 
 #define EOT    0xce
 #define TIE    0xcf
@@ -304,4 +306,6 @@ const XcmdFunc gXcmdTable[] =
     ply_xswee,
     ply_xcmd_0C,
     ply_xcmd_0D,
+    ply_xpoky,
+    ply_xpoln,
 };
