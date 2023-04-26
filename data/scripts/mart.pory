@@ -1,0 +1,68 @@
+script PokeMart_EventScript_Mart_Clerk {
+  lock
+  faceplayer
+  if (!flag(FLAG_SYS_GAME_CLEAR)) {
+    message(format("Hi!\nHow can I help you?"))
+  } 
+  else {
+    message(format("Hey, aren't you the League Champion?\nWow…and how may I help you?"))
+  }
+  waitmessage
+  // pokemart(NULL) // gets inventory by badge count
+  pokemart(PetalburgCity_Mart_Pokemart_Expanded)
+  call(Common_Pory_EventScript_Goodbyes)
+  release
+  end
+}
+
+script OldaleTown_Mart_EventScript_Clerk_New {
+  if (!flag(FLAG_ADVENTURE_STARTED)) {
+    lock
+    faceplayer
+    msgbox(format("Sorry, but we're all out of Poké Balls at the moment."))
+    message(format("…anything else I can do for you?"))
+    pokemart(OldaleTown_Mart_Pokemart_Basic_New)
+    msgbox(format("We'll be getting more in soon.\nSee you then!"))
+    release
+    end
+  }
+  elif (flag(FLAG_ADVENTURE_STARTED) && !flag(FLAG_BADGE01_GET)) {
+    lock
+    faceplayer
+    message(format("We just got some balls back in stock!\nWould you like to get some now?"))
+    waitmessage
+    // pokemart(NULL) // gets inventory by badge count
+    pokemart(OldaleTown_Mart_Pokemart_Expanded)
+    call(Common_Pory_EventScript_Goodbyes)
+    // msgbox(format("DEBUG: Bye")) // the bug seems connected to when I add or remove this
+    release
+    end
+  }
+  else {
+    call(PokeMart_EventScript_Mart_Clerk)
+  }
+} 
+
+mart OldaleTown_Mart_Pokemart_Basic_New {
+  ITEM_POTION
+  ITEM_FLUFFY_TAIL
+}
+
+script Common_Pory_EventScript_Goodbyes {
+  random(6)
+  buffernumberstring(STR_VAR_1, VAR_RESULT) // for debugging only
+  switch (var(VAR_RESULT)) {
+    case 0: msgbox("Until next time!")
+    case 1: msgbox("See you later!")
+    case 2: msgbox("Goodbye!")
+    case 3: msgbox("Bye bye!")
+    case 4: msgbox("Bye now!")
+    case 5: msgbox("Ciao!")
+    default:
+      msgbox("DEFAULT: {STR_VAR_1}") // for debugging only
+  }
+}
+
+script PetalburgCity_Mart_EventScript_Clerk_New {
+  call(PokeMart_EventScript_Mart_Clerk)
+}
