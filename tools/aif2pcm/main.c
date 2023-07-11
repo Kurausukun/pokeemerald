@@ -590,12 +590,18 @@ void aif2pcm(const char *aif_filename, const char *pcm_filename, bool compress)
 	int header_size = 0x10;
 	struct Bytes *pcm;
 	struct Bytes output = {0,0};
+    int remainder = aif_data.real_num_samples % 64;
 
 	if (compress)
 	{
 		struct Bytes *input = malloc(sizeof(struct Bytes));
 		input->data = aif_data.samples8;
 		input->length = aif_data.real_num_samples;
+		if (remainder)
+		{
+			//memset(&input->data[input->length], 0, 64 - remainder);
+            input->length += 64 - remainder;
+		}
 		pcm = delta_compress(input);
 		free(input);
 	}
@@ -606,6 +612,8 @@ void aif2pcm(const char *aif_filename, const char *pcm_filename, bool compress)
 		pcm->length = aif_data.real_num_samples;
 	}
 	output.length = header_size + pcm->length;
+	if (compress && remainder)
+		output.length += 64 - remainder;
 	output.data = malloc(output.length);
 
 	uint32_t pitch_adjust = (uint32_t)(aif_data.sample_rate * 1024);
