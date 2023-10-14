@@ -73,7 +73,7 @@ $(MID_SUBDIR)/mus_roulette.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G038 -V080
 
 $(MID_SUBDIR)/mus_lilycove_museum.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G020 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_lilycove_museum -V080
 
 $(MID_SUBDIR)/mus_encounter_brendan.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G067 -V078
@@ -106,7 +106,7 @@ $(MID_SUBDIR)/mus_encounter_champion.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G100 -V076
 
 $(MID_SUBDIR)/mus_petalburg_woods.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G018 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_petalburg_woods -V080
 
 $(MID_SUBDIR)/mus_abandoned_ship.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G030 -V080
@@ -124,16 +124,16 @@ $(MID_SUBDIR)/mus_hall_of_fame.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G082 -V078
 
 $(MID_SUBDIR)/mus_route110.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G_route110 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_route110 -V080
 
 $(MID_SUBDIR)/mus_route120.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G014 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_route120 -V080
 
 $(MID_SUBDIR)/mus_route122.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G021 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_route122 -V080
 
 $(MID_SUBDIR)/mus_route101.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G011 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_route101 -V080
 
 $(MID_SUBDIR)/mus_dummy.s: %.s: %.mid
 	$(MID) $< $@ -E -R40
@@ -148,13 +148,13 @@ $(MID_SUBDIR)/mus_help.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G056 -V078
 
 $(MID_SUBDIR)/mus_level_up.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_obtain_item.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_evolved.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_gsc_route38.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -V080
@@ -166,10 +166,10 @@ $(MID_SUBDIR)/mus_poke_mart.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G050 -V085
 
 $(MID_SUBDIR)/mus_oceanic_museum.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G023 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_oceanic_museum -V080
 
 $(MID_SUBDIR)/mus_gym.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G013 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_gym -V080
 
 $(MID_SUBDIR)/mus_encounter_may.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G061 -V078
@@ -205,10 +205,10 @@ $(MID_SUBDIR)/mus_victory_trainer.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G058 -V091
 
 $(MID_SUBDIR)/mus_victory_wild.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G025 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_victory_wild -V080
 
 $(MID_SUBDIR)/mus_victory_gym_leader.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G024 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_victory_gym_leader -V080
 
 $(MID_SUBDIR)/mus_victory_aqua_magma.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G070 -V088
@@ -217,7 +217,7 @@ $(MID_SUBDIR)/mus_victory_league.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G029 -V080
 
 $(MID_SUBDIR)/mus_caught.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G025 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_victory_wild -V080
 
 $(MID_SUBDIR)/mus_encounter_cool.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G063 -V086
@@ -238,31 +238,31 @@ $(MID_SUBDIR)/mus_sealed_chamber.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G084 -V100
 
 $(MID_SUBDIR)/mus_petalburg.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G015 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_petalburg -V080
 
 $(MID_SUBDIR)/mus_fortree.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G032 -V080
 
 $(MID_SUBDIR)/mus_oldale.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G019 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_oldale -V080
 
 $(MID_SUBDIR)/mus_mt_pyre_exterior.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G080 -V080
 
 $(MID_SUBDIR)/mus_heal.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_slots_jackpot.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_slots_win.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_obtain_badge.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_obtain_berry.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_obtain_b_points.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G103 -V090 -P5
@@ -271,25 +271,25 @@ $(MID_SUBDIR)/mus_rg_photo.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G180 -V100 -P5
 
 $(MID_SUBDIR)/mus_evolution_intro.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G026 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_evolution -V080
 
 $(MID_SUBDIR)/mus_obtain_symbol.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G103 -V100 -P5
 
 $(MID_SUBDIR)/mus_awaken_legend.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_register_match_call.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G105 -V090 -P5
 
 $(MID_SUBDIR)/mus_move_deleted.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_obtain_tmhm.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_too_bad.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G012 -V090 -P5
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_fanfare -V090 -P5
 
 $(MID_SUBDIR)/mus_encounter_magma.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G087 -V072
@@ -301,7 +301,7 @@ $(MID_SUBDIR)/mus_littleroot.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G051 -V100
 
 $(MID_SUBDIR)/mus_surf.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G017 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_surf -V080
 
 $(MID_SUBDIR)/mus_route104.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G047 -V097
@@ -571,7 +571,7 @@ $(MID_SUBDIR)/mus_b_tower.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G110 -V100
 
 $(MID_SUBDIR)/mus_evolution.s: %.s: %.mid
-	$(MID) $< $@ -E -R$(STD_REVERB) -G026 -V080
+	$(MID) $< $@ -E -R$(STD_REVERB) -Gvoicegroup_evolution -V080
 
 $(MID_SUBDIR)/mus_encounter_elite_four.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G096 -V078
