@@ -38,10 +38,10 @@ endif
 
 ifeq ($(OS),Windows_NT)
 SCRIPT := tools/poryscript/poryscript-windows/poryscript$(EXE)
-PORYSCRIPTARGS := -fc tools/poryscript/poryscript-windows/font_widths.json
+PORYSCRIPTARGS := -fw tools/poryscript/poryscript-windows/font_widths.json
 else
 SCRIPT := tools/poryscript/poryscript-linux/poryscript$(EXE)
-PORYSCRIPTARGS := -fc tools/poryscript/poryscript-linux/font_widths.json
+PORYSCRIPTARGS := -fw tools/poryscript/poryscript-linux/font_widths.json
 endif
 
 PORYSCRIPTARGS := $(PORYSCRIPTARGS) -s ROGUE_VERSION=ROGUE_VERSION_EXPANSION
