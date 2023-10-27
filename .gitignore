@@ -39,4 +39,5 @@ porymap.project.cfg
 *.sym
 *.js
 data/maps/Rogue*/*.inc
+data/maps/**/*.inc
 tools/poryscript/*
