@@ -4543,6 +4543,10 @@ DirectSoundWaveData_sd90_enhanced_delay_shaku::
 	.incbin "sound/direct_sound_samples/sd90_enhanced_delay_shaku.bin"
 
 	.align 2
+DirectSoundWaveData_sc88pro_tuba_51_short::
+	.incbin "sound/direct_sound_samples/sc88pro_tuba_51_short.bin"
+
+	.align 2
 DirectSoundWaveData_puresquare_12::
 	.incbin "sound/direct_sound_samples/puresquare_12.bin"
 
@@ -5837,7 +5841,3 @@ DirectSoundWaveData_hg_hoohclap::
 	.align 2
 DirectSoundWaveData_hg_choirc5::
 	.incbin "sound/direct_sound_samples/hg_choirc5.bin"
-
-	.align 2
-DirectSoundWaveData_sc88pro_tuba_51_short::
-	.incbin "sound/direct_sound_samples/sc88pro_tuba_51_short.aif"
