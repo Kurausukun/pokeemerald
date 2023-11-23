@@ -124,6 +124,7 @@ LDFLAGS = -Map ../../$(MAP)
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 GFX := tools/gbagfx/gbagfx$(EXE)
 AIF := tools/aif2pcm/aif2pcm$(EXE)
+WAV := tools/wav2agb/wav2agb$(EXE)
 MID := tools/mid2agb/mid2agb$(EXE)
 SCANINC := tools/scaninc/scaninc$(EXE)
 PREPROC := tools/preproc/preproc$(EXE)
@@ -269,6 +270,7 @@ include songs.mk
 %.png: ;
 %.pal: ;
 %.aif: ;
+%.wav: ;
 
 %.1bpp: %.png  ; $(GFX) $< $@
 %.4bpp: %.png  ; $(GFX) $< $@
@@ -277,7 +279,9 @@ include songs.mk
 %.gbapal: %.png ; $(GFX) $< $@
 %.lz: % ; $(GFX) $< $@
 %.rl: % ; $(GFX) $< $@
-$(CRY_SUBDIR)/%.bin: $(CRY_SUBDIR)/%.aif ; $(AIF) $< $@ --compress
+$(CRY_SUBDIR)/%.bin: $(CRY_SUBDIR)/%.wav
+	$(WAV) $< $@ -c
+	$(AS) $< $@
 sound/%.bin: sound/%.aif ; $(AIF) $< $@
 
 
