@@ -1128,7 +1128,7 @@
 	.endm
 
 	@ Sets a berry tree's berry and growth stage. treeId is any BERRY_TREE_* constant (an index into berryTrees in SaveBlock1),
-	@ berry is any ITEM_TO_BERRY(ITEM_BERRY_NAME) value, and growthStage is any BERRY_STAGE_* constant.
+	@ berry is any ITEM_TO_BERRY_1(ITEM_BERRY_NAME) value, and growthStage is any BERRY_STAGE_* constant.
 	.macro setberrytree treeId:req, berry:req, growthStage:req
 	.byte 0x8a
 	.byte \treeId

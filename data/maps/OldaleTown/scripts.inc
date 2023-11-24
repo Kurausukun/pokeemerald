@@ -31,10 +31,23 @@ OldaleTown_EventScript_MoveMartEmployee::
 
 OldaleTown_EventScript_TownSign::
 	msgbox OldaleTown_Text_TownSign, MSGBOX_SIGN
+	additem ITEM_PUMKIN_BERRY, 10
+	additem ITEM_DRASH_BERRY, 10
+	additem ITEM_EGGANT_BERRY, 10
+	additem ITEM_STRIB_BERRY, 10
+	additem ITEM_CHILAN_BERRY, 10
+	additem ITEM_NUTPEA_BERRY, 10
+	additem ITEM_NION_BERRY, 10
+	additem ITEM_RAKO_BERRY, 10
+	additem ITEM_BITMEL_BERRY, 10
+	additem ITEM_CHIPEP_BERRY, 10
+	additem ITEM_GALIC_BERRY, 10
+	additem ITEM_TOPO_BERRY, 10
 	end
 
 OldaleTown_EventScript_Girl::
 	msgbox OldaleTown_Text_SavingMyProgress, MSGBOX_NPC
+	
 	end
 
 OldaleTown_EventScript_MartEmployee::

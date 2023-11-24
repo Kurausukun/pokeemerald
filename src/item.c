@@ -92,8 +92,8 @@ void CopyItemNameHandlePlural(u16 itemId, u8 *dst, u32 quantity)
     }
     else
     {
-        if (itemId >= FIRST_BERRY_INDEX && itemId <= LAST_BERRY_INDEX)
-            GetBerryCountString(dst, gBerries[itemId - FIRST_BERRY_INDEX].name, quantity);
+        if ((itemId >= FIRST_BERRY_INDEX_1 && itemId <= LAST_BERRY_INDEX_1) || (itemId >= FIRST_BERRY_INDEX_2 && itemId <= LAST_BERRY_INDEX_2))
+            GetBerryCountString(dst, gBerries[itemId - FIRST_BERRY_INDEX_1].name, quantity);
         else
             StringCopy(dst, ItemId_GetName(itemId));
     }
@@ -159,7 +159,7 @@ bool8 HasAtLeastOneBerry(void)
 {
     u16 i;
 
-    for (i = FIRST_BERRY_INDEX; i < ITEM_BRIGHT_POWDER; i++)
+    for (i = FIRST_BERRY_INDEX_1; i < ITEM_BRIGHT_POWDER; i++)
     {
         if (CheckBagHasItem(i, 1) == TRUE)
         {

@@ -733,7 +733,7 @@ SootopolisCity_EventScript_KiriGiveBerry::
 	msgbox SootopolisCity_Text_NameIsKiriHaveOneOfThese, MSGBOX_DEFAULT
 	random NUM_KIRI_BERRIES
 	addvar VAR_RESULT, NUM_KIRI_BERRIES_SKIPPED
-	addvar VAR_RESULT, FIRST_BERRY_INDEX
+	addvar VAR_RESULT, FIRST_BERRY_INDEX_1
 	giveitem VAR_RESULT
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
 	setflag FLAG_DAILY_SOOTOPOLIS_RECEIVED_BERRY

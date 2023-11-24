@@ -622,7 +622,7 @@ static void CopyBagItemName(u8 *dst, u16 itemId)
 {
     if (ItemId_GetPocket(itemId) == POCKET_BERRIES)
     {
-        ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId), STR_CONV_MODE_LEADING_ZEROS, 2);
+        ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY_1(itemId), STR_CONV_MODE_LEADING_ZEROS, 2);
         CopyItemName(itemId, gStringVar2);
         StringExpandPlaceholders(dst, gText_NumberItem_TMBerry);
     }

@@ -1884,7 +1884,7 @@ static void SetBerryTreeGraphics(struct ObjectEvent *objectEvent, struct Sprite 
         sprite->invisible = FALSE;
         berryId = GetBerryTypeByBerryTreeId(objectEvent->trainerRange_berryTreeId) - 1;
         berryStage--;
-        if (berryId > ITEM_TO_BERRY(LAST_BERRY_INDEX))
+        if (berryId > ITEM_TO_BERRY_1(LAST_BERRY_INDEX_1) && (berryId < ITEM_TO_BERRY_1(FIRST_BERRY_INDEX_2) || berryId > ITEM_TO_BERRY_1(LAST_BERRY_INDEX_2)))
             berryId = 0;
 
         ObjectEventSetGraphicsId(objectEvent, gBerryTreeObjectEventGraphicsIdTablePointers[berryId][berryStage]);

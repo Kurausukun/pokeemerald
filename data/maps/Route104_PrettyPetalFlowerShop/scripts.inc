@@ -86,7 +86,7 @@ Route104_PrettyPetalFlowerShop_EventScript_RandomBerryGirl::
 	goto_if_set FLAG_DAILY_FLOWER_SHOP_RECEIVED_BERRY, Route104_PrettyPetalFlowerShop_EventScript_AlreadyReceivedBerry
 	msgbox Route104_PrettyPetalFlowerShop_Text_ImGrowingFlowers, MSGBOX_DEFAULT
 	random 8
-	addvar VAR_RESULT, FIRST_BERRY_INDEX
+	addvar VAR_RESULT, FIRST_BERRY_INDEX_1
 	giveitem VAR_RESULT
 	goto_if_eq VAR_RESULT, 0, Common_EventScript_ShowBagIsFull
 	setflag FLAG_DAILY_FLOWER_SHOP_RECEIVED_BERRY

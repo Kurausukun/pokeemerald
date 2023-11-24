@@ -30,11 +30,11 @@ void WonderNews_SetReward(u32 newsType)
     case WONDER_NEWS_RECV_FRIEND:
     case WONDER_NEWS_RECV_WIRELESS:
         // Random berry between ITEM_RAZZ_BERRY and ITEM_NOMEL_BERRY
-        data->berry = (Random() % 15) + ITEM_TO_BERRY(ITEM_RAZZ_BERRY);
+        data->berry = (Random() % 15) + ITEM_TO_BERRY_1(ITEM_RAZZ_BERRY);
         break;
     case WONDER_NEWS_SENT:
         // Random berry between ITEM_CHERI_BERRY and ITEM_IAPAPA_BERRY
-        data->berry = (Random() % 15) + ITEM_TO_BERRY(ITEM_CHERI_BERRY);
+        data->berry = (Random() % 15) + ITEM_TO_BERRY_1(ITEM_CHERI_BERRY);
         break;
     }
 }
@@ -106,7 +106,7 @@ static u32 GetRewardItem(struct WonderNewsMetadata *data)
 {
     u32 itemId;
     data->newsType = WONDER_NEWS_NONE;
-    itemId = data->berry + FIRST_BERRY_INDEX - 1;
+    itemId = data->berry + FIRST_BERRY_INDEX_1 - 1;
     data->berry = 0;
     IncrementRewardCounter(data);
     return itemId;

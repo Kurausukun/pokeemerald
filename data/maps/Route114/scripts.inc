@@ -27,7 +27,7 @@ Route114_EventScript_Man::
 	msgbox Route114_Text_LoveUsingBerryCrushShareBerry, MSGBOX_DEFAULT
 	random NUM_ROUTE_114_MAN_BERRIES
 	addvar VAR_RESULT, NUM_ROUTE_114_MAN_BERRIES_SKIPPED
-	addvar VAR_RESULT, FIRST_BERRY_INDEX
+	addvar VAR_RESULT, FIRST_BERRY_INDEX_1
 	giveitem VAR_RESULT
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
 	setflag FLAG_DAILY_ROUTE_114_RECEIVED_BERRY
