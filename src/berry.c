@@ -1228,7 +1228,7 @@ bool32 IsEnigmaBerryValid(void)
     return TRUE;
 }
 
-const struct Berry *GetBerryInfo(u8 berry)
+const struct Berry *GetBerryInfo(u16 berry)
 {
     if (berry == ITEM_TO_BERRY_1(ITEM_ENIGMA_BERRY) && IsEnigmaBerryValid())
         return (struct Berry *)(&gSaveBlock1Ptr->enigmaBerry.berry);
@@ -1404,8 +1404,6 @@ u8 ItemIdToBerryType(u16 item)
     if (berry > LAST_BERRY_INDEX_1 - FIRST_BERRY_INDEX_1 && ((berry < FIRST_BERRY_INDEX_2 - FIRST_BERRY_INDEX_1) || berry > LAST_BERRY_INDEX_2 - FIRST_BERRY_INDEX_1))
         return ITEM_TO_BERRY_1(FIRST_BERRY_INDEX_1);
     else
-        if (berry >= FIRST_BERRY_INDEX_2)
-            return ITEM_TO_BERRY_1(item) - (FIRST_BERRY_INDEX_2 - LAST_BERRY_INDEX_1) + 1;
         return ITEM_TO_BERRY_1(item);
 }
 

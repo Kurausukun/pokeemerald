@@ -403,7 +403,10 @@ static void PrintAllBerryData(void)
 static void PrintBerryNumberAndName(void)
 {
     const struct Berry *berry = GetBerryInfo(sBerryTag->berryId);
-    ConvertIntToDecimalStringN(gStringVar1, sBerryTag->berryId, STR_CONV_MODE_LEADING_ZEROS, 2);
+    if (sBerryTag->berryId > LAST_BERRY_INDEX_1)
+        ConvertIntToDecimalStringN(gStringVar1, sBerryTag->berryId - (FIRST_BERRY_INDEX_2 - LAST_BERRY_INDEX_1) + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
+    else
+        ConvertIntToDecimalStringN(gStringVar1, sBerryTag->berryId, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringCopy(gStringVar2, berry->name);
     StringExpandPlaceholders(gStringVar4, gText_NumberVar1Var2);
     PrintTextInBerryTagScreen(WIN_BERRY_NAME, gStringVar4, 0, 1, 0, 0);

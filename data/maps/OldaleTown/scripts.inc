@@ -31,6 +31,8 @@ OldaleTown_EventScript_MoveMartEmployee::
 
 OldaleTown_EventScript_TownSign::
 	msgbox OldaleTown_Text_TownSign, MSGBOX_SIGN
+	additem ITEM_CHERI_BERRY, 10
+	additem ITEM_ORAN_BERRY, 10
 	additem ITEM_PUMKIN_BERRY, 10
 	additem ITEM_DRASH_BERRY, 10
 	additem ITEM_EGGANT_BERRY, 10

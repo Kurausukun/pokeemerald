@@ -4,7 +4,7 @@
 void ClearEnigmaBerries(void);
 void SetEnigmaBerry(u8 *src);
 bool32 IsEnigmaBerryValid(void);
-const struct Berry *GetBerryInfo(u8 berry);
+const struct Berry *GetBerryInfo(u16 berry);
 struct BerryTree *GetBerryTreeInfo(u8 id);
 bool32 ObjectEventInteractionWaterBerryTree(void);
 bool8 IsPlayerFacingEmptyBerryTreePatch(void);
