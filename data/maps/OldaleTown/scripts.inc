@@ -35,6 +35,7 @@ OldaleTown_EventScript_TownSign::
 
 OldaleTown_EventScript_Girl::
 	msgbox OldaleTown_Text_SavingMyProgress, MSGBOX_NPC
+	callnative ChangeMonNature
 	end
 
 OldaleTown_EventScript_MartEmployee::

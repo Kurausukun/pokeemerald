@@ -7141,3 +7141,26 @@ u8 *MonSpritesGfxManager_GetSpritePtr(u8 managerId, u8 spriteNum)
         return gfx->spritePointers[spriteNum];
     }
 }
+
+void ChangeMonNature(void)
+{
+    u16 checksum;
+    u32 personality = 0;
+    struct Pokemon *mon = &gPlayerParty[0];
+    struct BoxPokemon *boxMon = &(mon->box);
+    
+    struct PokemonSubstruct0 *substruct0 = &(GetSubstruct(boxMon, boxMon->personality, 0)->type0);
+    struct PokemonSubstruct1 *substruct1 = &(GetSubstruct(boxMon, boxMon->personality, 1)->type1);
+    struct PokemonSubstruct2 *substruct2 = &(GetSubstruct(boxMon, boxMon->personality, 2)->type2);
+    struct PokemonSubstruct3 *substruct3 = &(GetSubstruct(boxMon, boxMon->personality, 3)->type3);
+
+    DecryptBoxMon(boxMon);
+    boxMon->personality = personality;
+    substruct0 = &(GetSubstruct(boxMon, personality, 0)->type0);
+    substruct1 = &(GetSubstruct(boxMon, personality, 1)->type1);
+    substruct2 = &(GetSubstruct(boxMon, personality, 2)->type2);
+    substruct3 = &(GetSubstruct(boxMon, personality, 3)->type3);
+    checksum = CalculateBoxMonChecksum(boxMon);
+    SetMonData(mon, MON_DATA_CHECKSUM, &checksum);
+    EncryptBoxMon(boxMon);
+}
