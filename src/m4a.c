@@ -1,7 +1,10 @@
 #include <string.h>
+#include "gba/io_reg.h"
 #include "gba/m4a_internal.h"
 
 extern const u8 gCgb3Vol[];
+
+extern u32 GetBiosChecksum(void);
 
 #define BSS_CODE __attribute__((section(".bss.code")))
 
@@ -380,17 +383,30 @@ void SoundInit(struct SoundInfo *soundInfo)
 void SampleFreqSet(u32 freq)
 {
     struct SoundInfo *soundInfo = SOUND_INFO_PTR;
+    u32 DSMode = 0;
+
+    if (GetBiosChecksum() == 0xBAAE1880)
+        DSMode = 1;
 
     freq = (freq & 0xF0000) >> 16;
     soundInfo->freq = freq;
-    soundInfo->pcmSamplesPerVBlank = gPcmSamplesPerVBlankTable[freq - 1];
+    if (DSMode)
+        soundInfo->pcmSamplesPerVBlank = gDSPcmSamplesPerVBlankTable[freq - 1];
+    else
+        soundInfo->pcmSamplesPerVBlank = gPcmSamplesPerVBlankTable[freq - 1];
     soundInfo->pcmDmaPeriod = PCM_DMA_BUF_SIZE / soundInfo->pcmSamplesPerVBlank;
 
     // LCD refresh rate 59.7275Hz
-    soundInfo->pcmFreq = (597275 * soundInfo->pcmSamplesPerVBlank + 5000) / 10000;
+    if (DSMode)
+        soundInfo->pcmFreq = (596555 * soundInfo->pcmSamplesPerVBlank + 5000) / 10000;
+    else
+        soundInfo->pcmFreq = (597275 * soundInfo->pcmSamplesPerVBlank + 5000) / 10000;
 
     // CPU frequency 16.78Mhz
-    soundInfo->divFreq = (16777216 / soundInfo->pcmFreq + 1) >> 1;
+    if (DSMode)
+        soundInfo->divFreq = (16756991 / soundInfo->pcmFreq + 1) >> 1;
+    else
+        soundInfo->divFreq = (16777216 / soundInfo->pcmFreq + 1) >> 1;
 
     // Turn off timer 0.
     REG_TM0CNT_H = 0;

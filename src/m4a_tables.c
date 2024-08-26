@@ -115,6 +115,22 @@ const u16 gPcmSamplesPerVBlankTable[] =
     704,
 };
 
+const u16 gDSPcmSamplesPerVBlankTable[] =
+{
+    90,  // 5369Hz
+    148, // 8829Hz
+    180, // 10738Hz
+    238, // 14198Hz
+    267, // 15928Hz
+    299, // 17837Hz
+    357, // 21297Hz
+    447, // 26666Hz
+    537, // 32035Hz
+    598, // 35674Hz
+    685, // 40864Hz
+    714, // 42594Hz
+};
+
 const u8 gCgbScaleTable[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,

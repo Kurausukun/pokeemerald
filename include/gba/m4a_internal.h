@@ -15,18 +15,18 @@
 #define SOUND_MODE_MAXCHN_SHIFT 8
 #define SOUND_MODE_MASVOL       0x0000F000
 #define SOUND_MODE_MASVOL_SHIFT 12
-#define SOUND_MODE_FREQ_05734   0x00010000
-#define SOUND_MODE_FREQ_07884   0x00020000
-#define SOUND_MODE_FREQ_10512   0x00030000
-#define SOUND_MODE_FREQ_13379   0x00040000
-#define SOUND_MODE_FREQ_15768   0x00050000
-#define SOUND_MODE_FREQ_18157   0x00060000
-#define SOUND_MODE_FREQ_21024   0x00070000
-#define SOUND_MODE_FREQ_26758   0x00080000
-#define SOUND_MODE_FREQ_31536   0x00090000
-#define SOUND_MODE_FREQ_36314   0x000A0000
-#define SOUND_MODE_FREQ_40137   0x000B0000
-#define SOUND_MODE_FREQ_42048   0x000C0000
+#define SOUND_MODE_FREQ_05734   0x00010000  // 5369Hz  in DS mode
+#define SOUND_MODE_FREQ_07884   0x00020000  // 8829Hz  in DS mode
+#define SOUND_MODE_FREQ_10512   0x00030000  // 10738Hz in DS mode
+#define SOUND_MODE_FREQ_13379   0x00040000  // 14198Hz in DS mode
+#define SOUND_MODE_FREQ_15768   0x00050000  // 15928Hz in DS mode
+#define SOUND_MODE_FREQ_18157   0x00060000  // 17837Hz in DS mode
+#define SOUND_MODE_FREQ_21024   0x00070000  // 21297Hz in DS mode
+#define SOUND_MODE_FREQ_26758   0x00080000  // 26666Hz in DS mode
+#define SOUND_MODE_FREQ_31536   0x00090000  // 32035Hz in DS mode
+#define SOUND_MODE_FREQ_36314   0x000A0000  // 35674Hz in DS mode
+#define SOUND_MODE_FREQ_40137   0x000B0000  // 40864Hz in DS mode
+#define SOUND_MODE_FREQ_42048   0x000C0000  // 42594Hz in DS mode
 #define SOUND_MODE_FREQ         0x000F0000
 #define SOUND_MODE_FREQ_SHIFT   16
 #define SOUND_MODE_DA_BIT_9     0x00800000
@@ -390,6 +390,7 @@ extern struct CgbChannel gCgbChans[];
 extern const u8 gScaleTable[];
 extern const u32 gFreqTable[];
 extern const u16 gPcmSamplesPerVBlankTable[];
+extern const u16 gDSPcmSamplesPerVBlankTable[];
 
 extern const u8 gCgbScaleTable[];
 extern const s16 gCgbFreqTable[];

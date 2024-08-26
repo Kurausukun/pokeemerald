@@ -181,6 +181,7 @@
 #define REG_OFFSET_IF          0x202
 
 #define REG_OFFSET_WAITCNT     0x204
+#define REG_OFFSET_MEMCNT      0x800
 
 // I/O register addresses
 
@@ -344,6 +345,7 @@
 #define REG_ADDR_IF          (REG_BASE + REG_OFFSET_IF)
 
 #define REG_ADDR_WAITCNT     (REG_BASE + REG_OFFSET_WAITCNT)
+#define REG_ADDR_MEMCNT      (REG_BASE + REG_OFFSET_MEMCNT)
 
 // I/O registers
 
@@ -498,6 +500,7 @@
 #define REG_IF          (*(vu16 *)REG_ADDR_IF)
 
 #define REG_WAITCNT     (*(vu16 *)REG_ADDR_WAITCNT)
+#define REG_MEMCNT      (*(vu32 *)REG_ADDR_MEMCNT)
 
 // I/O register fields
 
@@ -773,5 +776,11 @@
 
 #define WAITCNT_AGB (0 << 15)
 #define WAITCNT_CGB (1 << 15)
+
+// MEMCNT
+#define MEMCNT_WRAM_SWAP_ENABLE   (0 << 0)
+#define MEMCNT_CGB_BOOTROM_SKIP   (1 << 3)
+#define MEMCNT_EWRAM_DISABLE      (0 << 5)
+#define MEMCNT_EWRAM_WAITSTATE(n) (n > 14 ? 14 << 24 : n << 24)
 
 #endif // GUARD_GBA_IO_REG_H
