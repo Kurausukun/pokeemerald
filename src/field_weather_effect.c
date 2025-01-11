@@ -13,6 +13,7 @@
 #include "task.h"
 #include "trig.h"
 #include "gpu_regs.h"
+#include "m4a.h"
 
 EWRAM_DATA static u8 sCurrentAbnormalWeather = 0;
 EWRAM_DATA static u16 sUnusedWeatherRelated = 0;
@@ -2434,6 +2435,8 @@ static void UpdateBubbleSprite(struct Sprite *sprite)
 
 //------------------------------------------------------------------------------
 
+static void UpdateAbnormalWeatherMusic(u8 taskId);
+
 static void UNUSED UnusedSetCurrentAbnormalWeather(u32 weather, u32 unknown)
 {
     sCurrentAbnormalWeather = weather;
@@ -2443,6 +2446,9 @@ static void UNUSED UnusedSetCurrentAbnormalWeather(u32 weather, u32 unknown)
 #define tState         data[0]
 #define tWeatherA      data[1]
 #define tWeatherB      data[2]
+#define tVolume1       data[3]
+#define tVolume2       data[4]
+#define tVolumeState   data[5] // 0 = set, 1 = changing
 #define tDelay         data[15]
 
 static void Task_DoAbnormalWeather(u8 taskId)
@@ -2457,6 +2463,7 @@ static void Task_DoAbnormalWeather(u8 taskId)
             SetNextWeather(tWeatherA);
             sCurrentAbnormalWeather = tWeatherA;
             tDelay = 600;
+            tVolumeState = 1;
             tState++;
         }
         break;
@@ -2466,29 +2473,36 @@ static void Task_DoAbnormalWeather(u8 taskId)
             SetNextWeather(tWeatherB);
             sCurrentAbnormalWeather = tWeatherB;
             tDelay = 600;
+            tVolumeState = 1;
             tState = 0;
         }
         break;
     }
+    UpdateAbnormalWeatherMusic(taskId);
 }
 
-static void CreateAbnormalWeatherTask(void)
+void CreateAbnormalWeatherTask(void)
 {
     u8 taskId = CreateTask(Task_DoAbnormalWeather, 0);
     s16 *data = gTasks[taskId].data;
 
     tDelay = 600;
+    tVolumeState = 1;
     if (sCurrentAbnormalWeather == WEATHER_DOWNPOUR)
     {
         // Currently Downpour, next will be Drought
         tWeatherA = WEATHER_DROUGHT;
         tWeatherB = WEATHER_DOWNPOUR;
+        tVolume1 = 256;
+        tVolume2 = 0;
     }
     else if (sCurrentAbnormalWeather == WEATHER_DROUGHT)
     {
         // Currently Drought, next will be Downpour
         tWeatherA = WEATHER_DOWNPOUR;
         tWeatherB = WEATHER_DROUGHT;
+        tVolume1 = 0;
+        tVolume2 = 256;
     }
     else
     {
@@ -2496,12 +2510,59 @@ static void CreateAbnormalWeatherTask(void)
         sCurrentAbnormalWeather = WEATHER_DOWNPOUR;
         tWeatherA = WEATHER_DROUGHT;
         tWeatherB = WEATHER_DOWNPOUR;
+        tVolume1 = 256;
+        tVolume2 = 0;
     }
+}
+
+static void UpdateAbnormalWeatherMusic(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    
+    if (tVolumeState == 0)
+        return;
+
+    if (sCurrentAbnormalWeather == WEATHER_DROUGHT)
+    {
+        tVolume1 -= 1;
+        if (tVolume1 <= 0)
+        {
+            tVolume1 = 0;
+            tVolumeState = 0;
+        }
+        
+        tVolume2 += 1;
+        if (tVolume2 >= 256)
+        {
+            tVolume2 = 256;
+            tVolumeState = 0;
+        }
+    }
+    else if (sCurrentAbnormalWeather == WEATHER_DOWNPOUR)
+    {
+        tVolume1 += 1;
+        if (tVolume1 >= 256)
+        {
+            tVolume1 = 256;
+            tVolumeState = 0;
+        }
+        
+        tVolume2 -= 1;
+        if (tVolume2 <= 0)
+        {
+            tVolume2 = 0;
+            tVolumeState = 0;
+        }
+    }
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x1, (u16)tVolume1);
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0x2, (u16)tVolume2);
 }
 
 #undef tState
 #undef tWeatherA
 #undef tWeatherB
+#undef tVolume1
+#undef tVolume2
 #undef tDelay
 
 static u8 TranslateWeatherNum(u8);
@@ -2536,6 +2597,12 @@ void SetWeather_Unused(u32 weather)
 {
     SetSavedWeather(weather);
     SetCurrentAndNextWeather(GetSavedWeather());
+}
+
+void SetWeather_Abnormal(void)
+{
+    SetSavedWeather(WEATHER_ABNORMAL);
+    SetNextWeather(GetSavedWeather());
 }
 
 void DoCurrentWeather(void)
@@ -2632,5 +2699,3 @@ static void UpdateRainCounter(u8 newWeather, u8 oldWeather)
      && (newWeather == WEATHER_RAIN || newWeather == WEATHER_RAIN_THUNDERSTORM))
         IncrementGameStat(GAME_STAT_GOT_RAINED_ON);
 }
-
-
