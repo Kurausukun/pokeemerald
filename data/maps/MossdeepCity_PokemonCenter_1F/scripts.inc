@@ -19,6 +19,8 @@ MossdeepCity_PokemonCenter_1F_EventScript_Nurse::
 
 MossdeepCity_PokemonCenter_1F_EventScript_Woman::
 	msgbox MossdeepCity_PokemonCenter_1F_Text_GymLeaderDuoFormidable, MSGBOX_NPC
+	setflag FLAG_SYS_WEATHER_CTRL
+	call Common_EventScript_SetAbnormalWeather
 	end
 
 MossdeepCity_PokemonCenter_1F_EventScript_Girl::
