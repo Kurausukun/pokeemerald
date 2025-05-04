@@ -5,6 +5,7 @@ static void *sHeapStart;
 static u32 sHeapSize;
 
 ALIGNED(4) EWRAM_DATA u8 gHeap[HEAP_SIZE] = {0};
+static EWRAM_DATA u32 sUsedHeap = 0; // amount of heap space currently in use
 
 #define MALLOC_SYSTEM_ID 0xA3A3
 
@@ -37,6 +38,8 @@ void PutMemBlockHeader(void *block, struct MemBlock *prev, struct MemBlock *next
     header->size = size;
     header->prev = prev;
     header->next = next;
+    
+    sUsedHeap += sizeof(* header);
 }
 
 void PutFirstMemBlockHeader(void *block, u32 size)
@@ -70,6 +73,7 @@ void *AllocInternal(void *heapStart, u32 size)
                     // The block isn't much bigger than the requested size,
                     // so just use it.
                     pos->flag = TRUE;
+                    sUsedHeap += size;
                 }
                 else
                 {
@@ -84,6 +88,7 @@ void *AllocInternal(void *heapStart, u32 size)
                     pos->size = size;
 
                     PutMemBlockHeader(splitBlock, pos, pos->next, foundBlockSize);
+                    sUsedHeap += size;
 
                     pos->next = splitBlock;
 
@@ -100,6 +105,7 @@ void *AllocInternal(void *heapStart, u32 size)
 
         pos = pos->next;
     }
+    MgbaPrintf(2, "\nalloc'd %u (0x%X) bytes on heap.\nheap space in use: %u (0x%X)\nheap space free: %u (0x%X)", size + sizeof(struct MemBlock), size + sizeof(struct MemBlock), sUsedHeap, sUsedHeap, HEAP_SIZE - sUsedHeap, HEAP_SIZE - sUsedHeap);
 }
 
 void FreeInternal(void *heapStart, void *pointer)
@@ -109,6 +115,7 @@ void FreeInternal(void *heapStart, void *pointer)
         struct MemBlock *head = (struct MemBlock *)heapStart;
         struct MemBlock *block = (struct MemBlock *)((u8 *)pointer - sizeof(struct MemBlock));
         block->flag = FALSE;
+        sUsedHeap -= block->size;
 
         // If the freed block isn't the last one, merge with the next block
         // if it's not in use.
@@ -139,6 +146,7 @@ void FreeInternal(void *heapStart, void *pointer)
                 block->prev->size += sizeof(struct MemBlock) + block->size;
             }
         }
+        MgbaPrintf(2, "\nfreed %u (0x%X) bytes on heap.\nheap space in use: %u (0x%X)\nheap space free: %u (0x%X)", block->size, block->size, sUsedHeap, sUsedHeap, HEAP_SIZE - sUsedHeap, HEAP_SIZE - sUsedHeap);
     }
 }
 
