@@ -7,6 +7,7 @@
 #include "pokemon.h"
 #include "constants/songs.h"
 #include "task.h"
+#include "malloc.h"
 
 struct Fanfare
 {
@@ -15,6 +16,8 @@ struct Fanfare
 };
 
 EWRAM_DATA struct MusicPlayerInfo* gMPlay_PokemonCry = NULL;
+COMMON_DATA struct MusicPlayerInfo* gMPlayInfo_Backup = NULL;
+COMMON_DATA struct MusicPlayerTrack* gMPlayTrack_Backup = NULL;
 EWRAM_DATA u8 gPokemonCryBGMDuckingCounter = 0;
 
 static u16 sCurrentMapMusic;
@@ -627,4 +630,37 @@ bool8 IsSpecialSEPlaying(void)
     if (!(gMPlayInfo_SE3.status & MUSICPLAYER_STATUS_TRACK))
         return FALSE;
     return TRUE;
+}
+
+void StartLowHPMusic(void)
+{
+    if (gMPlayInfo_Backup == NULL)
+    {
+        gMPlayInfo_Backup = (struct MusicPlayerInfo *)Alloc(sizeof(struct MusicPlayerInfo));
+        gMPlayTrack_Backup = (struct MusicPlayerTrack*)Alloc(sizeof(struct MusicPlayerTrack) * gMPlayInfo_BGM.trackCount);
+    }
+    if (gMPlayInfo_Backup)
+    {
+        int i;
+        CpuFastCopy(&gMPlayInfo_BGM, gMPlayInfo_Backup, sizeof(struct MusicPlayerInfo));
+        for (i = 0; i < gMPlayInfo_BGM.trackCount; i++)
+            gMPlayInfo_Backup->tracks[i] = gMPlayInfo_BGM.tracks[i];
+        m4aMPlayStop(&gMPlayInfo_BGM);
+        m4aSongNumStart(MUS_HINSI);
+    }
+}
+
+void StopLowHPMusic(bool32 resume)
+{
+    m4aMPlayStop(&gMPlayInfo_BGM);
+    if (gMPlayInfo_Backup)
+    {
+        int i;
+        CpuFastCopy(gMPlayInfo_Backup, &gMPlayInfo_BGM, sizeof(struct MusicPlayerInfo));
+        for (i = 0; i < gMPlayInfo_Backup->trackCount; i++)
+            gMPlayInfo_BGM.tracks[i] = gMPlayInfo_Backup->tracks[i];
+    }
+    Free(gMPlayInfo_Backup);
+    if (resume)
+        m4aMPlayContinue(&gMPlayInfo_BGM);
 }

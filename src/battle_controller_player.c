@@ -2689,7 +2689,7 @@ static void PlayerHandleChoosePokemon(void)
 
 static void PlayerHandleCmd23(void)
 {
-    BattleStopLowHpSound();
+    BattleStopLowHpSound(FALSE);
     BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
     PlayerBufferExecCompleted();
 }
@@ -2911,7 +2911,7 @@ static void PlayerHandlePlayFanfareOrBGM(void)
 {
     if (gBattleBufferA[gActiveBattler][3])
     {
-        BattleStopLowHpSound();
+        BattleStopLowHpSound(FALSE);
         PlayBGM(gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8));
     }
     else

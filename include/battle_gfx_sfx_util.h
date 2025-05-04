@@ -30,7 +30,7 @@ void LoadBattleMonGfxAndAnimate(u8 battlerId, bool8 loadMonSprite, u8 spriteId);
 void TrySetBehindSubstituteSpriteBit(u8 battlerId, u16 move);
 void ClearBehindSubstituteBit(u8 battlerId);
 void HandleLowHpMusicChange(struct Pokemon *mon, u8 battlerId);
-void BattleStopLowHpSound(void);
+void BattleStopLowHpSound(u32 resume);
 u8 GetMonHPBarLevel(struct Pokemon *mon);
 void HandleBattleLowHpMusicChange(void);
 void SetBattlerSpriteAffineMode(u8 affineMode);
