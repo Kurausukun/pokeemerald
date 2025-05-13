@@ -170,7 +170,16 @@ struct SoundChannel
 
 struct MusicPlayerInfo;
 
+#if !MODERN
 typedef void (*MPlayFunc)();
+#else
+typedef union {
+    void (*MPlayFunc_InfoTrack) (struct MusicPlayerInfo *, struct MusicPlayerTrack *);
+    void (*MPlayFunc_u32) (u32);
+    void (*MPlayFunc_Info) (struct MusicPlayerInfo *);
+    void (*MPlayFunc_void) (void *);
+} MPlayFunc;
+#endif
 typedef void (*PlyNoteFunc)(u32, struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 typedef void (*CgbSoundFunc)(void);
 typedef void (*CgbOscOffFunc)(u8);

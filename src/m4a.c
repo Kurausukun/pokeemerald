@@ -5,6 +5,10 @@ extern const u8 gCgb3Vol[];
 
 #define BSS_CODE __attribute__((section(".bss.code")))
 
+#if MODERN
+#define asm __asm__
+#endif
+
 BSS_CODE ALIGNED(4) char SoundMainRAM_Buffer[0x800] = {0};
 
 COMMON_DATA struct SoundInfo gSoundInfo = {0};
@@ -283,6 +287,7 @@ void MPlayExtender(struct CgbChannel *cgbChans)
 
     soundInfo->ident++;
 
+#if !MODERN
     gMPlayJumpTable[8] = ply_memacc;
     gMPlayJumpTable[17] = ply_lfos;
     gMPlayJumpTable[19] = ply_mod;
@@ -292,7 +297,17 @@ void MPlayExtender(struct CgbChannel *cgbChans)
     gMPlayJumpTable[31] = TrackStop;
     gMPlayJumpTable[32] = FadeOutBody;
     gMPlayJumpTable[33] = TrkVolPitSet;
-
+#else
+    gMPlayJumpTable[8].MPlayFunc_InfoTrack = ply_memacc;
+    gMPlayJumpTable[17].MPlayFunc_InfoTrack = ply_lfos;
+    gMPlayJumpTable[19].MPlayFunc_InfoTrack = ply_mod;
+    gMPlayJumpTable[28].MPlayFunc_InfoTrack = ply_xcmd;
+    gMPlayJumpTable[29].MPlayFunc_InfoTrack = ply_endtie;
+    gMPlayJumpTable[30].MPlayFunc_u32 = SampleFreqSet;
+    gMPlayJumpTable[31].MPlayFunc_InfoTrack = TrackStop;
+    gMPlayJumpTable[32].MPlayFunc_Info = FadeOutBody;
+    gMPlayJumpTable[33].MPlayFunc_InfoTrack = TrkVolPitSet;
+#endif
     soundInfo->cgbChans = cgbChans;
     soundInfo->CgbSound = CgbSound;
     soundInfo->CgbOscOff = CgbOscOff;
@@ -320,13 +335,21 @@ void MusicPlayerJumpTableCopy(void)
 
 void ClearChain(void *x)
 {
+#if !MODERN
     void (*func)(void *) = *(&gMPlayJumpTable[34]);
+#else
+    void (*func)(void *) = *(&gMPlayJumpTable[34].MPlayFunc_void);
+#endif
     func(x);
 }
 
 void Clear64byte(void *x)
 {
+#if !MODERN
     void (*func)(void *) = *(&gMPlayJumpTable[35]);
+#else
+    void (*func)(void *) = *(&gMPlayJumpTable[35].MPlayFunc_void);
+#endif
     func(x);
 }
 
@@ -1492,7 +1515,11 @@ void ply_memacc(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *trac
 cond_true:
     {
         // *& is required for matching
+#if !MODERN
         (*&gMPlayJumpTable[1])(mplayInfo, track);
+#else
+        (*&gMPlayJumpTable[1].MPlayFunc_InfoTrack)(mplayInfo, track);
+#endif
         return;
     }
 
@@ -1510,7 +1537,11 @@ void ply_xcmd(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
 
 void ply_xxx(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track)
 {
+#if !MODERN
     gMPlayJumpTable[0](mplayInfo, track);
+#else
+    gMPlayJumpTable[0].MPlayFunc_InfoTrack(mplayInfo, track);
+#endif
 }
 
 #define READ_XCMD_BYTE(var, n)       \

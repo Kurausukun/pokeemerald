@@ -7,7 +7,7 @@ static u16 handshake_wait(u16 slot);
 static void STWI_set_timer_in_RAM(u8 count);
 static void STWI_stop_timer_in_RAM(void);
 static void STWI_init_slave(void);
-static void Callback_Dummy_M(int reqCommandId, int error, void (*callbackM)());
+static void Callback_Dummy_M(int reqCommandId, int error, callbackMFunc callbackM);
 static void Callback_Dummy_S(u16 reqCommandId, void (*callbackS)(u16));
 static void Callback_Dummy_ID(void (*callbackId)(void));
 
@@ -134,7 +134,11 @@ static void sio32intr_clock_master(void)
             }
         }
         gSTWIStatus->sending = 0;
+#if !MODERN
         if (gSTWIStatus->callbackM != NULL)
+#else
+        if (gSTWIStatus->callbackM.callbackM_void != NULL)
+#endif
             Callback_Dummy_M(gSTWIStatus->reqActiveCommand, gSTWIStatus->error, gSTWIStatus->callbackM);
     }
     else
@@ -388,7 +392,7 @@ static void STWI_init_slave(void)
 }
 
 NAKED
-static void Callback_Dummy_M(int reqCommandId, int error, void (*callbackM)())
+static void Callback_Dummy_M(int reqCommandId, int error, callbackMFunc callbackM)
 {
     asm("bx r2");
 }

@@ -110,7 +110,11 @@ u16 STWI_read_status(u8 index)
 
 void STWI_init_Callback_M(void)
 {
+#if !MODERN
     STWI_set_Callback_M(NULL);
+#else
+    gSTWIStatus->callbackM.callbackM_void = NULL;
+#endif
 }
 
 void STWI_init_Callback_S(void)
@@ -119,7 +123,7 @@ void STWI_init_Callback_S(void)
 }
 
 // The callback can take 2 or 3 arguments.
-void STWI_set_Callback_M(void *callbackM)
+void STWI_set_Callback_M(callbackMFunc callbackM)
 {
     gSTWIStatus->callbackM = callbackM;
 }
@@ -497,8 +501,13 @@ static void STWI_intr_timer(void)
         gSTWIStatus->timerActive = 1;
         STWI_stop_timer();
         STWI_reset_ClockCounter();
+#if !MODERN
         if (gSTWIStatus->callbackM != NULL)
             gSTWIStatus->callbackM(ID_CLOCK_SLAVE_MS_CHANGE_ERROR_BY_DMA_REQ, 0);
+#else
+        if (gSTWIStatus->callbackM.callbackM_void != NULL)
+            gSTWIStatus->callbackM.callbackM_intint(ID_CLOCK_SLAVE_MS_CHANGE_ERROR_BY_DMA_REQ, 0);
+#endif
         break;
     }
 }
@@ -548,8 +557,13 @@ static u16 STWI_init(u8 request)
     {
         // Can't start sending if IME is disabled.
         gSTWIStatus->error = ERR_REQ_CMD_IME_DISABLE;
+#if !MODERN
         if (gSTWIStatus->callbackM != NULL)
             gSTWIStatus->callbackM(request, gSTWIStatus->error);
+#else
+        if (gSTWIStatus->callbackM.callbackM_void != NULL)
+            gSTWIStatus->callbackM.callbackM_u8vu16(request, gSTWIStatus->error);
+#endif
         return TRUE;
     }
     else if (gSTWIStatus->sending == 1)
@@ -557,16 +571,26 @@ static u16 STWI_init(u8 request)
         // Already sending something. Cancel and error.
         gSTWIStatus->error = ERR_REQ_CMD_SENDING;
         gSTWIStatus->sending = 0;
+#if !MODERN
         if (gSTWIStatus->callbackM != NULL)
             gSTWIStatus->callbackM(request, gSTWIStatus->error);
+#else
+        if (gSTWIStatus->callbackM.callbackM_void != NULL)
+            gSTWIStatus->callbackM.callbackM_u8vu16(request, gSTWIStatus->error);
+#endif
         return TRUE;
     }
     else if (gSTWIStatus->msMode == AGB_CLK_SLAVE)
     {
         // Can't send if clock slave
         gSTWIStatus->error = ERR_REQ_CMD_CLOCK_SLAVE;
+#if !MODERN
         if (gSTWIStatus->callbackM != NULL)
             gSTWIStatus->callbackM(request, gSTWIStatus->error, gSTWIStatus);
+#else
+        if (gSTWIStatus->callbackM.callbackM_void != NULL)
+            gSTWIStatus->callbackM.callbackM_u8vu16STWIStatus(request, gSTWIStatus->error, gSTWIStatus);
+#endif
         return TRUE;
     }
     else
@@ -622,15 +646,25 @@ static s32 STWI_restart_Command(void)
         {
             gSTWIStatus->error = ERR_REQ_CMD_CLOCK_DRIFT;
             gSTWIStatus->sending = 0;
+#if !MODERN
             if (gSTWIStatus->callbackM != NULL)
                 gSTWIStatus->callbackM(gSTWIStatus->reqActiveCommand, gSTWIStatus->error);
+#else
+            if (gSTWIStatus->callbackM.callbackM_void != NULL)
+                gSTWIStatus->callbackM.callbackM_u8vu16(gSTWIStatus->reqActiveCommand, gSTWIStatus->error);
+#endif
         }
         else
         {
             gSTWIStatus->error = ERR_REQ_CMD_CLOCK_DRIFT;
             gSTWIStatus->sending = 0;
+#if !MODERN
             if (gSTWIStatus->callbackM != NULL)
                 gSTWIStatus->callbackM(gSTWIStatus->reqActiveCommand, gSTWIStatus->error);
+#else
+            if (gSTWIStatus->callbackM.callbackM_void != NULL)
+                gSTWIStatus->callbackM.callbackM_u8vu16(gSTWIStatus->reqActiveCommand, gSTWIStatus->error);
+#endif
             gSTWIStatus->state = 4; // error
         }
     }

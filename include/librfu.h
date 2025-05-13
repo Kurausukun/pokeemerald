@@ -293,6 +293,18 @@ union RfuPacket
     struct RfuPacket8 rfuPacket8;
 };
 
+#if !MODERN
+typedef void (*callbackMFunc)();
+#else
+struct STWIStatus;
+typedef union {
+        void (*callbackM_intint)(int, int);
+        void (*callbackM_u8vu16)(u8, vu16);
+        void (*callbackM_u8vu16STWIStatus) (u8, vu16, struct STWIStatus *);
+        void (*callbackM_void)(void *);
+    } callbackMFunc;
+#endif
+
 struct STWIStatus
 {
     vs32 state;
@@ -316,7 +328,7 @@ struct STWIStatus
     u8 recoveryCount;
     u8 unk_16;
     u8 unk_17;
-    void (*callbackM)();
+    callbackMFunc callbackM;
     void (*callbackS)(u16);
     void (*callbackID)(void);
     union RfuPacket *txPacket;
@@ -596,7 +608,7 @@ void STWI_init_all(struct RfuIntrStruct *interruptStruct, IntrFunc *interrupt, b
 void STWI_set_MS_mode(u8 mode);
 void STWI_init_Callback_M(void);
 void STWI_init_Callback_S(void);
-void STWI_set_Callback_M(void *callbackM);
+void STWI_set_Callback_M(callbackMFunc callbackM);
 void STWI_set_Callback_S(void (*callbackS)(u16));
 void STWI_init_timer(IntrFunc *interrupt, s32 timerSelect);
 void AgbRFU_SoftReset(void);
