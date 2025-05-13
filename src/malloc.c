@@ -196,6 +196,7 @@ void InitHeap(void *heapStart, u32 heapSize)
     sHeapStart = heapStart;
     sHeapSize = heapSize;
     PutFirstMemBlockHeader(heapStart, heapSize);
+    MgbaPrintf(2, "\ninitialized heap\n");
 }
 
 void *Alloc(u32 size)
