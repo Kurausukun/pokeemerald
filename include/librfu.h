@@ -298,11 +298,11 @@ typedef void (*callbackMFunc)();
 #else
 struct STWIStatus;
 typedef union {
-        void (*callbackM_intint)(int, int);
-        void (*callbackM_u8vu16)(u8, vu16);
-        void (*callbackM_u8vu16STWIStatus) (u8, vu16, struct STWIStatus *);
-        void (*callbackM_void)(void *);
-    } callbackMFunc;
+    void (*callbackM_intint)(int, int);
+    void (*callbackM_u8vu16)(u8, vu16);
+    void (*callbackM_u8vu16STWIStatus) (u8, vu16, struct STWIStatus *);
+    void (*callbackM_void)(void *);
+} callbackMFunc;
 #endif
 
 struct STWIStatus
