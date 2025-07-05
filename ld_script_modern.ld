@@ -61,8 +61,8 @@ SECTIONS {
         src/m4a_1.o(.text);
         src/m4a.o(.text);
         src/agb_flash.o(.text);
-        src/agb_flash_1m.o(.text);
-        src/agb_flash_mx.o(.text);
+        src/agb_flash_512k.o(.text);
+        src/agb_flash_mx_512k.o(.text);
         src/siirtc.o(.text);
         src/librfu_stwi.o(.text);
         src/librfu_intr.o(.text);
@@ -93,9 +93,9 @@ SECTIONS {
     {
         src/m4a.o(.rodata);
         src/agb_flash.o(.rodata);
-        src/agb_flash_1m.o(.rodata);
-        src/agb_flash_mx.o(.rodata);
-        src/agb_flash_le.o(.rodata);
+        src/agb_flash_512k.o(.rodata);
+        src/agb_flash_mx_512k.o(.rodata);
+        src/agb_flash_le_512k.o(.rodata);
         src/siirtc.o(.rodata);
         src/librfu_rfu.o(.rodata);
         src/librfu_sio32id.o(.rodata);

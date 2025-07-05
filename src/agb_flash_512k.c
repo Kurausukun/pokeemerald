@@ -1,17 +1,17 @@
 #include "gba/gba.h"
 #include "gba/flash_internal.h"
 
-static const char AgbLibFlashVersion[] = "FLASH1M_V103";
-
-static const struct FlashSetupInfo *const sSetupInfos[] =
-{
-    &MX29L010,
-    &LE26FV10N1TS,
-    &DefaultFlash
+static const char AgbLibFlash512KVersion[] = "FLASH512_V130";
+const struct FlashSetupInfo *const gSetup512KInfos[] = {
+    &LE39FW512,
+    &MN63F805MNP,
+    &MX29L512,
+    &DefaultFlash512K,
 };
 
 u16 IdentifyFlash(void)
 {
+
     u16 result;
     u16 flashId;
     const struct FlashSetupInfo *const *setupInfo;
@@ -20,16 +20,14 @@ u16 IdentifyFlash(void)
 
     flashId = ReadFlashId();
 
-    setupInfo = sSetupInfos;
+    setupInfo = gSetup512KInfos;
     result = 1;
 
-    for (;;)
-    {
+    for (;;) {
         if ((*setupInfo)->type.ids.separate.makerId == 0)
             break;
 
-        if (flashId == (*setupInfo)->type.ids.joined)
-        {
+        if (flashId == (*setupInfo)->type.ids.joined) {
             result = 0;
             break;
         }
@@ -37,7 +35,6 @@ u16 IdentifyFlash(void)
         setupInfo++;
     }
 
-    ProgramFlashByte = (*setupInfo)->programFlashByte;
     ProgramFlashSector = (*setupInfo)->programFlashSector;
     EraseFlashChip = (*setupInfo)->eraseFlashChip;
     EraseFlashSector = (*setupInfo)->eraseFlashSector;
@@ -48,33 +45,21 @@ u16 IdentifyFlash(void)
     return result;
 }
 
-u16 WaitForFlashWrite_Common(u8 phase, u8 *addr, u8 lastData)
+u16 WaitForFlashWrite512K_Common(u8 phase, u8 *addr, u8 lastData)
 {
     u16 result = 0;
     u8 status;
 
     StartFlashTimer(phase);
 
-    while ((status = PollFlashStatus(addr)) != lastData)
-    {
-        if (status & 0x20)
-        {
-            // The write operation exceeded the flash chip's time limit.
-
+    while ((status = PollFlashStatus(addr)) != lastData) {
+        if (gFlashTimeoutFlag) {
             if (PollFlashStatus(addr) == lastData)
                 break;
 
-            FLASH_WRITE(0x5555, 0xF0);
-            result = phase | 0xA000u;
-            break;
-        }
+            if (gFlash->ids.separate.makerId == 0xc2)
+                FLASH_WRITE(0x5555, 0xF0);
 
-        if (gFlashTimeoutFlag)
-        {
-            if (PollFlashStatus(addr) == lastData)
-                break;
-
-            FLASH_WRITE(0x5555, 0xF0);
             result = phase | 0xC000u;
             break;
         }

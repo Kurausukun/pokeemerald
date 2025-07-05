@@ -35,7 +35,7 @@
 #include "confetti_util.h"
 #include "constants/rgb.h"
 
-#define HALL_OF_FAME_MAX_TEAMS 50
+#define HALL_OF_FAME_MAX_TEAMS 25
 #define TAG_CONFETTI 1001
 
 struct HallofFameMon
@@ -52,7 +52,7 @@ struct HallofFameTeam
     struct HallofFameMon mon[PARTY_SIZE];
 };
 
-STATIC_ASSERT(sizeof(struct HallofFameTeam) * HALL_OF_FAME_MAX_TEAMS <= SECTOR_DATA_SIZE * NUM_HOF_SECTORS, HallOfFameFreeSpace);
+STATIC_ASSERT(sizeof(struct HallofFameTeam) * HALL_OF_FAME_MAX_TEAMS <= SECTOR_DATA_SIZE, HallOfFameFreeSpace);
 
 struct HofGfx
 {
@@ -486,12 +486,12 @@ static void Task_Hof_InitTeamSaveData(u8 taskId)
 
     if (!gHasHallOfFameRecords)
     {
-        memset(gDecompressionBuffer, 0, SECTOR_SIZE * NUM_HOF_SECTORS);
+        memset(gDecompressionBuffer, 0, SECTOR_SIZE);
     }
     else
     {
         if (LoadGameSave(SAVE_HALL_OF_FAME) != SAVE_STATUS_OK)
-            memset(gDecompressionBuffer, 0, SECTOR_SIZE * NUM_HOF_SECTORS);
+            memset(gDecompressionBuffer, 0, SECTOR_SIZE);
     }
 
     for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; i++, lastSavedTeam++)
@@ -848,7 +848,7 @@ void CB2_DoHallOfFamePC(void)
                 gTasks[taskId].tMonSpriteId(i) = SPRITE_NONE;
             }
 
-            sHofMonPtr = AllocZeroed(SECTOR_SIZE * NUM_HOF_SECTORS);
+            sHofMonPtr = AllocZeroed(SECTOR_SIZE);
             SetMainCallback2(CB2_HallOfFame);
         }
         break;
@@ -867,7 +867,7 @@ static void Task_HofPC_CopySaveData(u8 taskId)
         u16 i;
         struct HallofFameTeam *savedTeams;
 
-        CpuCopy16(gDecompressionBuffer, sHofMonPtr, SECTOR_SIZE * NUM_HOF_SECTORS);
+        CpuCopy16(gDecompressionBuffer, sHofMonPtr, SECTOR_SIZE);
         savedTeams = sHofMonPtr;
         for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; i++, savedTeams++)
         {
