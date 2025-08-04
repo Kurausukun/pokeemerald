@@ -38,7 +38,7 @@ SECTIONS {
         data/*.o(.bss);
 
         /* .bss.code starts at 0x3001AA8 */
-        src/m4a.o(.bss.code);
+        src/m4a_1.o(.bss.code);
 
         /* COMMON starts at 0x30022A8 */
         INCLUDE "sym_common.ld"

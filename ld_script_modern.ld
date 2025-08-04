@@ -26,7 +26,7 @@ SECTIONS {
         *libc.a:*.o(.bss*);
         *libnosys.a:*.o(.bss*);
 
-        src/m4a.o(.bss.code);
+        src/m4a_1.o(.bss.code);
 
         src/*.o(common_data);
         src/*.o(COMMON);
