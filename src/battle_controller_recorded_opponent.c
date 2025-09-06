@@ -1434,8 +1434,8 @@ static void RecordedOpponentHandleChooseItem(void)
 
 static void RecordedOpponentHandleChoosePokemon(void)
 {
-    *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = RecordedBattle_GetBattlerAction(gActiveBattler);
-    BtlController_EmitChosenMonReturnValue(B_COMM_TO_ENGINE, *(gBattleStruct->monToSwitchIntoId + gActiveBattler), NULL);
+    gActiveBattler[gBattleStruct->monToSwitchIntoId] = RecordedBattle_GetBattlerAction(gActiveBattler);
+    BtlController_EmitChosenMonReturnValue(B_COMM_TO_ENGINE, gActiveBattler[gBattleStruct->monToSwitchIntoId], NULL);
     RecordedOpponentBufferExecCompleted();
 }
 

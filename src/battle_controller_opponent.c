@@ -1159,7 +1159,7 @@ static void OpponentHandleLoadMonSprite(void)
 
 static void OpponentHandleSwitchInAnim(void)
 {
-    *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+    gActiveBattler[gBattleStruct->monToSwitchIntoId] = PARTY_SIZE;
     gBattlerPartyIndexes[gActiveBattler] = gBattleBufferA[gActiveBattler][1];
     StartSendOutAnim(gActiveBattler, gBattleBufferA[gActiveBattler][2]);
     gBattlerControllerFuncs[gActiveBattler] = SwitchIn_TryShinyAnim;
@@ -1622,7 +1622,7 @@ static void OpponentHandleChoosePokemon(void)
 {
     s32 chosenMonId;
 
-    if (*(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) == PARTY_SIZE)
+    if (gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] == PARTY_SIZE)
     {
         chosenMonId = GetMostSuitableMonToSwitchInto();
 
@@ -1665,12 +1665,12 @@ static void OpponentHandleChoosePokemon(void)
     }
     else
     {
-        chosenMonId = *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler);
-        *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        chosenMonId = gActiveBattler[gBattleStruct->AI_monToSwitchIntoId];
+        gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = PARTY_SIZE;
     }
 
 
-    *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = chosenMonId;
+    gActiveBattler[gBattleStruct->monToSwitchIntoId] = chosenMonId;
     BtlController_EmitChosenMonReturnValue(B_COMM_TO_ENGINE, chosenMonId, NULL);
     OpponentBufferExecCompleted();
 }

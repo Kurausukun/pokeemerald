@@ -2619,7 +2619,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 0) = gCurrentMove;
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 1) = gCurrentMove >> 8;
-                    *(gBattleStruct->wrappedBy + gEffectBattler) = gBattlerAttacker;
+                    gEffectBattler[gBattleStruct->wrappedBy] = gBattlerAttacker;
 
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
                     gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
@@ -3030,7 +3030,7 @@ static void Cmd_tryfaintmon(void)
              && gBattleMons[gBattlerAttacker].hp != 0
              && gCurrentMove != MOVE_STRUGGLE)
             {
-                u8 moveIndex = *(gBattleStruct->chosenMovePositions + gBattlerAttacker);
+                u8 moveIndex = gBattlerAttacker[gBattleStruct->chosenMovePositions];
 
                 gBattleMons[gBattlerAttacker].pp[moveIndex] = 0;
                 BattleScriptPush(gBattlescriptCurrInstr);
@@ -4610,7 +4610,7 @@ static void Cmd_getswitchedmondata(void)
 
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1]);
 
-    gBattlerPartyIndexes[gActiveBattler] = *(gBattleStruct->monToSwitchIntoId + gActiveBattler);
+    gBattlerPartyIndexes[gActiveBattler] = gActiveBattler[gBattleStruct->monToSwitchIntoId];
 
     BtlController_EmitGetMonData(B_COMM_TO_CONTROLLER, REQUEST_ALL_BATTLE, gBitTable[gBattlerPartyIndexes[gActiveBattler]]);
     MarkBattlerForControllerExec(gActiveBattler);
@@ -4854,8 +4854,8 @@ static void Cmd_jumpifcantswitch(void)
 // Note that this is not used by the Switch action, only replacing fainted Pokémon or Baton Pass
 static void ChooseMonToSendOut(u8 slotId)
 {
-    *(gBattleStruct->battlerPartyIndexes + gActiveBattler) = gBattlerPartyIndexes[gActiveBattler];
-    *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+    gActiveBattler[gBattleStruct->battlerPartyIndexes] = gBattlerPartyIndexes[gActiveBattler];
+    gActiveBattler[gBattleStruct->monToSwitchIntoId] = PARTY_SIZE;
     gBattleStruct->field_93 &= ~(gBitTable[gActiveBattler]);
 
     BtlController_EmitChoosePokemon(B_COMM_TO_CONTROLLER, PARTY_ACTION_SEND_OUT, slotId, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
@@ -5113,8 +5113,8 @@ static void Cmd_openpartyscreen(void)
         else
         {
             gActiveBattler = battler;
-            *(gBattleStruct->battlerPartyIndexes + gActiveBattler) = gBattlerPartyIndexes[gActiveBattler];
-            *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+            gActiveBattler[gBattleStruct->battlerPartyIndexes] = gBattlerPartyIndexes[gActiveBattler];
+            gActiveBattler[gBattleStruct->monToSwitchIntoId] = PARTY_SIZE;
             gBattleStruct->field_93 &= ~(gBitTable[gActiveBattler]);
 
             BtlController_EmitChoosePokemon(B_COMM_TO_CONTROLLER, hitmarkerFaintBits, *(gBattleStruct->monToSwitchIntoId + BATTLE_PARTNER(gActiveBattler)), ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
@@ -5164,7 +5164,7 @@ static void Cmd_switchhandleorder(void)
         {
             if (gBattleBufferB[i][0] == CONTROLLER_CHOSENMONRETURNVALUE)
             {
-                *(gBattleStruct->monToSwitchIntoId + i) = gBattleBufferB[i][1];
+                i[gBattleStruct->monToSwitchIntoId] = gBattleBufferB[i][1];
                 if (!(gBattleStruct->field_93 & gBitTable[i]))
                 {
                     RecordedBattle_SetBattlerAction(i, gBattleBufferB[i][1]);
@@ -5186,7 +5186,7 @@ static void Cmd_switchhandleorder(void)
         // fall through
     case 3:
         gBattleCommunication[0] = gBattleBufferB[gActiveBattler][1];
-        *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = gBattleBufferB[gActiveBattler][1];
+        gActiveBattler[gBattleStruct->monToSwitchIntoId] = gBattleBufferB[gActiveBattler][1];
 
         if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
         {
@@ -5200,7 +5200,7 @@ static void Cmd_switchhandleorder(void)
         }
         else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
         {
-            SwitchPartyOrderInGameMulti(gActiveBattler, *(gBattleStruct->monToSwitchIntoId + gActiveBattler));
+            SwitchPartyOrderInGameMulti(gActiveBattler, gActiveBattler[gBattleStruct->monToSwitchIntoId]);
         }
         else
         {
@@ -7165,7 +7165,7 @@ static bool8 TryDoForceSwitchOut(void)
 {
     if (gBattleMons[gBattlerAttacker].level >= gBattleMons[gBattlerTarget].level)
     {
-        *(gBattleStruct->battlerPartyIndexes + gBattlerTarget) = gBattlerPartyIndexes[gBattlerTarget];
+        gBattlerTarget[gBattleStruct->battlerPartyIndexes] = gBattlerPartyIndexes[gBattlerTarget];
     }
     else
     {
@@ -7175,7 +7175,7 @@ static bool8 TryDoForceSwitchOut(void)
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
             return FALSE;
         }
-        *(gBattleStruct->battlerPartyIndexes + gBattlerTarget) = gBattlerPartyIndexes[gBattlerTarget];
+        gBattlerTarget[gBattleStruct->battlerPartyIndexes] = gBattlerPartyIndexes[gBattlerTarget];
     }
 
     gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
@@ -7351,7 +7351,7 @@ static void Cmd_forcerandomswitch(void)
                 } while (GetMonData(&party[i], MON_DATA_SPECIES) == SPECIES_NONE
                        || GetMonData(&party[i], MON_DATA_IS_EGG) == TRUE
                        || GetMonData(&party[i], MON_DATA_HP) == 0); //should be one while loop, but that doesn't match.
-                *(gBattleStruct->monToSwitchIntoId + gBattlerTarget) = i;
+                gBattlerTarget[gBattleStruct->monToSwitchIntoId] = i;
 
                 if (!IsMultiBattle())
                     SwitchPartyOrder(gBattlerTarget);
@@ -7383,7 +7383,7 @@ static void Cmd_forcerandomswitch(void)
                        || GetMonData(&party[i], MON_DATA_IS_EGG) == TRUE
                        || GetMonData(&party[i], MON_DATA_HP) == 0); //should be one while loop, but that doesn't match.
             }
-            *(gBattleStruct->monToSwitchIntoId + gBattlerTarget) = i;
+            gBattlerTarget[gBattleStruct->monToSwitchIntoId] = i;
 
             if (!IsMultiBattle())
                 SwitchPartyOrder(gBattlerTarget);
@@ -8761,7 +8761,7 @@ static void Cmd_jumpifnopursuitswitchdmg(void)
     }
 
     if (gChosenActionByBattler[gBattlerTarget] == B_ACTION_USE_MOVE
-        && gBattlerAttacker == *(gBattleStruct->moveTarget + gBattlerTarget)
+        && gBattlerAttacker == gBattlerTarget[gBattleStruct->moveTarget]
         && !(gBattleMons[gBattlerTarget].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
         && gBattleMons[gBattlerAttacker].hp
         && !gDisableStructs[gBattlerTarget].truantCounter
@@ -8776,7 +8776,7 @@ static void Cmd_jumpifnopursuitswitchdmg(void)
         }
 
         gCurrentMove = MOVE_PURSUIT;
-        gCurrMovePos = gChosenMovePos = *(gBattleStruct->chosenMovePositions + gBattlerTarget);
+        gCurrMovePos = gChosenMovePos = gBattlerTarget[gBattleStruct->chosenMovePositions];
         gBattlescriptCurrInstr += 5;
         gBattleScripting.animTurn = 1;
         gHitMarker &= ~HITMARKER_ATTACKSTRING_PRINTED;
@@ -8847,7 +8847,7 @@ static void Cmd_rapidspinfree(void)
     {
         gBattleScripting.battler = gBattlerTarget;
         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
-        gBattlerTarget = *(gBattleStruct->wrappedBy + gBattlerAttacker);
+        gBattlerTarget = gBattlerAttacker[gBattleStruct->wrappedBy];
 
         gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
         gBattleTextBuff1[1] = B_BUFF_MOVE;
@@ -9619,7 +9619,7 @@ static void Cmd_switchoutabilities(void)
     case ABILITY_NATURAL_CURE:
         gBattleMons[gActiveBattler].status1 = 0;
         BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE,
-                                     gBitTable[*(gBattleStruct->battlerPartyIndexes + gActiveBattler)],
+                                     gBitTable[gActiveBattler[gBattleStruct->battlerPartyIndexes]],
                                      sizeof(gBattleMons[gActiveBattler].status1),
                                      &gBattleMons[gActiveBattler].status1);
         MarkBattlerForControllerExec(gActiveBattler);

@@ -22,7 +22,7 @@ static bool8 ShouldSwitchIfPerishSong(void)
     if (gStatuses3[gActiveBattler] & STATUS3_PERISH_SONG
         && gDisableStructs[gActiveBattler].perishSongTimer == 0)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -106,7 +106,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
             if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && Random() % 3 < 2)
             {
                 // We found a mon.
-                *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = i;
+                gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = i;
                 BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
                 return TRUE;
             }
@@ -192,9 +192,9 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
             continue;
         if (i == gBattlerPartyIndexes[battlerIn2])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn1))
+        if (i == battlerIn1[gBattleStruct->monToSwitchIntoId])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+        if (i == battlerIn2[gBattleStruct->monToSwitchIntoId])
             continue;
 
         species = GetMonData(&party[i], MON_DATA_SPECIES);
@@ -206,7 +206,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
         if (absorbingTypeAbility == monAbility && Random() & 1)
         {
             // we found a mon.
-            *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = i;
+            gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = i;
             BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
             return TRUE;
         }
@@ -228,14 +228,14 @@ static bool8 ShouldSwitchIfNaturalCure(void)
       || gLastLandedMoves[gActiveBattler] == MOVE_UNAVAILABLE)
      && Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
         return TRUE;
     }
     else if (gBattleMoves[gLastLandedMoves[gActiveBattler]].power == 0
           && Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -247,7 +247,7 @@ static bool8 ShouldSwitchIfNaturalCure(void)
 
     if (Random() & 1)
     {
-        *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = PARTY_SIZE;
         BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
         return TRUE;
     }
@@ -390,9 +390,9 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
             continue;
         if (i == gBattlerPartyIndexes[battlerIn2])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn1))
+        if (i == battlerIn1[gBattleStruct->monToSwitchIntoId])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+        if (i == battlerIn2[gBattleStruct->monToSwitchIntoId])
             continue;
 
         species = GetMonData(&party[i], MON_DATA_SPECIES);
@@ -415,7 +415,7 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
                 moveFlags = AI_TypeCalc(move, gBattleMons[battlerIn1].species, gBattleMons[battlerIn1].ability);
                 if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && Random() % moduloPercent == 0)
                 {
-                    *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = i;
+                    gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = i;
                     BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SWITCH, 0);
                     return TRUE;
                 }
@@ -496,9 +496,9 @@ static bool8 ShouldSwitch(void)
             continue;
         if (i == gBattlerPartyIndexes[battlerIn2])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn1))
+        if (i == battlerIn1[gBattleStruct->monToSwitchIntoId])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+        if (i == battlerIn2[gBattleStruct->monToSwitchIntoId])
             continue;
 
         availableToSwitch++;
@@ -542,7 +542,7 @@ void AI_TrySwitchOrUseItem(void)
     {
         if (ShouldSwitch())
         {
-            if (*(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) == PARTY_SIZE)
+            if (gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] == PARTY_SIZE)
             {
                 s32 monToSwitchId = GetMostSuitableMonToSwitchInto();
                 if (monToSwitchId == PARTY_SIZE)
@@ -578,19 +578,19 @@ void AI_TrySwitchOrUseItem(void)
                             continue;
                         if (monToSwitchId == gBattlerPartyIndexes[battlerIn2])
                             continue;
-                        if (monToSwitchId == *(gBattleStruct->monToSwitchIntoId + battlerIn1))
+                        if (monToSwitchId == battlerIn1[gBattleStruct->monToSwitchIntoId])
                             continue;
-                        if (monToSwitchId == *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+                        if (monToSwitchId == battlerIn2[gBattleStruct->monToSwitchIntoId])
                             continue;
 
                         break;
                     }
                 }
 
-                *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler) = monToSwitchId;
+                gActiveBattler[gBattleStruct->AI_monToSwitchIntoId] = monToSwitchId;
             }
 
-            *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = *(gBattleStruct->AI_monToSwitchIntoId + gActiveBattler);
+            gActiveBattler[gBattleStruct->monToSwitchIntoId] = gActiveBattler[gBattleStruct->AI_monToSwitchIntoId];
             return;
         }
         else if (ShouldUseItem())
@@ -643,8 +643,8 @@ u8 GetMostSuitableMonToSwitchInto(void)
     u8 invalidMons;
     u16 move;
 
-    if (*(gBattleStruct->monToSwitchIntoId + gActiveBattler) != PARTY_SIZE)
-        return *(gBattleStruct->monToSwitchIntoId + gActiveBattler);
+    if (gActiveBattler[gBattleStruct->monToSwitchIntoId] != PARTY_SIZE)
+        return gActiveBattler[gBattleStruct->monToSwitchIntoId];
     if (gBattleTypeFlags & BATTLE_TYPE_ARENA)
         return gBattlerPartyIndexes[gActiveBattler] + 1;
 
@@ -700,8 +700,8 @@ u8 GetMostSuitableMonToSwitchInto(void)
                 && !(gBitTable[i] & invalidMons)
                 && gBattlerPartyIndexes[battlerIn1] != i
                 && gBattlerPartyIndexes[battlerIn2] != i
-                && i != *(gBattleStruct->monToSwitchIntoId + battlerIn1)
-                && i != *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+                && i != battlerIn1[gBattleStruct->monToSwitchIntoId]
+                && i != battlerIn2[gBattleStruct->monToSwitchIntoId])
             {
                 u8 type1 = gSpeciesInfo[species].types[0];
                 u8 type2 = gSpeciesInfo[species].types[1];
@@ -764,9 +764,9 @@ u8 GetMostSuitableMonToSwitchInto(void)
             continue;
         if (gBattlerPartyIndexes[battlerIn2] == i)
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn1))
+        if (i == battlerIn1[gBattleStruct->monToSwitchIntoId])
             continue;
-        if (i == *(gBattleStruct->monToSwitchIntoId + battlerIn2))
+        if (i == battlerIn2[gBattleStruct->monToSwitchIntoId])
             continue;
 
         for (j = 0; j < MAX_MON_MOVES; j++)

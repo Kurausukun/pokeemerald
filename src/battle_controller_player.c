@@ -2618,7 +2618,7 @@ static void HandleChooseMoveAfterDma3(void)
 
 static void PlayerChooseMoveInBattlePalace(void)
 {
-    if (--*(gBattleStruct->arenaMindPoints + gActiveBattler) == 0)
+    if (--gActiveBattler[gBattleStruct->arenaMindPoints] == 0)
     {
         gBattlePalaceMoveSelectionRngValue = gRngValue;
         BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, ChooseMoveAndTargetInBattlePalace());
@@ -2630,7 +2630,7 @@ static void PlayerHandleChooseMove(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_PALACE)
     {
-        *(gBattleStruct->arenaMindPoints + gActiveBattler) = 8;
+        gActiveBattler[gBattleStruct->arenaMindPoints] = 8;
         gBattlerControllerFuncs[gActiveBattler] = PlayerChooseMoveInBattlePalace;
     }
     else
