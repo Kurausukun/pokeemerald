@@ -571,7 +571,7 @@ static void AnimSparkElectricity(struct Sprite *sprite)
 
 static void AnimZapCannonSpark(struct Sprite *sprite)
 {
-    InitSpritePosToAnimAttacker(sprite, 1);
+    InitSpritePosToAnimAttacker(sprite, TRUE);
     sprite->data[0] = gBattleAnimArgs[3];
     sprite->data[1] = sprite->x;
     sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
@@ -583,7 +583,7 @@ static void AnimZapCannonSpark(struct Sprite *sprite)
     sprite->data[7] = gBattleAnimArgs[4];
     sprite->oam.tileNum += gBattleAnimArgs[6] * 4;
     sprite->callback = AnimZapCannonSpark_Step;
-    AnimZapCannonSpark_Step(sprite);
+    sprite->callback(sprite);
 }
 
 static void AnimZapCannonSpark_Step(struct Sprite *sprite)
@@ -597,7 +597,9 @@ static void AnimZapCannonSpark_Step(struct Sprite *sprite)
             sprite->invisible ^= 1;
     }
     else
+    {
         DestroyAnimSprite(sprite);
+    }
 }
 
 static void AnimThunderboltOrb_Step(struct Sprite *sprite)
@@ -870,7 +872,9 @@ static void AnimTask_ElectricChargingParticles_Step(u8 taskId)
         }
     }
     else if(task->data[7] == 0)
+    {
         DestroyAnimVisualTask(taskId);
+    }
 }
 
 static void AnimElectricChargingParticles_Step(struct Sprite *sprite)
@@ -991,7 +995,9 @@ void AnimTask_VoltTackleAttackerReappear(u8 taskId)
                 gSprites[task->data[15]].x2 = task->data[14];
             }
             else
+            {
                 task->data[0]++;
+            }
 
         }
         break;
@@ -1159,7 +1165,7 @@ void AnimTask_ShockWaveProgressingBolt(u8 taskId)
         task->data[4] = 7;
         task->data[5] = -1;
         task->data[11] = 12;
-        task->data[12] = BattleAnimAdjustPanning(task->data[11] - 76);
+        task->data[12] = BattleAnimAdjustPanning(SOUND_PAN_ATTACKER);
         task->data[13] = BattleAnimAdjustPanning(SOUND_PAN_TARGET);
         task->data[14] = task->data[12];
         task->data[15] = (task->data[13] - task->data[12]) / 3;

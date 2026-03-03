@@ -22,13 +22,10 @@ struct MultiPartnerMenuPokemon
     /*0x1D*/ u8 language;
 };
 
-#define TYPE_NAME_LENGTH 6
-#define ABILITY_NAME_LENGTH 12
-
 // defines for the u8 array gTypeEffectiveness
-#define TYPE_EFFECT_ATK_TYPE(i)((gTypeEffectiveness[i + 0]))
-#define TYPE_EFFECT_DEF_TYPE(i)((gTypeEffectiveness[i + 1]))
-#define TYPE_EFFECT_MULTIPLIER(i)((gTypeEffectiveness[i + 2]))
+#define TYPE_EFFECT_ATK_TYPE(i) ((gTypeEffectiveness[i + 0]))
+#define TYPE_EFFECT_DEF_TYPE(i) ((gTypeEffectiveness[i + 1]))
+#define TYPE_EFFECT_MULTIPLIER(i) ((gTypeEffectiveness[i + 2]))
 
 // defines for the gTypeEffectiveness multipliers
 #define TYPE_MUL_NO_EFFECT          0
@@ -52,17 +49,17 @@ void SpriteCB_VsLetterDummy(struct Sprite *sprite);
 void SpriteCB_VsLetterInit(struct Sprite *sprite);
 void CB2_InitEndLinkBattle(void);
 u32 GetBattleBgTemplateData(u8 arrayId, u8 caseId);
-u32 GetBattleWindowTemplatePixelWidth(u32 setId, u32 tableId);
-void SpriteCb_WildMon(struct Sprite *sprite);
+u32 GetBattleWindowTemplatePixelWidth(u32 windowsType, u32 tableId);
+void SpriteCB_WildMon(struct Sprite *sprite);
 void SpriteCallbackDummy_2(struct Sprite *sprite);
 void SpriteCB_FaintOpponentMon(struct Sprite *sprite);
-void SpriteCb_ShowAsMoveTarget(struct Sprite *sprite);
-void SpriteCb_HideAsMoveTarget(struct Sprite *sprite);
+void SpriteCB_ShowAsMoveTarget(struct Sprite *sprite);
+void SpriteCB_HideAsMoveTarget(struct Sprite *sprite);
 void SpriteCB_OpponentMonFromBall(struct Sprite *sprite);
 void SpriteCB_BattleSpriteStartSlideLeft(struct Sprite *sprite);
 void SpriteCB_FaintSlideAnim(struct Sprite *sprite);
-void DoBounceEffect(u8 battlerId, u8 b, s8 c, s8 d);
-void EndBounceEffect(u8 battlerId, bool8 b);
+void DoBounceEffect(u8 battler, u8 which, s8 delta, s8 amplitude);
+void EndBounceEffect(u8 battler, u8 which);
 void SpriteCB_PlayerMonFromBall(struct Sprite *sprite);
 void SpriteCB_TrainerThrowObject(struct Sprite *sprite);
 void AnimSetCenterToCornerVecX(struct Sprite *sprite);
@@ -72,12 +69,12 @@ void SwitchInClearSetData(void);
 void FaintClearSetData(void);
 void BattleTurnPassed(void);
 u8 IsRunningFromBattleImpossible(void);
-void SwitchPartyOrder(u8 battlerId);
+void SwitchPartyOrder(u8 battler);
 void SwapTurnOrder(u8 id1, u8 id2);
-u8 GetWhoStrikesFirst(u8 battlerId1, u8 battlerId2, bool8 ignoreChosenMoves);
+u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves);
 void RunBattleScriptCommands_PopCallbacksStack(void);
 void RunBattleScriptCommands(void);
-bool8 TryRunFromBattle(u8 battlerId);
+bool8 TryRunFromBattle(u8 battler);
 void SpecialStatusesClear(void);
 
 extern struct MultiPartnerMenuPokemon gMultiPartnerParty[MULTI_PARTY_SIZE];

@@ -40,20 +40,18 @@ struct LinkPlayerObjectEvent
     u8 movementMode;
 };
 
-// Exported RAM declarations
 extern struct WarpData gLastUsedWarp;
 extern struct LinkPlayerObjectEvent gLinkPlayerObjectEvents[4];
 
-extern u16 *gBGTilemapBuffers1;
-extern u16 *gBGTilemapBuffers2;
-extern u16 *gBGTilemapBuffers3;
+extern u16 *gOverworldTilemapBuffer_Bg2;
+extern u16 *gOverworldTilemapBuffer_Bg1;
+extern u16 *gOverworldTilemapBuffer_Bg3;
 extern u16 gHeldKeyCodeToSend;
 extern void (*gFieldCallback)(void);
 extern bool8 (*gFieldCallback2)(void);
 extern u8 gLocalLinkPlayerId;
 extern u8 gFieldLinkPlayerCount;
 
-// Exported ROM declarations
 extern const struct UCoords32 gDirectionToVectors[];
 
 void DoWhiteOut(void);
@@ -78,8 +76,8 @@ void SetWarpDestination(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 void SetWarpDestinationToMapWarp(s8 mapGroup, s8 mapNum, s8 warpId);
 void SetDynamicWarp(s32 unused, s8 mapGroup, s8 mapNum, s8 warpId);
 void SetDynamicWarpWithCoords(s32 unused, s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
-void SetWarpDestinationToDynamicWarp(u8 unused);
-void SetWarpDestinationToHealLocation(u8 a1);
+void SetWarpDestinationToDynamicWarp(u8 unusedWarpId);
+void SetWarpDestinationToHealLocation(u8 healLocationId);
 void SetWarpDestinationToLastHealLocation(void);
 void SetLastHealLocationWarp(u8 healLocationId);
 void UpdateEscapeWarp(s16 x, s16 y);
@@ -88,7 +86,7 @@ void SetWarpDestinationToEscapeWarp(void);
 void SetFixedDiveWarp(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 void SetFixedHoleWarp(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 void SetWarpDestinationToFixedHoleWarp(s16 x, s16 y);
-void SetContinueGameWarpToHealLocation(u8 a1);
+void SetContinueGameWarpToHealLocation(u8 healLocationId);
 void SetContinueGameWarpToDynamicWarp(int unused);
 const struct MapConnection *GetMapConnection(u8 dir);
 bool8 SetDiveWarpEmerge(u16 x, u16 y);
@@ -101,7 +99,7 @@ void SetDefaultFlashLevel(void);
 void SetFlashLevel(s32 flashLevel);
 u8 GetFlashLevel(void);
 void SetCurrentMapLayout(u16 mapLayoutId);
-void SetObjectEventLoadFlag(u8 var);
+void SetObjectEventLoadFlag(u8 flag);
 u16 GetLocationMusic(struct WarpData *warp);
 u16 GetCurrLocationDefaultMusic(void);
 u16 GetWarpDestinationMusic(void);
@@ -123,8 +121,8 @@ u8 GetLastUsedWarpMapType(void);
 bool8 IsMapTypeOutdoors(u8 mapType);
 bool8 Overworld_MapTypeAllowsTeleportAndFly(u8 mapType);
 bool8 IsMapTypeIndoors(u8 mapType);
-u8 GetSavedWarpRegionMapSectionId(void);
-u8 GetCurrentRegionMapSectionId(void);
+mapsec_u8_t GetSavedWarpRegionMapSectionId(void);
+mapsec_u8_t GetCurrentRegionMapSectionId(void);
 u8 GetCurrentMapBattleScene(void);
 void CleanupOverworldWindowsAndTilemaps(void);
 bool32 IsOverworldLinkActive(void);
@@ -132,7 +130,7 @@ void CB1_Overworld(void);
 void CB2_OverworldBasic(void);
 void CB2_Overworld(void);
 void SetMainCallback1(void (*cb)(void));
-void SetUnusedCallback(void *a0);
+void SetUnusedCallback(void *func);
 void CB2_NewGame(void);
 void CB2_WhiteOut(void);
 void CB2_LoadMap(void);

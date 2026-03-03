@@ -14,14 +14,14 @@
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": [
     {
-      "direction": "up",
+      "map": "MAP_OLDALE_TOWN",
       "offset": 0,
-      "map": "MAP_OLDALE_TOWN"
+      "direction": "up"
     },
     {
-      "direction": "down",
+      "map": "MAP_LITTLEROOT_TOWN",
       "offset": 0,
-      "map": "MAP_LITTLEROOT_TOWN"
+      "direction": "down"
     }
   ],
   "object_events": [
@@ -39,6 +39,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_ROUTE101_BIRCH",
       "graphics_id": "OBJ_EVENT_GFX_PROF_BIRCH",
       "x": 9,
       "y": 13,
@@ -65,6 +66,7 @@
       "flag": "FLAG_HIDE_ROUTE_101_BIRCH_STARTERS_BAG"
     },
     {
+      "local_id": "LOCALID_ROUTE101_ZIGZAGOON",
       "graphics_id": "OBJ_EVENT_GFX_ZIGZAGOON_1",
       "x": 10,
       "y": 13,

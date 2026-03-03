@@ -30,6 +30,17 @@
 #include "constants/region_map_sections.h"
 #include "constants/songs.h"
 
+// gFrontierPassBg_Pal has 8*16 colors, but they attempt to load 13*16 colors.
+// As a result it goes out of bounds and interprets 160 bytes of whatever comes
+// after gFrontierPassBg_Pal (by default, gFrontierPassBg_Gfx) as a palette.
+// Nothing uses these colors (except the Trainer Card, which correctly writes them)
+// so in practice this bug has no effect on the game.
+#ifdef BUGFIX
+#define NUM_BG_PAL_SLOTS 8
+#else
+#define NUM_BG_PAL_SLOTS 13
+#endif
+
 // All windows displayed in the frontier pass.
 enum
 {
@@ -95,7 +106,7 @@ enum {
 
 struct FrontierPassData
 {
-    void (*callback)(void);
+    MainCallback callback;
     u16 state;
     u16 battlePoints;
     s16 cursorX;
@@ -126,14 +137,14 @@ struct FrontierPassGfx
 
 struct FrontierPassSaved
 {
-    void (*callback)(void);
+    MainCallback callback;
     s16 cursorX;
     s16 cursorY;
 };
 
 struct FrontierMapData
 {
-    void (*callback)(void);
+    MainCallback callback;
     struct Sprite *cursorSprite;
     struct Sprite *playerHeadSprite;
     struct Sprite *mapIndicatorSprite;
@@ -149,8 +160,8 @@ static EWRAM_DATA struct FrontierPassGfx *sPassGfx = NULL;
 static EWRAM_DATA struct FrontierMapData *sMapData = NULL;
 static EWRAM_DATA struct FrontierPassSaved sSavedPassData = {0};
 
-static u32 AllocateFrontierPassData(void (*callback)(void));
-static void ShowFrontierMap(void (*callback)(void));
+static u32 AllocateFrontierPassData(MainCallback callback);
+static void ShowFrontierMap(MainCallback callback);
 static void CB2_InitFrontierPass(void);
 static void DrawFrontierPassBg(void);
 static void FreeCursorAndSymbolSprites(void);
@@ -593,9 +604,11 @@ static void LeaveFrontierPass(void)
     FreeFrontierPassData();
 }
 
-static u32 AllocateFrontierPassData(void (*callback)(void))
+static u32 AllocateFrontierPassData(MainCallback callback)
 {
-    u8 i;
+    // This variable is a MAPSEC initially, but is recycled as a 
+    // bare integer near the end of the function.
+    mapsec_u8_t i;
 
     if (sPassData != NULL)
         return ERR_ALREADY_DONE;
@@ -760,17 +773,17 @@ static bool32 InitFrontierPass(void)
     case 7:
         if (FreeTempTileDataBuffersIfPossible())
             return FALSE;
-        FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
-        FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, 30, 20);
-        FillBgTilemapBufferRect_Palette0(2, 0, 0, 0, 30, 20);
+        FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
+        FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
+        FillBgTilemapBufferRect_Palette0(2, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
         CopyBgTilemapBufferToVram(0);
         CopyBgTilemapBufferToVram(1);
         CopyBgTilemapBufferToVram(2);
         break;
     case 8:
-        LoadPalette(gFrontierPassBg_Pal[0], 0, 0x1A0);
-        LoadPalette(gFrontierPassBg_Pal[1 + sPassData->trainerStars], 0x10, 0x20);
-        LoadPalette(GetTextWindowPalette(0), 0xF0, 0x20);
+        LoadPalette(gFrontierPassBg_Pal, 0, NUM_BG_PAL_SLOTS * PLTT_SIZE_4BPP);
+        LoadPalette(gFrontierPassBg_Pal[1 + sPassData->trainerStars], BG_PLTT_ID(1), PLTT_SIZE_4BPP);
+        LoadPalette(GetTextWindowPalette(0), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
         DrawFrontierPassBg();
         UpdateAreaHighlight(sPassData->cursorArea, sPassData->previousCursorArea);
         if (sPassData->areaToShow == CURSOR_AREA_MAP || sPassData->areaToShow == CURSOR_AREA_CARD)
@@ -906,12 +919,12 @@ static void CB2_ReturnFromRecord(void)
     sPassData->cursorX = sSavedPassData.cursorX;
     sPassData->cursorY = sSavedPassData.cursorY;
     memset(&sSavedPassData, 0, sizeof(sSavedPassData));
-    switch (InBattlePyramid())
+    switch (CurrentBattlePyramidLocation())
     {
-    case 1:
+    case PYRAMID_LOCATION_FLOOR:
         PlayBGM(MUS_B_PYRAMID);
         break;
-    case 2:
+    case PYRAMID_LOCATION_TOP:
         PlayBGM(MUS_B_PYRAMID_TOP);
         break;
     default:
@@ -1230,7 +1243,7 @@ static void ShowHideZoomingArea(bool8 show, bool8 zoomedIn)
 
 static void UpdateAreaHighlight(u8 cursorArea, u8 previousCursorArea)
 {
-    #define NON_HIGHLIGHT_AREA(area)((area) == CURSOR_AREA_NOTHING || (area) > CURSOR_AREA_CANCEL)
+    #define NON_HIGHLIGHT_AREA(area) ((area) == CURSOR_AREA_NOTHING || (area) > CURSOR_AREA_CANCEL)
 
     // If moving off highlightable area, unhighlight it
     switch (previousCursorArea)
@@ -1352,7 +1365,7 @@ static void PrintOnFrontierMap(void);
 static void InitFrontierMapSprites(void);
 static void HandleFrontierMapCursorMove(u8 direction);
 
-static void ShowFrontierMap(void (*callback)(void))
+static void ShowFrontierMap(MainCallback callback)
 {
     if (sMapData != NULL)
         SetMainCallback2(callback); // This line doesn't make sense at all, since it gets overwritten later anyway.
@@ -1396,9 +1409,9 @@ static bool32 InitFrontierMap(void)
         SetBgTilemapBuffer(0, sMapData->tilemapBuff0);
         SetBgTilemapBuffer(1, sMapData->tilemapBuff1);
         SetBgTilemapBuffer(2, sMapData->tilemapBuff2);
-        FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, 30, 20);
-        FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, 30, 20);
-        FillBgTilemapBufferRect_Palette0(2, 0, 0, 0, 30, 20);
+        FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
+        FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
+        FillBgTilemapBufferRect_Palette0(2, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
         CopyBgTilemapBufferToVram(0);
         CopyBgTilemapBufferToVram(1);
         CopyBgTilemapBufferToVram(2);
@@ -1412,8 +1425,8 @@ static bool32 InitFrontierMap(void)
     case 5:
         if (FreeTempTileDataBuffersIfPossible())
             return FALSE;
-        LoadPalette(gFrontierPassBg_Pal[0], 0, 0x1A0);
-        LoadPalette(GetTextWindowPalette(0), 0xF0, 0x20);
+        LoadPalette(gFrontierPassBg_Pal, BG_PLTT_ID(0), NUM_BG_PAL_SLOTS * PLTT_SIZE_4BPP);
+        LoadPalette(GetTextWindowPalette(0), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
         CopyToBgTilemapBuffer(2, sMapScreen_Tilemap, 0, 0);
         CopyBgTilemapBufferToVram(2);
         break;
@@ -1569,48 +1582,48 @@ static void Task_HandleFrontierMap(u8 taskId)
 static u8 MapNumToFrontierFacilityId(u16 mapNum) // id + 1, zero means not a frontier map number
 {
     // In Battle Tower
-    if ((mapNum >= MAP_NUM(BATTLE_FRONTIER_BATTLE_TOWER_LOBBY) && mapNum <= MAP_NUM(BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM))
-     || (mapNum >= MAP_NUM(BATTLE_FRONTIER_BATTLE_TOWER_MULTI_PARTNER_ROOM) && mapNum <= MAP_NUM(BATTLE_FRONTIER_BATTLE_TOWER_MULTI_BATTLE_ROOM)))
+    if ((mapNum >= MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY) && mapNum <= MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM))
+     || (mapNum >= MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_PARTNER_ROOM) && mapNum <= MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_BATTLE_ROOM)))
         return FRONTIER_FACILITY_TOWER + 1;
 
     // In Battle Dome
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_DOME_LOBBY)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_DOME_CORRIDOR)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_DOME_PRE_BATTLE_ROOM)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_DOME_BATTLE_ROOM))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_DOME_LOBBY)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_DOME_CORRIDOR)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_DOME_PRE_BATTLE_ROOM)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_DOME_BATTLE_ROOM))
         return FRONTIER_FACILITY_DOME + 1;
 
     // In Battle Palace
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PALACE_LOBBY)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PALACE_CORRIDOR)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PALACE_LOBBY)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PALACE_CORRIDOR)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM))
         return FRONTIER_FACILITY_PALACE + 1;
 
     // In Battle Arena
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_ARENA_LOBBY)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_ARENA_CORRIDOR)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_ARENA_BATTLE_ROOM))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_ARENA_LOBBY)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_ARENA_CORRIDOR)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_ARENA_BATTLE_ROOM))
         return FRONTIER_FACILITY_ARENA + 1;
 
     // In Battle Factory
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_FACTORY_LOBBY)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_FACTORY_PRE_BATTLE_ROOM)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_FACTORY_BATTLE_ROOM))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_FACTORY_LOBBY)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_FACTORY_PRE_BATTLE_ROOM)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_FACTORY_BATTLE_ROOM))
         return FRONTIER_FACILITY_FACTORY + 1;
 
     // In Battle Pike
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_LOBBY)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_CORRIDOR)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_THREE_PATH_ROOM)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_ROOM_NORMAL)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_ROOM_FINAL)
-             || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_LOBBY)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_CORRIDOR)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_THREE_PATH_ROOM)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_NORMAL)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_FINAL)
+             || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS))
         return FRONTIER_FACILITY_PIKE + 1;
 
     // In Battle Pyramid
-    else if (mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PYRAMID_LOBBY)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PYRAMID_FLOOR)
-        || mapNum == MAP_NUM(BATTLE_FRONTIER_BATTLE_PYRAMID_TOP))
+    else if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PYRAMID_LOBBY)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PYRAMID_FLOOR)
+        || mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_BATTLE_PYRAMID_TOP))
         return FRONTIER_FACILITY_PYRAMID + 1;
 
     else
@@ -1646,8 +1659,8 @@ static void InitFrontierMapSprites(void)
     {
         s8 mapNum = gSaveBlock1Ptr->location.mapNum;
 
-        if (mapNum == MAP_NUM(BATTLE_FRONTIER_OUTSIDE_WEST)
-            || (mapNum == MAP_NUM(BATTLE_FRONTIER_OUTSIDE_EAST) && (x = 55)))
+        if (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_OUTSIDE_WEST)
+            || (mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_OUTSIDE_EAST) && (x = 55)))
         {
             x += gSaveBlock1Ptr->pos.x;
             y = gSaveBlock1Ptr->pos.y;
@@ -1668,7 +1681,7 @@ static void InitFrontierMapSprites(void)
             else
             {
                 // Handle Artisan Cave.
-                if (gSaveBlock1Ptr->escapeWarp.mapNum == MAP_NUM(BATTLE_FRONTIER_OUTSIDE_EAST))
+                if (gSaveBlock1Ptr->escapeWarp.mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_OUTSIDE_EAST))
                     x = gSaveBlock1Ptr->escapeWarp.x + 55;
                 else
                     x = gSaveBlock1Ptr->escapeWarp.x;

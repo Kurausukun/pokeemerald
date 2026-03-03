@@ -15,6 +15,7 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_FRONTIER_RECEPTION_GREETER",
       "graphics_id": "OBJ_EVENT_GFX_TEALA",
       "x": 0,
       "y": 11,
@@ -28,6 +29,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_FRONTIER_RECEPTION_GUIDE",
       "graphics_id": "OBJ_EVENT_GFX_TEALA",
       "x": 8,
       "y": 11,
@@ -54,6 +56,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_FRONTIER_RECEPTION_SCOTT",
       "graphics_id": "OBJ_EVENT_GFX_SCOTT",
       "x": 4,
       "y": 5,
@@ -86,14 +89,14 @@
       "y": 13,
       "elevation": 0,
       "dest_map": "MAP_BATTLE_FRONTIER_OUTSIDE_WEST",
-      "dest_warp_id": 8
+      "dest_warp_id": "8"
     },
     {
       "x": 4,
       "y": 1,
       "elevation": 0,
       "dest_map": "MAP_BATTLE_FRONTIER_OUTSIDE_WEST",
-      "dest_warp_id": 9
+      "dest_warp_id": "9"
     }
   ],
   "coord_events": [],

@@ -15,6 +15,7 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_LEAGUE_NURSE",
       "graphics_id": "OBJ_EVENT_GFX_NURSE",
       "x": 3,
       "y": 2,
@@ -41,6 +42,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_LEAGUE_GUARD_1",
       "graphics_id": "OBJ_EVENT_GFX_MAN_3",
       "x": 8,
       "y": 2,
@@ -54,6 +56,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_LEAGUE_GUARD_2",
       "graphics_id": "OBJ_EVENT_GFX_MAN_3",
       "x": 11,
       "y": 2,
@@ -73,35 +76,35 @@
       "y": 11,
       "elevation": 3,
       "dest_map": "MAP_EVER_GRANDE_CITY",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 10,
       "y": 11,
       "elevation": 3,
       "dest_map": "MAP_EVER_GRANDE_CITY",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 9,
       "y": 1,
       "elevation": 3,
       "dest_map": "MAP_EVER_GRANDE_CITY_HALL5",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 10,
       "y": 1,
       "elevation": 3,
       "dest_map": "MAP_EVER_GRANDE_CITY_HALL5",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 1,
       "y": 7,
       "elevation": 4,
       "dest_map": "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_2F",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [],

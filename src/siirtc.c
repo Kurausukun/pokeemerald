@@ -4,6 +4,7 @@
 
 #include "gba/gba.h"
 #include "siirtc.h"
+#include "config.h"
 
 #define STATUS_INTFE  0x02 // frequency interrupt enable
 #define STATUS_INTME  0x08 // per-minute interrupt enable
@@ -343,7 +344,7 @@ bool8 SiiRtcSetTime(struct SiiRtcInfo *rtc)
     return TRUE;
 }
 
-bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
+static bool8 UNUSED SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
 {
     u8 i;
     u8 alarmData[2];

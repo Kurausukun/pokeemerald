@@ -1,341 +1,341 @@
 #ifndef GUARD_DATA_BARD_MUSIC_MISC_H
 #define GUARD_DATA_BARD_MUSIC_MISC_H
-const struct BardSound gBardSounds_Misc[][6] = {
-    {
-        { 0x14, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+static const struct BardSoundTemplate sBardSoundTemplates_Misc[][MAX_BARD_SOUNDS_PER_WORD] = {
+    [EC_INDEX(EC_WORD_HIGHS)] = {
+        { .songId = PHONEME_ID(PH_PRICE_SOLO) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x18, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_LOWS)] = {
+        { .songId = PHONEME_ID(PH_GOAT_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2b, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_UM)] = {
+        { .songId = PHONEME_ID(PH_STRUT_HELD) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_REAR)] = {
+        { .songId = PHONEME_ID(PH_STRUT_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THINGS)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THING)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x18, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_BELOW)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        { .songId = PHONEME_ID(PH_GOAT_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x2c, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_ABOVE)] = {
+        { .songId = PHONEME_ID(PH_STRUT_BLEND) },
+        { .songId = PHONEME_ID(PH_STRUT_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x0, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_BACK)] = {
+        { .songId = PHONEME_ID(PH_TRAP_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x12, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_HIGH)] = {
+        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x30, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_HERE)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        { .songId = PHONEME_ID(PH_NURSE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xf, 0x0, 0x0, 0x0, 0x0 },
-        { 0x12, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_INSIDE)] = {
+        { .songId = PHONEME_ID(PH_KIT_BLEND) },
+        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x21, 0x0, 0x0, 0x0, 0x0 },
-        { 0x12, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_OUTSIDE)] = {
+        { .songId = PHONEME_ID(PH_MOUTH_BLEND) },
+        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xe, 0x0, 0x0, 0x0, 0x0 },
-        { 0x12, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_BESIDE)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_SOLO) },
+        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THIS_IS_IT_EXCL)] = {
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THIS)] = {
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x9, 0x0, 0x0, 0x0, 0x0 },
-        { 0x30, 0x0, 0x0, 0x0, 0x0 },
-        { 0xe, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_EVERY)] = {
+        { .songId = PHONEME_ID(PH_DRESS_BLEND) },
+        { .songId = PHONEME_ID(PH_NURSE_BLEND) },
+        { .songId = PHONEME_ID(PH_FLEECE_SOLO) },
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THESE)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xe, 0x0, 0x0, 0x0, 0x0 },
-        { 0x32, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THESE_WERE)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_SOLO) },
+        { .songId = PHONEME_ID(PH_NURSE_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x21, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_DOWN)] = {
+        { .songId = PHONEME_ID(PH_MOUTH_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THAT)] = {
+        { .songId = PHONEME_ID(PH_TRAP_SOLO) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x18, 0x0, 0x0, 0x0, 0x0 },
-        { 0x1b, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THOSE_ARE)] = {
+        { .songId = PHONEME_ID(PH_GOAT_BLEND) },
+        { .songId = PHONEME_ID(PH_THOUGHT_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x18, 0x0, 0x0, 0x0, 0x0 },
-        { 0x30, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THOSE_WERE)] = {
+        { .songId = PHONEME_ID(PH_GOAT_BLEND) },
+        { .songId = PHONEME_ID(PH_NURSE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x1, 0x0, 0x0, 0x0, 0x0 },
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THAT_S_IT_EXCL)] = {
+        { .songId = PHONEME_ID(PH_TRAP_HELD) },
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x0, 0x0, 0x0, 0x0, 0x0 },
-        { 0x10, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_AM)] = {
+        { .songId = PHONEME_ID(PH_TRAP_BLEND) },
+        { .songId = PHONEME_ID(PH_KIT_HELD) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x0, 0x0, 0x0, 0x0, 0x0 },
-        { 0x2c, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_THAT_WAS)] = {
+        { .songId = PHONEME_ID(PH_TRAP_BLEND) },
+        { .songId = PHONEME_ID(PH_STRUT_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2b, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_FRONT)] = {
+        { .songId = PHONEME_ID(PH_STRUT_HELD) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_UP)] = {
+        { .songId = PHONEME_ID(PH_STRUT_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xf, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_CHOICE)] = {
+        { .songId = PHONEME_ID(PH_KIT_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x1b, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_FAR)] = {
+        { .songId = PHONEME_ID(PH_THOUGHT_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2c, 0x0, 0x0, 0x0, 0x0 },
-        { 0x4, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_AWAY)] = {
+        { .songId = PHONEME_ID(PH_STRUT_SOLO) },
+        { .songId = PHONEME_ID(PH_FACE_HELD) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xc, 0x0, 0x0, 0x0, 0x0 },
-        { 0x30, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_NEAR)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_BLEND) },
+        { .songId = PHONEME_ID(PH_NURSE_BLEND) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x9, 0x0, 0x0, 0x0, 0x0 },
-        { 0x32, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_WHERE)] = {
+        { .songId = PHONEME_ID(PH_DRESS_BLEND) },
+        { .songId = PHONEME_ID(PH_NURSE_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x10, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_WHEN)] = {
+        { .songId = PHONEME_ID(PH_KIT_HELD) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2c, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_WHAT)] = {
+        { .songId = PHONEME_ID(PH_STRUT_SOLO) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0xe, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_DEEP)] = {
+        { .songId = PHONEME_ID(PH_FLEECE_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x1, 0x0, 0x0, 0x0, 0x0 },
-        { 0x1a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_SHALLOW)] = {
+        { .songId = PHONEME_ID(PH_TRAP_HELD) },
+        { .songId = PHONEME_ID(PH_GOAT_SOLO) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x14, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_WHY)] = {
+        { .songId = PHONEME_ID(PH_PRICE_SOLO) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x2a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x2e, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_CONFUSED)] = {
+        { .songId = PHONEME_ID(PH_STRUT_BLEND) },
+        { .songId = PHONEME_ID(PH_CURE_HELD) },
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x1d, 0x0, 0x0, 0x0, 0x0 },
-        { 0x1a, 0x0, 0x0, 0x0, 0x0 },
-        { 0x11, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_OPPOSITE)] = {
+        { .songId = PHONEME_ID(PH_THOUGHT_SOLO) },
+        { .songId = PHONEME_ID(PH_GOAT_SOLO) },
+        { .songId = PHONEME_ID(PH_KIT_SOLO) },
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x9, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_LEFT)] = {
+        { .songId = PHONEME_ID(PH_DRESS_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     },
-    {
-        { 0x12, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
-        { 0x33, 0x0, 0x0, 0x0, 0x0 },
+    [EC_INDEX(EC_WORD_RIGHT)] = {
+        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
+        PREV_BARD_SOUND,
+        PREV_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
-        NULL_BARD_SOUND
+        NULL_BARD_SOUND,
     }
 };
 

@@ -15,6 +15,7 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_RAYQUAZA_SLEEPING",
       "graphics_id": "OBJ_EVENT_GFX_RAYQUAZA",
       "x": 14,
       "y": 7,
@@ -47,7 +48,7 @@
       "y": 14,
       "elevation": 3,
       "dest_map": "MAP_SKY_PILLAR_5F",
-      "dest_warp_id": 1
+      "dest_warp_id": "1"
     }
   ],
   "coord_events": [
@@ -56,7 +57,7 @@
       "x": 14,
       "y": 9,
       "elevation": 3,
-      "var": "VAR_SKY_PILLAR_RAQUAZA_CRY_DONE",
+      "var": "VAR_SKY_PILLAR_RAYQUAZA_CRY_DONE",
       "var_value": "0",
       "script": "SkyPillar_Top_EventScript_AwakenRayquaza"
     }

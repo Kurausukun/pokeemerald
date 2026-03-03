@@ -12,7 +12,7 @@ struct Pokenav_Menu
     u16 currMenuItem;
     u16 helpBarIndex;
     u32 menuId;
-    u32 (*callback)(struct Pokenav_Menu*);
+    u32 (*callback)(struct Pokenav_Menu *);
 };
 
 static bool32 UpdateMenuCursorPos(struct Pokenav_Menu *);
@@ -28,7 +28,7 @@ static u32 HandleCantOpenRibbonsInput(struct Pokenav_Menu *);
 static u32 HandleMainMenuInputEndTutorial(struct Pokenav_Menu *);
 static u32 HandleMainMenuInputTutorial(struct Pokenav_Menu *);
 static u32 HandleMainMenuInput(struct Pokenav_Menu *);
-static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu*);
+static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu *);
 static void SetMenuInputHandler(struct Pokenav_Menu *);
 
 // Number of entries - 1 for that menu type
@@ -186,7 +186,7 @@ static void SetMenuInputHandler(struct Pokenav_Menu *menu)
     }
 }
 
-static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu*)
+static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu *)
 {
     switch (GetPokenavMode())
     {
@@ -257,7 +257,7 @@ static u32 HandleMainMenuInput(struct Pokenav_Menu *menu)
     return POKENAV_MENU_FUNC_NONE;
 }
 
-// Force the player to select Match Call during the call Mr. Stone pokenav tutorial
+// Force the player to select Match Call during the call Mr. Stone PokéNav tutorial
 static u32 HandleMainMenuInputTutorial(struct Pokenav_Menu *menu)
 {
     if (UpdateMenuCursorPos(menu))
@@ -287,7 +287,7 @@ static u32 HandleMainMenuInputTutorial(struct Pokenav_Menu *menu)
     return POKENAV_MENU_FUNC_NONE;
 }
 
-// After calling Mr. Stone during the pokenav tutorial, force player to exit or use Match Call again
+// After calling Mr. Stone during the PokéNav tutorial, force player to exit or use Match Call again
 static u32 HandleMainMenuInputEndTutorial(struct Pokenav_Menu *menu)
 {
     if (UpdateMenuCursorPos(menu))

@@ -60,13 +60,13 @@ static void Task_BlendPalettesGradually(u8 taskId);
 // unaligned word reads are issued in BlendPalette otherwise
 ALIGNED(4) EWRAM_DATA u16 gPlttBufferUnfaded[PLTT_BUFFER_SIZE] = {0};
 ALIGNED(4) EWRAM_DATA u16 gPlttBufferFaded[PLTT_BUFFER_SIZE] = {0};
-EWRAM_DATA struct PaletteStruct sPaletteStructs[NUM_PALETTE_STRUCTS] = {0};
+static EWRAM_DATA struct PaletteStruct sPaletteStructs[NUM_PALETTE_STRUCTS] = {0};
 EWRAM_DATA struct PaletteFadeControl gPaletteFade = {0};
 static EWRAM_DATA u32 sFiller = 0;
 static EWRAM_DATA u32 sPlttBufferTransferPending = 0;
-EWRAM_DATA u8 gPaletteDecompressionBuffer[PLTT_DECOMP_BUFFER_SIZE] = {0};
+EWRAM_DATA u8 ALIGNED(2) gPaletteDecompressionBuffer[PLTT_SIZE] = {0};
 
-static const struct PaletteStructTemplate gDummyPaletteStructTemplate = {
+static const struct PaletteStructTemplate sDummyPaletteStructTemplate = {
     .id = 0xFFFF,
     .state = 1
 };
@@ -148,7 +148,7 @@ static void ReadPlttIntoBuffers(void)
     u16 i;
     u16 *pltt = (u16 *)PLTT;
 
-    for (i = 0; i < PLTT_SIZE / 2; i++)
+    for (i = 0; i < PLTT_BUFFER_SIZE; i++)
     {
         gPlttBufferUnfaded[i] = pltt[i];
         gPlttBufferFaded[i] = pltt[i];
@@ -201,15 +201,13 @@ bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targe
     }
 }
 
-// Unused
-static bool8 BeginPlttFade(u32 selectedPalettes, u8 delay, u8 startY, u8 targetY, u16 blendColor)
+static bool8 UNUSED BeginPlttFade(u32 selectedPalettes, u8 delay, u8 startY, u8 targetY, u16 blendColor)
 {
     ReadPlttIntoBuffers();
     return BeginNormalPaletteFade(selectedPalettes, delay, startY, targetY, blendColor);
 }
 
-// Unused
-static void PaletteStruct_Run(u8 a1, u32 *unkFlags)
+static void UNUSED PaletteStruct_Run(u8 a1, u32 *unkFlags)
 {
     u8 i;
 
@@ -237,63 +235,63 @@ static void PaletteStruct_Run(u8 a1, u32 *unkFlags)
     }
 }
 
-static void PaletteStruct_Copy(struct PaletteStruct *a1, u32 *unkFlags)
+static void PaletteStruct_Copy(struct PaletteStruct *palStruct, u32 *unkFlags)
 {
     s32 srcIndex;
     s32 srcCount;
     u8 i = 0;
-    u16 srcOffset = a1->srcIndex * a1->template->size;
+    u16 srcOffset = palStruct->srcIndex * palStruct->template->size;
 
-    if (!a1->template->pst_field_8_0)
+    if (!palStruct->template->pst_field_8_0)
     {
-        while (i < a1->template->size)
+        while (i < palStruct->template->size)
         {
-            gPlttBufferUnfaded[a1->destOffset] = a1->template->src[srcOffset];
-            gPlttBufferFaded[a1->destOffset] = a1->template->src[srcOffset];
+            gPlttBufferUnfaded[palStruct->destOffset] = palStruct->template->src[srcOffset];
+            gPlttBufferFaded[palStruct->destOffset] = palStruct->template->src[srcOffset];
             i++;
-            a1->destOffset++;
+            palStruct->destOffset++;
             srcOffset++;
         }
     }
     else
     {
-        while (i < a1->template->size)
+        while (i < palStruct->template->size)
         {
-            gPlttBufferFaded[a1->destOffset] = a1->template->src[srcOffset];
+            gPlttBufferFaded[palStruct->destOffset] = palStruct->template->src[srcOffset];
             i++;
-            a1->destOffset++;
+            palStruct->destOffset++;
             srcOffset++;
         }
     }
 
-    a1->destOffset = a1->baseDestOffset;
-    a1->countdown1 = a1->template->time1;
-    a1->srcIndex++;
+    palStruct->destOffset = palStruct->baseDestOffset;
+    palStruct->countdown1 = palStruct->template->time1;
+    palStruct->srcIndex++;
 
-    srcIndex = a1->srcIndex;
-    srcCount = a1->template->srcCount;
+    srcIndex = palStruct->srcIndex;
+    srcCount = palStruct->template->srcCount;
 
     if (srcIndex >= srcCount)
     {
-        if (a1->countdown2)
-            a1->countdown2--;
-        a1->srcIndex = 0;
+        if (palStruct->countdown2)
+            palStruct->countdown2--;
+        palStruct->srcIndex = 0;
     }
 
-    *unkFlags |= 1 << (a1->baseDestOffset >> 4);
+    *unkFlags |= 1 << (palStruct->baseDestOffset >> 4);
 }
 
-static void PaletteStruct_Blend(struct PaletteStruct *a1, u32 *unkFlags)
+static void PaletteStruct_Blend(struct PaletteStruct *palStruct, u32 *unkFlags)
 {
-    if (gPaletteFade.active && ((1 << (a1->baseDestOffset >> 4)) & gPaletteFade_selectedPalettes))
+    if (gPaletteFade.active && ((1 << (palStruct->baseDestOffset >> 4)) & gPaletteFade_selectedPalettes))
     {
-        if (!a1->template->pst_field_8_0)
+        if (!palStruct->template->pst_field_8_0)
         {
             if (gPaletteFade.delayCounter != gPaletteFade_delay)
             {
                 BlendPalette(
-                    a1->baseDestOffset,
-                    a1->template->size,
+                    palStruct->baseDestOffset,
+                    palStruct->template->size,
                     gPaletteFade.y,
                     gPaletteFade.blendColor);
             }
@@ -302,13 +300,13 @@ static void PaletteStruct_Blend(struct PaletteStruct *a1, u32 *unkFlags)
         {
             if (!gPaletteFade.delayCounter)
             {
-                if (a1->countdown1 != a1->template->time1)
+                if (palStruct->countdown1 != palStruct->template->time1)
                 {
-                    u32 srcOffset = a1->srcIndex * a1->template->size;
+                    u32 srcOffset = palStruct->srcIndex * palStruct->template->size;
                     u8 i;
 
-                    for (i = 0; i < a1->template->size; i++)
-                        gPlttBufferFaded[a1->baseDestOffset + i] = a1->template->src[srcOffset + i];
+                    for (i = 0; i < palStruct->template->size; i++)
+                        gPlttBufferFaded[palStruct->baseDestOffset + i] = palStruct->template->src[srcOffset + i];
                 }
             }
         }
@@ -352,7 +350,7 @@ void PaletteStruct_ResetById(u16 id)
 
 static void PaletteStruct_Reset(u8 paletteNum)
 {
-    sPaletteStructs[paletteNum].template = &gDummyPaletteStructTemplate;
+    sPaletteStructs[paletteNum].template = &sDummyPaletteStructTemplate;
     sPaletteStructs[paletteNum].active = FALSE;
     sPaletteStructs[paletteNum].baseDestOffset = 0;
     sPaletteStructs[paletteNum].destOffset = 0;
@@ -382,14 +380,14 @@ void ResetPaletteFadeControl(void)
     gPaletteFade.deltaY = 2;
 }
 
-static void PaletteStruct_SetUnusedFlag(u16 id)
+static void UNUSED PaletteStruct_SetUnusedFlag(u16 id)
 {
     u8 paletteNum = PaletteStruct_GetPalNum(id);
     if (paletteNum != NUM_PALETTE_STRUCTS)
         sPaletteStructs[paletteNum].flag = TRUE;
 }
 
-static void PaletteStruct_ClearUnusedFlag(u16 id)
+static void UNUSED PaletteStruct_ClearUnusedFlag(u16 id)
 {
     u8 paletteNum = PaletteStruct_GetPalNum(id);
     if (paletteNum != NUM_PALETTE_STRUCTS)
@@ -440,7 +438,7 @@ static u8 UpdateNormalPaletteFade(void)
         else
         {
             selectedPalettes = gPaletteFade_selectedPalettes >> 16;
-            paletteOffset = 256;
+            paletteOffset = OBJ_PLTT_OFFSET;
         }
 
         while (selectedPalettes)
@@ -592,13 +590,13 @@ static u8 UpdateFastPaletteFade(void)
 
     if (gPaletteFade.objPaletteToggle)
     {
-        paletteOffsetStart = 256;
-        paletteOffsetEnd = 512;
+        paletteOffsetStart = OBJ_PLTT_OFFSET;
+        paletteOffsetEnd = PLTT_BUFFER_SIZE;
     }
     else
     {
         paletteOffsetStart = 0;
-        paletteOffsetEnd = 256;
+        paletteOffsetEnd = OBJ_PLTT_OFFSET;
     }
 
     switch (gPaletteFade_submode)
@@ -958,7 +956,7 @@ void BlendPalettesGradually(u32 selectedPalettes, s8 delay, u8 coeff, u8 coeffTa
 {
     u8 taskId;
 
-    taskId = CreateTask((void *)Task_BlendPalettesGradually, priority);
+    taskId = CreateTask(Task_BlendPalettesGradually, priority);
     gTasks[taskId].tCoeff = coeff;
     gTasks[taskId].tCoeffTarget = coeffTarget;
 
@@ -982,8 +980,7 @@ void BlendPalettesGradually(u32 selectedPalettes, s8 delay, u8 coeff, u8 coeffTa
     gTasks[taskId].func(taskId);
 }
 
-// Unused
-static bool32 IsBlendPalettesGraduallyTaskActive(u8 id)
+static bool32 UNUSED IsBlendPalettesGraduallyTaskActive(u8 id)
 {
     int i;
 
@@ -996,8 +993,7 @@ static bool32 IsBlendPalettesGraduallyTaskActive(u8 id)
     return FALSE;
 }
 
-// Unused
-static void DestroyBlendPalettesGraduallyTask(void)
+static void UNUSED DestroyBlendPalettesGraduallyTask(void)
 {
     u8 taskId;
 

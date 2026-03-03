@@ -28,6 +28,7 @@
       "flag": "FLAG_HIDE_SOUTHERN_ISLAND_EON_STONE"
     },
     {
+      "local_id": "LOCALID_SOUTHERN_ISLAND_LATI",
       "graphics_id": "OBJ_EVENT_GFX_VAR_1",
       "x": 13,
       "y": 2,
@@ -47,14 +48,14 @@
       "y": 18,
       "elevation": 3,
       "dest_map": "MAP_SOUTHERN_ISLAND_EXTERIOR",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 14,
       "y": 18,
       "elevation": 3,
       "dest_map": "MAP_SOUTHERN_ISLAND_EXTERIOR",
-      "dest_warp_id": 1
+      "dest_warp_id": "1"
     }
   ],
   "coord_events": [],

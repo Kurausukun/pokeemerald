@@ -1,6 +1,7 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_anim_internal.h"
 #include "gpu_regs.h"
 #include "graphics.h"
 #include "palette.h"
@@ -48,11 +49,11 @@ static void AnimTask_SurfWaveScanlineEffect(u8);
 static void AnimTask_WaterSpoutLaunch_Step(u8);
 static void AnimTask_WaterSpoutRain_Step(u8);
 static u8 GetWaterSpoutPowerForAnim(void);
-static void CreateWaterSpoutLaunchDroplets(struct Task*, u8);
-static void CreateWaterSpoutRainDroplet(struct Task*, u8);
+static void CreateWaterSpoutLaunchDroplets(struct Task *, u8);
+static void CreateWaterSpoutRainDroplet(struct Task *, u8);
 static void AnimTask_WaterSport_Step(u8);
-static void CreateWaterSportDroplet(struct Task*);
-static void CreateWaterPulseRingBubbles(struct Sprite*, int, int);
+static void CreateWaterSportDroplet(struct Task *);
+static void CreateWaterPulseRingBubbles(struct Sprite *, int, int);
 
 static const u8 sUnusedWater_Gfx[] = INCBIN_U8("graphics/battle_anims/unused/water_gfx.4bpp");
 static const u8 sUnusedWater[] = INCBIN_U8("graphics/battle_anims/unused/water.bin");
@@ -473,26 +474,36 @@ const struct SpriteTemplate gWeatherBallWaterDownSpriteTemplate =
     .callback = AnimWeatherBallDown,
 };
 
+#define tRaindropSpawnTimer    data[0]
+#define tRaindropUnused        data[1]
+#define tRaindropSpawnInterval data[2]
+#define tRaindropSpawnDuration data[3] // number of frames over which we spawn raindrops
+
 void AnimTask_CreateRaindrops(u8 taskId)
 {
     u8 x, y;
 
-    if (gTasks[taskId].data[0] == 0)
+    if (gTasks[taskId].tRaindropSpawnTimer == 0)
     {
-        gTasks[taskId].data[1] = gBattleAnimArgs[0];
-        gTasks[taskId].data[2] = gBattleAnimArgs[1];
-        gTasks[taskId].data[3] = gBattleAnimArgs[2];
+        gTasks[taskId].tRaindropUnused        = gBattleAnimArgs[0];
+        gTasks[taskId].tRaindropSpawnInterval = gBattleAnimArgs[1];
+        gTasks[taskId].tRaindropSpawnDuration = gBattleAnimArgs[2];
     }
-    gTasks[taskId].data[0]++;
-    if (gTasks[taskId].data[0] % gTasks[taskId].data[2] == 1)
+    gTasks[taskId].tRaindropSpawnTimer++;
+    if (gTasks[taskId].tRaindropSpawnTimer % gTasks[taskId].tRaindropSpawnInterval == 1)
     {
         x = Random2() % DISPLAY_WIDTH;
         y = Random2() % (DISPLAY_HEIGHT / 2);
         CreateSprite(&gRainDropSpriteTemplate, x, y, 4);
     }
-    if (gTasks[taskId].data[0] == gTasks[taskId].data[3])
+    if (gTasks[taskId].tRaindropSpawnTimer == gTasks[taskId].tRaindropSpawnDuration)
         DestroyAnimVisualTask(taskId);
 }
+
+#undef tRaindropSpawnTimer
+#undef tRaindropUnused
+#undef tRaindropSpawnInterval
+#undef tRaindropSpawnDuration
 
 static void AnimRainDrop(struct Sprite *sprite)
 {
@@ -503,6 +514,10 @@ static void AnimRainDrop_Step(struct Sprite *sprite)
 {
     if (++sprite->data[0] <= 13)
     {
+        //
+        // Make the raindrop fall, but only until it reaches the
+        // impact/splash frames of its animation.
+        //
         sprite->x2++;
         sprite->y2 += 4;
     }
@@ -619,7 +634,7 @@ static void AnimAuroraBeamRings_Step(struct Sprite *sprite)
 void AnimTask_RotateAuroraRingColors(u8 taskId)
 {
     gTasks[taskId].data[0] = gBattleAnimArgs[0];
-    gTasks[taskId].data[2] = IndexOfSpritePaletteTag(ANIM_TAG_RAINBOW_RINGS) * 16 + 256;
+    gTasks[taskId].data[2] = OBJ_PLTT_ID(IndexOfSpritePaletteTag(ANIM_TAG_RAINBOW_RINGS));
     gTasks[taskId].func = AnimTask_RotateAuroraRingColors_Step;
 }
 
@@ -739,7 +754,7 @@ static void AnimHydroCannonCharge_Step(struct Sprite *sprite)
 // Flashing blue orbs move from the attacker to the target. Second stage of Hydro Cannon
 static void AnimHydroCannonBeam(struct Sprite *sprite)
 {
-    bool8 animType;
+    bool8 respectMonPicOffsets;
     u8 coordType;
     if (GetBattlerSide(gBattleAnimAttacker) == GetBattlerSide(gBattleAnimTarget))
     {
@@ -748,14 +763,14 @@ static void AnimHydroCannonBeam(struct Sprite *sprite)
             gBattleAnimArgs[0] *= -1;
     }
     if ((gBattleAnimArgs[5] & 0xFF00) == 0)
-        animType = TRUE;
+        respectMonPicOffsets = TRUE;
     else
-        animType = FALSE;
+        respectMonPicOffsets = FALSE;
     if ((u8)gBattleAnimArgs[5] == 0)
         coordType = BATTLER_COORD_Y_PIC_OFFSET;
     else
         coordType = BATTLER_COORD_Y;
-    InitSpritePosToAnimAttacker(sprite, animType);
+    InitSpritePosToAnimAttacker(sprite, respectMonPicOffsets);
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         gBattleAnimArgs[2] = -gBattleAnimArgs[2];
     sprite->data[0] = gBattleAnimArgs[4];
@@ -798,6 +813,8 @@ static void AnimSmallBubblePair_Step(struct Sprite *sprite)
 
 void AnimTask_CreateSurfWave(u8 taskId)
 {
+    CMD_ARGS(palette);
+
     struct BattleAnimBgData animBg;
     u8 taskId2;
     u16 *x;
@@ -824,10 +841,10 @@ void AnimTask_CreateSurfWave(u8 taskId)
         AnimLoadCompressedBgTilemapHandleContest(&animBg, gBattleAnimBgTilemap_SurfContest, TRUE);
     }
     AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnimBgImage_Surf, animBg.tilesOffset);
-    if (gBattleAnimArgs[0] == 0)
-        LoadCompressedPalette(gBattleAnimBgPalette_Surf, animBg.paletteId * 16, 32);
+    if (cmd->palette == ANIM_SURF_PAL_SURF)
+        LoadCompressedPalette(gBattleAnimBgPalette_Surf, BG_PLTT_ID(animBg.paletteId), PLTT_SIZE_4BPP);
     else
-        LoadCompressedPalette(gBattleAnimBackgroundImageMuddyWater_Pal, animBg.paletteId * 16, 32);
+        LoadCompressedPalette(gBattleAnimBackgroundImageMuddyWater_Pal, BG_PLTT_ID(animBg.paletteId), PLTT_SIZE_4BPP);
     taskId2 = CreateTask(AnimTask_SurfWaveScanlineEffect, gTasks[taskId].priority + 1);
     gTasks[taskId].data[15] = taskId2;
     gTasks[taskId2].data[0] = 0;
@@ -887,12 +904,12 @@ static void AnimTask_CreateSurfWave_Step1(u8 taskId)
     gTasks[taskId].data[2] += gTasks[taskId].data[1];
     if (++gTasks[taskId].data[5] == 4)
     {
-        rgbBuffer = gPlttBufferFaded[animBg.paletteId * 16 + 7];
+        rgbBuffer = gPlttBufferFaded[BG_PLTT_ID(animBg.paletteId) + 7];
         for (i = 6; i != 0; i--)
         {
-            gPlttBufferFaded[animBg.paletteId * 16 + 1 + i] = gPlttBufferFaded[animBg.paletteId * 16 + 1 + i - 1]; // 1 + i - 1 is needed to match for some bizarre reason
+            gPlttBufferFaded[BG_PLTT_ID(animBg.paletteId) + 1 + i] = gPlttBufferFaded[BG_PLTT_ID(animBg.paletteId) + 1 + i - 1]; // 1 + i - 1 is needed to match for some bizarre reason
         }
-        gPlttBufferFaded[animBg.paletteId * 16 + 1] = rgbBuffer;
+        gPlttBufferFaded[BG_PLTT_ID(animBg.paletteId) + 1] = rgbBuffer;
         gTasks[taskId].data[5] = 0;
     }
     if (++gTasks[taskId].data[6] > 1)

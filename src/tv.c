@@ -45,7 +45,6 @@
 #include "constants/metatile_labels.h"
 #include "constants/moves.h"
 #include "constants/region_map_sections.h"
-#include "constants/script_menu.h"
 
 #define LAST_TVSHOW_IDX (TV_SHOWS_COUNT - 1)
 
@@ -64,14 +63,14 @@ enum {
     ROULETTE,
 };
 
-s8 sCurTVShowSlot;
-u16 sTV_SecretBaseVisitMovesTemp[8];
-u8 sTV_DecorationsBuffer[DECOR_MAX_SECRET_BASE];
-struct {
+COMMON_DATA s8 sCurTVShowSlot = 0;
+COMMON_DATA u16 sTV_SecretBaseVisitMovesTemp[8] = {0};
+COMMON_DATA u8 sTV_DecorationsBuffer[DECOR_MAX_SECRET_BASE] = {0};
+COMMON_DATA struct {
     u8 level;
     u16 species;
     u16 move;
-} sTV_SecretBaseVisitMonsTemp[10];
+} sTV_SecretBaseVisitMonsTemp[10] = {0};
 
 static u8 sTVShowMixingNumPlayers;
 static u8 sTVShowNewsMixingNumPlayers;
@@ -200,31 +199,31 @@ static const struct {
         .species = SPECIES_SEEDOT,
         .moves = {MOVE_BIDE, MOVE_HARDEN, MOVE_LEECH_SEED},
         .level = 3,
-        .location = MAP_NUM(ROUTE102)
+        .location = MAP_NUM(MAP_ROUTE102)
     },
     {
         .species = SPECIES_NUZLEAF,
         .moves = {MOVE_HARDEN, MOVE_GROWTH, MOVE_NATURE_POWER, MOVE_LEECH_SEED},
         .level = 15,
-        .location = MAP_NUM(ROUTE114),
+        .location = MAP_NUM(MAP_ROUTE114),
     },
     {
         .species = SPECIES_SEEDOT,
         .moves = {MOVE_HARDEN, MOVE_GROWTH, MOVE_NATURE_POWER, MOVE_LEECH_SEED},
         .level = 13,
-        .location = MAP_NUM(ROUTE117),
+        .location = MAP_NUM(MAP_ROUTE117),
     },
     {
         .species = SPECIES_SEEDOT,
         .moves = {MOVE_GIGA_DRAIN, MOVE_FRUSTRATION, MOVE_SOLAR_BEAM, MOVE_LEECH_SEED},
         .level = 25,
-        .location = MAP_NUM(ROUTE120),
+        .location = MAP_NUM(MAP_ROUTE120),
     },
     {
         .species = SPECIES_SKITTY,
         .moves = {MOVE_GROWL, MOVE_TACKLE, MOVE_TAIL_WHIP, MOVE_ATTRACT},
         .level = 8,
-        .location = MAP_NUM(ROUTE116),
+        .location = MAP_NUM(MAP_ROUTE116),
     }
 };
 
@@ -373,21 +372,21 @@ static const u8 *const sTV3CheersForPokeblocksTextGroup[] = {
 };
 
 static const u8 *const sTVBravoTrainerBattleTowerTextGroup[] = {
-    gTVBravoTrainerBattleTowerText00,
-    gTVBravoTrainerBattleTowerText01,
-    gTVBravoTrainerBattleTowerText02,
-    gTVBravoTrainerBattleTowerText03,
-    gTVBravoTrainerBattleTowerText04,
-    gTVBravoTrainerBattleTowerText05,
-    gTVBravoTrainerBattleTowerText06,
-    gTVBravoTrainerBattleTowerText07,
-    gTVBravoTrainerBattleTowerText08,
-    gTVBravoTrainerBattleTowerText09,
-    gTVBravoTrainerBattleTowerText10,
-    gTVBravoTrainerBattleTowerText11,
-    gTVBravoTrainerBattleTowerText12,
-    gTVBravoTrainerBattleTowerText13,
-    gTVBravoTrainerBattleTowerText14
+    [BRAVOTOWER_STATE_INTRO]                = BravoTrainerBattleTower_Text_Intro,
+    [BRAVOTOWER_STATE_NEW_RECORD]           = BravoTrainerBattleTower_Text_NewRecord,
+    [BRAVOTOWER_STATE_LOST]                 = BravoTrainerBattleTower_Text_Lost,
+    [BRAVOTOWER_STATE_WON]                  = BravoTrainerBattleTower_Text_Won,
+    [BRAVOTOWER_STATE_LOST_FINAL]           = BravoTrainerBattleTower_Text_LostFinal,
+    [BRAVOTOWER_STATE_SATISFIED]            = BravoTrainerBattleTower_Text_Satisfied,
+    [BRAVOTOWER_STATE_UNSATISFIED]          = BravoTrainerBattleTower_Text_Unsatisfied,
+    [BRAVOTOWER_STATE_UNUSED_1]             = BravoTrainerBattleTower_Text_None1,
+    [BRAVOTOWER_STATE_UNUSED_2]             = BravoTrainerBattleTower_Text_None2,
+    [BRAVOTOWER_STATE_UNUSED_3]             = BravoTrainerBattleTower_Text_None3,
+    [BRAVOTOWER_STATE_UNUSED_4]             = BravoTrainerBattleTower_Text_None4,
+    [BRAVOTOWER_STATE_RESPONSE]             = BravoTrainerBattleTower_Text_Response,
+    [BRAVOTOWER_STATE_RESPONSE_SATISFIED]   = BravoTrainerBattleTower_Text_ResponseSatisfied,
+    [BRAVOTOWER_STATE_RESPONSE_UNSATISFIED] = BravoTrainerBattleTower_Text_ResponseUnsatisfied,
+    [BRAVOTOWER_STATE_OUTRO]                = BravoTrainerBattleTower_Text_Outro
 };
 
 static const u8 *const sTVContestLiveUpdatesTextGroup[] = {
@@ -485,7 +484,7 @@ static const u8 *const sTVPokemonTodayFailedTextGroup[] = {
     gTVPokemonTodayFailedText06
 };
 
-static const u8 *const sTVPokemonAnslerTextGroup[] = {
+static const u8 *const sTVPokemonAnglerTextGroup[] = {
     gTVPokemonAnglerText00,
     gTVPokemonAnglerText01
 };
@@ -723,7 +722,7 @@ static const u8 *const sTVInSearchOfTrainersTextGroup[] = {
 
 // Secret Base Secrets TV Show states for actions that can be taken in a secret base
 // The flags that determine whether or not the action was taken are commented
-const u8 sTVSecretBaseSecretsActions[NUM_SECRET_BASE_FLAGS] =
+static const u8 sTVSecretBaseSecretsActions[NUM_SECRET_BASE_FLAGS] =
 {
     SBSECRETS_STATE_USED_CHAIR,             // SECRET_BASE_USED_CHAIR
     SBSECRETS_STATE_USED_BALLOON,           // SECRET_BASE_USED_BALLOON
@@ -837,8 +836,8 @@ void UpdateTVScreensOnMap(int width, int height)
         break;
 //  case PLAYERS_HOUSE_TV_NONE:
     default:
-        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LILYCOVE_CITY_COVE_LILY_MOTEL_1F)
-         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(LILYCOVE_CITY_COVE_LILY_MOTEL_1F))
+        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_LILYCOVE_CITY_COVE_LILY_MOTEL_1F)
+         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_LILYCOVE_CITY_COVE_LILY_MOTEL_1F))
         {
             // NPC in Lilycove Hotel is always watching TV
             SetTVMetatilesOnMap(width, height, METATILE_Building_TV_On);
@@ -852,7 +851,7 @@ void UpdateTVScreensOnMap(int width, int height)
     }
 }
 
-static void SetTVMetatilesOnMap(int width, int height, u16 tileId)
+static void SetTVMetatilesOnMap(int width, int height, u16 metatileId)
 {
     int x;
     int y;
@@ -862,7 +861,7 @@ static void SetTVMetatilesOnMap(int width, int height, u16 tileId)
         for (x = 0; x < width; x++)
         {
             if (MapGridGetMetatileBehaviorAt(x, y) == MB_TELEVISION)
-                MapGridSetMetatileIdAt(x, y, tileId | METATILE_COLLISION_MASK);
+                MapGridSetMetatileIdAt(x, y, metatileId | MAPGRID_COLLISION_MASK);
         }
     }
 }
@@ -941,9 +940,8 @@ void GabbyAndTyBeforeInterview(void)
     gSaveBlock1Ptr->gabbyAndTyData.mon2 = gBattleResults.playerMon2Species;
     gSaveBlock1Ptr->gabbyAndTyData.lastMove = gBattleResults.lastUsedMovePlayer;
     if (gSaveBlock1Ptr->gabbyAndTyData.battleNum != 0xFF)
-    {
         gSaveBlock1Ptr->gabbyAndTyData.battleNum++;
-    }
+
     gSaveBlock1Ptr->gabbyAndTyData.battleTookMoreThanOneTurn = gBattleResults.playerMonWasDamaged;
 
     if (gBattleResults.playerFaintCounter != 0)
@@ -975,9 +973,7 @@ void GabbyAndTyBeforeInterview(void)
 
     TakeGabbyAndTyOffTheAir();
     if (gSaveBlock1Ptr->gabbyAndTyData.lastMove == MOVE_NONE)
-    {
-        FlagSet(FLAG_TEMP_1);
-    }
+        FlagSet(FLAG_TEMP_SKIP_GABBY_INTERVIEW);
 }
 
 void GabbyAndTyAfterInterview(void)
@@ -996,6 +992,7 @@ static void TakeGabbyAndTyOffTheAir(void)
     gSaveBlock1Ptr->gabbyAndTyData.onAir = FALSE;
 }
 
+// See gabby_and_ty.inc for details
 u8 GabbyAndTyGetBattleNum(void)
 {
     if (gSaveBlock1Ptr->gabbyAndTyData.battleNum > 5)
@@ -1037,41 +1034,42 @@ u8 GabbyAndTyGetLastBattleTrivia(void)
     return 0;
 }
 
+// See gabby_and_ty.inc for details
 void GetGabbyAndTyLocalIds(void)
 {
     switch (GabbyAndTyGetBattleNum())
     {
     case 1:
-        gSpecialVar_0x8004 = 14;
-        gSpecialVar_0x8005 = 13;
+        gSpecialVar_0x8004 = LOCALID_ROUTE111_GABBY_1;
+        gSpecialVar_0x8005 = LOCALID_ROUTE111_TY_1;
         break;
     case 2:
-        gSpecialVar_0x8004 = 5;
-        gSpecialVar_0x8005 = 6;
+        gSpecialVar_0x8004 = LOCALID_ROUTE118_GABBY_1;
+        gSpecialVar_0x8005 = LOCALID_ROUTE118_TY_1;
         break;
     case 3:
-        gSpecialVar_0x8004 = 18;
-        gSpecialVar_0x8005 = 17;
+        gSpecialVar_0x8004 = LOCALID_ROUTE120_GABBY_1;
+        gSpecialVar_0x8005 = LOCALID_ROUTE120_TY_1;
         break;
     case 4:
-        gSpecialVar_0x8004 = 21;
-        gSpecialVar_0x8005 = 22;
+        gSpecialVar_0x8004 = LOCALID_ROUTE111_GABBY_2;
+        gSpecialVar_0x8005 = LOCALID_ROUTE111_TY_2;
         break;
     case 5:
-        gSpecialVar_0x8004 = 8;
-        gSpecialVar_0x8005 = 9;
+        gSpecialVar_0x8004 = LOCALID_ROUTE118_GABBY_2;
+        gSpecialVar_0x8005 = LOCALID_ROUTE118_TY_2;
         break;
     case 6:
-        gSpecialVar_0x8004 = 19;
-        gSpecialVar_0x8005 = 20;
+        gSpecialVar_0x8004 = LOCALID_ROUTE120_GABBY_2;
+        gSpecialVar_0x8005 = LOCALID_ROUTE120_TY_2;
         break;
     case 7:
-        gSpecialVar_0x8004 = 23;
-        gSpecialVar_0x8005 = 24;
+        gSpecialVar_0x8004 = LOCALID_ROUTE111_GABBY_3;
+        gSpecialVar_0x8005 = LOCALID_ROUTE111_TY_3;
         break;
     case 8:
-        gSpecialVar_0x8004 = 10;
-        gSpecialVar_0x8005 = 11;
+        gSpecialVar_0x8004 = LOCALID_ROUTE118_GABBY_3;
+        gSpecialVar_0x8005 = LOCALID_ROUTE118_TY_3;
         break;
     }
 }
@@ -1449,7 +1447,7 @@ static void InterviewAfter_BravoTrainerPokemonProfile(void)
     }
 }
 
-void BravoTrainerPokemonProfile_BeforeInterview1(u16 a0)
+void BravoTrainerPokemonProfile_BeforeInterview1(u16 move)
 {
     TVShow *show = &gSaveBlock1Ptr->tvShows[LAST_TVSHOW_IDX];
     InterviewBefore_BravoTrainerPkmnProfile();
@@ -1457,7 +1455,7 @@ void BravoTrainerPokemonProfile_BeforeInterview1(u16 a0)
     if (sCurTVShowSlot != -1)
     {
         DeleteTVShowInArrayByIdx(gSaveBlock1Ptr->tvShows, LAST_TVSHOW_IDX);
-        show->bravoTrainer.move = a0;
+        show->bravoTrainer.move = move;
         show->bravoTrainer.kind = TVSHOW_BRAVO_TRAINER_POKEMON_PROFILE;
     }
 }
@@ -1483,23 +1481,23 @@ static void InterviewAfter_BravoTrainerBattleTowerProfile(void)
     TVShow *show = &gSaveBlock1Ptr->tvShows[sCurTVShowSlot];
     show->bravoTrainerTower.kind = TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE;
     show->bravoTrainerTower.active = TRUE;
-    StringCopy(show->bravoTrainerTower.trainerName, gSaveBlock2Ptr->playerName);
-    StringCopy(show->bravoTrainerTower.pokemonName, gSaveBlock2Ptr->frontier.towerInterview.opponentName);
+    StringCopy(show->bravoTrainerTower.playerName, gSaveBlock2Ptr->playerName);
+    StringCopy(show->bravoTrainerTower.opponentName, gSaveBlock2Ptr->frontier.towerInterview.opponentName);
     show->bravoTrainerTower.species = gSaveBlock2Ptr->frontier.towerInterview.playerSpecies;
     show->bravoTrainerTower.defeatedSpecies = gSaveBlock2Ptr->frontier.towerInterview.opponentSpecies;
     show->bravoTrainerTower.numFights = GetCurrentBattleTowerWinStreak(gSaveBlock2Ptr->frontier.towerLvlMode, 0);
     show->bravoTrainerTower.wonTheChallenge = gSaveBlock2Ptr->frontier.towerBattleOutcome;
     if (gSaveBlock2Ptr->frontier.towerLvlMode == FRONTIER_LVL_50)
-        show->bravoTrainerTower.btLevel = 50;
+        show->bravoTrainerTower.btLevel = FRONTIER_MAX_LEVEL_50;
     else
-        show->bravoTrainerTower.btLevel = 100;
+        show->bravoTrainerTower.btLevel = FRONTIER_MAX_LEVEL_OPEN;
     show->bravoTrainerTower.interviewResponse = gSpecialVar_0x8004;
     StorePlayerIdInNormalShow(show);
-    show->bravoTrainerTower.language = gGameLanguage;
-    if (show->bravoTrainerTower.language == LANGUAGE_JAPANESE || gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage == LANGUAGE_JAPANESE)
-        show->bravoTrainerTower.pokemonNameLanguage = LANGUAGE_JAPANESE;
+    show->bravoTrainerTower.playerLanguage = gGameLanguage;
+    if (show->bravoTrainerTower.playerLanguage == LANGUAGE_JAPANESE || gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage == LANGUAGE_JAPANESE)
+        show->bravoTrainerTower.opponentLanguage = LANGUAGE_JAPANESE;
     else
-        show->bravoTrainerTower.pokemonNameLanguage = gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage;
+        show->bravoTrainerTower.opponentLanguage = gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage;
 }
 
 void TryPutSmartShopperOnAir(void)
@@ -1507,8 +1505,8 @@ void TryPutSmartShopperOnAir(void)
     TVShow *show;
     u8 i;
 
-    if (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(TRAINER_HILL_ENTRANCE) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(TRAINER_HILL_ENTRANCE))
-     && !(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(BATTLE_FRONTIER_MART) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(BATTLE_FRONTIER_MART))
+    if (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_TRAINER_HILL_ENTRANCE) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_TRAINER_HILL_ENTRANCE))
+     && !(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_BATTLE_FRONTIER_MART) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_BATTLE_FRONTIER_MART))
      && !rbernoulli(1, 3))
     {
         sCurTVShowSlot = FindFirstEmptyRecordMixTVShowSlot(gSaveBlock1Ptr->tvShows);
@@ -2058,7 +2056,7 @@ static void SecretBaseVisit_CalculatePartyData(TVShow *show)
         {
             sTV_SecretBaseVisitMonsTemp[numPokemon].level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL);
             sTV_SecretBaseVisitMonsTemp[numPokemon].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES);
-            
+
             // Check all the Pokémon's moves, then randomly select one to save
             numMoves = 0;
             move = GetMonData(&gPlayerParty[i], MON_DATA_MOVE1);
@@ -2093,7 +2091,7 @@ static void SecretBaseVisit_CalculatePartyData(TVShow *show)
     for (i = 0, sum = 0; i < numPokemon; i++)
         sum += sTV_SecretBaseVisitMonsTemp[i].level;
 
-    // Using the data calculated above, save the data to talk about on the show 
+    // Using the data calculated above, save the data to talk about on the show
     // (average level, and one randomly selected species / move)
     show->secretBaseVisit.avgLevel = sum / numPokemon;
     j = Random() % numPokemon;
@@ -2203,7 +2201,7 @@ void TryPutLotteryWinnerReportOnAir(void)
     }
 }
 
-void TryPutBattleSeminarOnAir(u16 foeSpecies, u16 species, u8 moveIdx, const u16 *movePtr, u16 betterMove)
+void TryPutBattleSeminarOnAir(u16 foeSpecies, u16 species, u8 moveIndex, const u16 *movePtr, u16 betterMove)
 {
     TVShow *show;
     u8 i;
@@ -2218,10 +2216,10 @@ void TryPutBattleSeminarOnAir(u16 foeSpecies, u16 species, u8 moveIdx, const u16
         StringCopy(show->battleSeminar.playerName, gSaveBlock2Ptr->playerName);
         show->battleSeminar.foeSpecies = foeSpecies;
         show->battleSeminar.species = species;
-        show->battleSeminar.move = movePtr[moveIdx];
+        show->battleSeminar.move = movePtr[moveIndex];
         for (i = 0, j = 0; i < MAX_MON_MOVES; i++)
         {
-            if (i != moveIdx && movePtr[i])
+            if (i != moveIndex && movePtr[i])
             {
                 show->battleSeminar.otherMoves[j] = movePtr[i];
                 j++;
@@ -2643,7 +2641,7 @@ void DoPokeNews(void)
             // News event is upcoming, make comment about countdown to event
             u16 dayCountdown = gSaveBlock1Ptr->pokeNews[i].dayCountdown;
             ConvertIntToDecimalStringN(gStringVar1, dayCountdown, STR_CONV_MODE_LEFT_ALIGN, 1);
-            
+
             // Mark as inactive so the countdown TV airing doesn't repeat
             // Will be flagged as "upcoming" again by UpdatePokeNewsCountdown
             gSaveBlock1Ptr->pokeNews[i].state = POKENEWS_STATE_INACTIVE;
@@ -2682,14 +2680,14 @@ static bool8 ShouldApplyPokeNewsEffect(u8 newsKind)
     switch (newsKind)
     {
     case POKENEWS_SLATEPORT:
-        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SLATEPORT_CITY)
-         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SLATEPORT_CITY)
+        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_SLATEPORT_CITY)
+         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_SLATEPORT_CITY)
          && gSpecialVar_LastTalked == LOCALID_SLATEPORT_ENERGY_GURU)
             return TRUE;
         return FALSE;
     case POKENEWS_LILYCOVE:
-        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LILYCOVE_CITY_DEPARTMENT_STORE_ROOFTOP)
-         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(LILYCOVE_CITY_DEPARTMENT_STORE_ROOFTOP))
+        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ROOFTOP)
+         && gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ROOFTOP))
             return TRUE;
         return FALSE;
     }
@@ -2811,7 +2809,7 @@ static void SmartShopper_BufferPurchaseTotal(u8 varIdx, TVShow *show)
     for (i = 0; i < SMARTSHOPPER_NUM_ITEMS; i++)
     {
         if (show->smartshopperShow.itemIds[i] != ITEM_NONE)
-            price += ItemId_GetPrice(show->smartshopperShow.itemIds[i]) * show->smartshopperShow.itemAmounts[i];
+            price += GetItemPrice(show->smartshopperShow.itemIds[i]) * show->smartshopperShow.itemAmounts[i];
     }
 
     if (show->smartshopperShow.priceReduced == TRUE)
@@ -2848,7 +2846,7 @@ static bool8 IsRecordMixShowAlreadySpawned(u8 kind, bool8 delete)
 static void SortPurchasesByQuantity(void)
 {
     u8 i, j;
-    
+
     for (i = 0; i < SMARTSHOPPER_NUM_ITEMS - 1; i++)
     {
         for (j = i + 1; j < SMARTSHOPPER_NUM_ITEMS; j++)
@@ -3361,18 +3359,18 @@ u32 GetPlayerIDAsU32(void)
 u8 CheckForPlayersHouseNews(void)
 {
     // Check if not in Littleroot house map group
-    if (gSaveBlock1Ptr->location.mapGroup != MAP_GROUP(LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
+    if (gSaveBlock1Ptr->location.mapGroup != MAP_GROUP(MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
         return PLAYERS_HOUSE_TV_NONE;
 
     // Check if not in player's house (dependent on gender)
     if (gSaveBlock2Ptr->playerGender == MALE)
     {
-        if (gSaveBlock1Ptr->location.mapNum != MAP_NUM(LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
+        if (gSaveBlock1Ptr->location.mapNum != MAP_NUM(MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
             return PLAYERS_HOUSE_TV_NONE;
     }
     else
     {
-        if (gSaveBlock1Ptr->location.mapNum != MAP_NUM(LITTLEROOT_TOWN_MAYS_HOUSE_1F))
+        if (gSaveBlock1Ptr->location.mapNum != MAP_NUM(MAP_LITTLEROOT_TOWN_MAYS_HOUSE_1F))
             return PLAYERS_HOUSE_TV_NONE;
     }
 
@@ -3387,11 +3385,12 @@ u8 CheckForPlayersHouseNews(void)
 
 void GetMomOrDadStringForTVMessage(void)
 {
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
+    // If the player is checking the TV in their house it will only refer to their Mom.
+    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
     {
         if (gSaveBlock2Ptr->playerGender == MALE)
         {
-            if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
+            if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F))
             {
                 StringCopy(gStringVar1, gText_Mom);
                 VarSet(VAR_TEMP_3, 1);
@@ -3399,7 +3398,7 @@ void GetMomOrDadStringForTVMessage(void)
         }
         else
         {
-            if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(LITTLEROOT_TOWN_MAYS_HOUSE_1F))
+            if (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_LITTLEROOT_TOWN_MAYS_HOUSE_1F))
             {
                 StringCopy(gStringVar1, gText_Mom);
                 VarSet(VAR_TEMP_3, 1);
@@ -3416,6 +3415,7 @@ void GetMomOrDadStringForTVMessage(void)
     }
     else if (VarGet(VAR_TEMP_3) > 2)
     {
+        // Should only happen if VAR_TEMP_3 is already in use by something else.
         if (VarGet(VAR_TEMP_3) % 2 == 0)
             StringCopy(gStringVar1, gText_Mom);
         else
@@ -3423,6 +3423,9 @@ void GetMomOrDadStringForTVMessage(void)
     }
     else
     {
+        // Randomly choose whether to refer to Mom or Dad.
+        // NOTE: Because of this, any map that has a TV in it shouldn't rely on VAR_TEMP_3.
+        //       If its value is 0, checking the TV will set it to 1 or 2.
         if (Random() % 2 != 0)
         {
             StringCopy(gStringVar1, gText_Mom);
@@ -3439,7 +3442,7 @@ void GetMomOrDadStringForTVMessage(void)
 void HideBattleTowerReporter(void)
 {
     VarSet(VAR_BRAVO_TRAINER_BATTLE_TOWER_ON, 0);
-    RemoveObjectEventByLocalIdAndMap(LOCALID_BATTLE_TOWER_LOBBY_REPORTER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
+    RemoveObjectEventByLocalIdAndMap(LOCALID_TOWER_LOBBY_REPORTER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
     FlagSet(FLAG_HIDE_BATTLE_TOWER_REPORTER);
 }
 
@@ -3450,7 +3453,7 @@ void ReceiveTvShowsData(void *src, u32 size, u8 playersLinkId)
     TVShow (*rmBuffer2)[MAX_LINK_PLAYERS][TV_SHOWS_COUNT];
     TVShow (*rmBuffer)[MAX_LINK_PLAYERS][TV_SHOWS_COUNT];
 
-    rmBuffer2 = malloc(MAX_LINK_PLAYERS * TV_SHOWS_COUNT * sizeof(TVShow));
+    rmBuffer2 = Alloc(MAX_LINK_PLAYERS * TV_SHOWS_COUNT * sizeof(TVShow));
     if (rmBuffer2 != NULL)
     {
         for (i = 0; i < MAX_LINK_PLAYERS; i++)
@@ -3488,7 +3491,7 @@ void ReceiveTvShowsData(void *src, u32 size, u8 playersLinkId)
         CompactTVShowArray(gSaveBlock1Ptr->tvShows);
         DeactivateShowsWithUnseenSpecies();
         DeactivateGameCompleteShowsIfNotUnlocked();
-        free(rmBuffer2);
+        Free(rmBuffer2);
     }
 }
 
@@ -3835,7 +3838,7 @@ void ReceivePokeNewsData(void *src, u32 size, u8 playersLinkId)
     PokeNews (*rmBuffer2)[MAX_LINK_PLAYERS][POKE_NEWS_COUNT];
     PokeNews (*rmBuffer)[MAX_LINK_PLAYERS][POKE_NEWS_COUNT];
 
-    rmBuffer2 = malloc(MAX_LINK_PLAYERS * POKE_NEWS_COUNT * sizeof(PokeNews));
+    rmBuffer2 = Alloc(MAX_LINK_PLAYERS * POKE_NEWS_COUNT * sizeof(PokeNews));
     if (rmBuffer2 != NULL)
     {
         for (i = 0; i < MAX_LINK_PLAYERS; i++)
@@ -3861,7 +3864,7 @@ void ReceivePokeNewsData(void *src, u32 size, u8 playersLinkId)
         }
         ClearInvalidPokeNews();
         ClearPokeNewsIfGameNotComplete();
-        free(rmBuffer2);
+        Free(rmBuffer2);
     }
 }
 
@@ -3960,13 +3963,12 @@ else \
     (langptr) = langfix; \
 }
 
-// Unused
-static void TranslateShowNames(TVShow *show, u32 language)
+static void UNUSED TranslateShowNames(TVShow *show, u32 language)
 {
     int i;
     TVShow **shows;
 
-    shows = calloc(11, sizeof(TVShow *));
+    shows = AllocZeroed(sizeof(TVShow *) * 11);
     for (i = 0; i < LAST_TVSHOW_IDX; i++)
     {
         switch (show[i].common.kind)
@@ -3992,8 +3994,8 @@ static void TranslateShowNames(TVShow *show, u32 language)
             break;
         case TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE:
             shows[5] = &show[i];
-            SetStrLanguage(shows[5]->bravoTrainerTower.trainerName, shows[5]->bravoTrainerTower.language, language);
-            SetStrLanguage(shows[5]->bravoTrainerTower.pokemonName, shows[5]->bravoTrainerTower.pokemonNameLanguage, language);
+            SetStrLanguage(shows[5]->bravoTrainerTower.playerName, shows[5]->bravoTrainerTower.playerLanguage, language);
+            SetStrLanguage(shows[5]->bravoTrainerTower.opponentName, shows[5]->bravoTrainerTower.opponentLanguage, language);
             break;
         case TVSHOW_BRAVO_TRAINER_POKEMON_PROFILE:
             shows[4] = &show[i];
@@ -4023,7 +4025,7 @@ static void TranslateShowNames(TVShow *show, u32 language)
             break;
         }
     }
-    free(shows);
+    Free(shows);
 }
 
 void SanitizeTVShowsForRuby(TVShow *shows)
@@ -4035,8 +4037,8 @@ void SanitizeTVShowsForRuby(TVShow *shows)
     {
         if (curShow->bravoTrainerTower.kind == TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE)
         {
-            if ((curShow->bravoTrainerTower.language == LANGUAGE_JAPANESE && curShow->bravoTrainerTower.pokemonNameLanguage != LANGUAGE_JAPANESE)
-             || (curShow->bravoTrainerTower.language != LANGUAGE_JAPANESE && curShow->bravoTrainerTower.pokemonNameLanguage == LANGUAGE_JAPANESE))
+            if ((curShow->bravoTrainerTower.playerLanguage == LANGUAGE_JAPANESE && curShow->bravoTrainerTower.opponentLanguage != LANGUAGE_JAPANESE)
+             || (curShow->bravoTrainerTower.playerLanguage != LANGUAGE_JAPANESE && curShow->bravoTrainerTower.opponentLanguage == LANGUAGE_JAPANESE))
                 memset(curShow, 0, sizeof(TVShow));
         }
     }
@@ -4050,10 +4052,10 @@ static void TranslateRubyShows(TVShow *shows)
     {
         if (curShow->bravoTrainerTower.kind == TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE)
         {
-            if (IsStringJapanese(curShow->bravoTrainerTower.pokemonName))
-                curShow->bravoTrainerTower.pokemonNameLanguage = LANGUAGE_JAPANESE;
+            if (IsStringJapanese(curShow->bravoTrainerTower.opponentName))
+                curShow->bravoTrainerTower.opponentLanguage = LANGUAGE_JAPANESE;
             else
-                curShow->bravoTrainerTower.pokemonNameLanguage = GAME_LANGUAGE;
+                curShow->bravoTrainerTower.opponentLanguage = GAME_LANGUAGE;
         }
     }
 }
@@ -4093,8 +4095,8 @@ static void TranslateJapaneseEmeraldShows(TVShow *shows)
             curShow->bravoTrainer.pokemonNameLanguage = GetStringLanguage(curShow->bravoTrainer.pokemonNickname);
             break;
         case TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE:
-            curShow->bravoTrainerTower.language = GetStringLanguage(curShow->bravoTrainerTower.trainerName);
-            curShow->bravoTrainerTower.pokemonNameLanguage = GetStringLanguage(curShow->bravoTrainerTower.pokemonName);
+            curShow->bravoTrainerTower.playerLanguage = GetStringLanguage(curShow->bravoTrainerTower.playerName);
+            curShow->bravoTrainerTower.opponentLanguage = GetStringLanguage(curShow->bravoTrainerTower.opponentName);
             break;
         case TVSHOW_CONTEST_LIVE_UPDATES:
             curShow->contestLiveUpdates.winningTrainerLanguage = GetStringLanguage(curShow->contestLiveUpdates.winningTrainerName);
@@ -4371,6 +4373,9 @@ static void DoTVShowBravoTrainerPokemonProfile(void)
     ShowFieldMessage(sTVBravoTrainerTextGroup[state]);
 }
 
+// This is the TV show triggered by accepting the reporter's interview in the lobby of Battle Tower.
+// The reporter had asked the player if they were satisfied or not with the challenge, and then asked
+// for a one word Easy Chat description of their feelings about the challenge.
 static void DoTVShowBravoTrainerBattleTower(void)
 {
     TVShow *show;
@@ -4381,86 +4386,84 @@ static void DoTVShowBravoTrainerBattleTower(void)
     state = sTVShowState;
     switch(state)
     {
-    case 0:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.trainerName, show->bravoTrainerTower.language);
+    case BRAVOTOWER_STATE_INTRO:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.playerName, show->bravoTrainerTower.playerLanguage);
         StringCopy(gStringVar2, gSpeciesNames[show->bravoTrainerTower.species]);
-        if (show->bravoTrainerTower.numFights >= 7)
-            sTVShowState = 1;
+        if (show->bravoTrainerTower.numFights >= FRONTIER_STAGES_PER_CHALLENGE)
+            sTVShowState = BRAVOTOWER_STATE_NEW_RECORD;
         else
-            sTVShowState = 2;
+            sTVShowState = BRAVOTOWER_STATE_LOST;
         break;
-    case 1:
-        if (show->bravoTrainerTower.btLevel == 50)
-        {
+    case BRAVOTOWER_STATE_NEW_RECORD:
+        // The TV show states a "new record" was achieved as long as all the battles in the challenge were attempted,
+        // regardless of any previous records or whether the final battle was won or lost.
+        if (show->bravoTrainerTower.btLevel == FRONTIER_MAX_LEVEL_50)
             StringCopy(gStringVar1, gText_Lv50);
-        }
         else
-        {
             StringCopy(gStringVar1, gText_OpenLevel);
-        }
         ConvertIntToDecimalString(1, show->bravoTrainerTower.numFights);
         if (show->bravoTrainerTower.wonTheChallenge == TRUE)
-            sTVShowState = 3;
+            sTVShowState = BRAVOTOWER_STATE_WON;
         else
-            sTVShowState = 4;
+            sTVShowState = BRAVOTOWER_STATE_LOST_FINAL;
         break;
-    case 2:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
+    case BRAVOTOWER_STATE_LOST:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
         ConvertIntToDecimalString(1, show->bravoTrainerTower.numFights + 1);
         if (show->bravoTrainerTower.interviewResponse == 0)
-            sTVShowState = 5;
+            sTVShowState = BRAVOTOWER_STATE_SATISFIED;
         else
-            sTVShowState = 6;
+            sTVShowState = BRAVOTOWER_STATE_UNSATISFIED;
         break;
-    case 3:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
+    case BRAVOTOWER_STATE_WON:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
         StringCopy(gStringVar2, gSpeciesNames[show->bravoTrainerTower.defeatedSpecies]);
         if (show->bravoTrainerTower.interviewResponse == 0)
-            sTVShowState = 5;
+            sTVShowState = BRAVOTOWER_STATE_SATISFIED;
         else
-            sTVShowState = 6;
+            sTVShowState = BRAVOTOWER_STATE_UNSATISFIED;
         break;
-    case 4:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
+    case BRAVOTOWER_STATE_LOST_FINAL:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
         StringCopy(gStringVar2, gSpeciesNames[show->bravoTrainerTower.defeatedSpecies]);
         if (show->bravoTrainerTower.interviewResponse == 0)
-            sTVShowState = 5;
+            sTVShowState = BRAVOTOWER_STATE_SATISFIED;
         else
-            sTVShowState = 6;
+            sTVShowState = BRAVOTOWER_STATE_UNSATISFIED;
         break;
-    case 5:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
-        sTVShowState = 11;
+    case BRAVOTOWER_STATE_SATISFIED:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
+        sTVShowState = BRAVOTOWER_STATE_RESPONSE;
         break;
-    case 6:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
-        sTVShowState = 11;
+    case BRAVOTOWER_STATE_UNSATISFIED:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
+        sTVShowState = BRAVOTOWER_STATE_RESPONSE;
         break;
-    case 7:
-        sTVShowState = 11;
+    case BRAVOTOWER_STATE_UNUSED_1:
+        sTVShowState = BRAVOTOWER_STATE_RESPONSE;
         break;
-    case 8:
-    case 9:
-    case 10:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.trainerName, show->bravoTrainerTower.language);
-        sTVShowState = 11;
+    case BRAVOTOWER_STATE_UNUSED_2:
+    case BRAVOTOWER_STATE_UNUSED_3:
+    case BRAVOTOWER_STATE_UNUSED_4:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.playerName, show->bravoTrainerTower.playerLanguage);
+        sTVShowState = BRAVOTOWER_STATE_RESPONSE;
         break;
-    case 11:
+    case BRAVOTOWER_STATE_RESPONSE:
         CopyEasyChatWord(gStringVar1, show->bravoTrainerTower.words[0]);
         if (show->bravoTrainerTower.interviewResponse == 0)
-            sTVShowState = 12;
+            sTVShowState = BRAVOTOWER_STATE_RESPONSE_SATISFIED;
         else
-            sTVShowState = 13;
+            sTVShowState = BRAVOTOWER_STATE_RESPONSE_UNSATISFIED;
         break;
-    case 12:
-    case 13:
+    case BRAVOTOWER_STATE_RESPONSE_SATISFIED:
+    case BRAVOTOWER_STATE_RESPONSE_UNSATISFIED:
         CopyEasyChatWord(gStringVar1, show->bravoTrainerTower.words[0]);
-        TVShowConvertInternationalString(gStringVar2, show->bravoTrainerTower.trainerName, show->bravoTrainerTower.language);
-        TVShowConvertInternationalString(gStringVar3, show->bravoTrainerTower.pokemonName, show->bravoTrainerTower.pokemonNameLanguage);
-        sTVShowState = 14;
+        TVShowConvertInternationalString(gStringVar2, show->bravoTrainerTower.playerName, show->bravoTrainerTower.playerLanguage);
+        TVShowConvertInternationalString(gStringVar3, show->bravoTrainerTower.opponentName, show->bravoTrainerTower.opponentLanguage);
+        sTVShowState = BRAVOTOWER_STATE_OUTRO;
         break;
-    case 14:
-        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.trainerName, show->bravoTrainerTower.language);
+    case BRAVOTOWER_STATE_OUTRO:
+        TVShowConvertInternationalString(gStringVar1, show->bravoTrainerTower.playerName, show->bravoTrainerTower.playerLanguage);
         StringCopy(gStringVar2, gSpeciesNames[show->bravoTrainerTower.species]);
         TVShowDone();
         break;
@@ -4488,7 +4491,7 @@ static void DoTVShowTodaysSmartShopper(void)
         break;
     case SMARTSHOPPER_STATE_CLERK_NORMAL:
         TVShowConvertInternationalString(gStringVar1, show->smartshopperShow.playerName, show->smartshopperShow.language);
-        StringCopy(gStringVar2, ItemId_GetName(show->smartshopperShow.itemIds[0]));
+        StringCopy(gStringVar2, GetItemName(show->smartshopperShow.itemIds[0]));
         ConvertIntToDecimalString(2, show->smartshopperShow.itemAmounts[0]);
         // Pick a random comment (SMARTSHOPPER_STATE_RAND_COMMENT_#)
         sTVShowState += SMARTSHOPPER_STATE_CLERK_NORMAL + (Random() % (SMARTSHOPPER_STATE_RAND_COMMENT_4 - SMARTSHOPPER_STATE_RAND_COMMENT_1 + 1));
@@ -4510,7 +4513,7 @@ static void DoTVShowTodaysSmartShopper(void)
         break;
     case SMARTSHOPPER_STATE_SECOND_ITEM:
         // Clerk describes 2nd type of item player purchased
-        StringCopy(gStringVar2, ItemId_GetName(show->smartshopperShow.itemIds[1]));
+        StringCopy(gStringVar2, GetItemName(show->smartshopperShow.itemIds[1]));
         ConvertIntToDecimalString(2, show->smartshopperShow.itemAmounts[1]);
         if (show->smartshopperShow.itemIds[2] != ITEM_NONE)
             sTVShowState = SMARTSHOPPER_STATE_THIRD_ITEM;
@@ -4521,7 +4524,7 @@ static void DoTVShowTodaysSmartShopper(void)
         break;
     case SMARTSHOPPER_STATE_THIRD_ITEM:
         // Clerk describes 3rd type of item player purchased
-        StringCopy(gStringVar2, ItemId_GetName(show->smartshopperShow.itemIds[2]));
+        StringCopy(gStringVar2, GetItemName(show->smartshopperShow.itemIds[2]));
         ConvertIntToDecimalString(2, show->smartshopperShow.itemAmounts[2]);
         if (show->smartshopperShow.priceReduced == TRUE)
             sTVShowState = SMARTSHOPPER_STATE_DURING_SALE;
@@ -4549,7 +4552,7 @@ static void DoTVShowTodaysSmartShopper(void)
     case SMARTSHOPPER_STATE_CLERK_MAX:
         // Clerk's comments if player purchased maximum number of 1st item
         TVShowConvertInternationalString(gStringVar1, show->smartshopperShow.playerName, show->smartshopperShow.language);
-        StringCopy(gStringVar2, ItemId_GetName(show->smartshopperShow.itemIds[0]));
+        StringCopy(gStringVar2, GetItemName(show->smartshopperShow.itemIds[0]));
         if (show->smartshopperShow.priceReduced == TRUE)
             sTVShowState = SMARTSHOPPER_STATE_DURING_SALE;
         else
@@ -4673,7 +4676,7 @@ static void DoTVShowPokemonTodaySuccessfulCapture(void)
         sTVShowState = 2;
         break;
     case 2:
-        StringCopy(gStringVar2, ItemId_GetName(show->pokemonToday.ball));
+        StringCopy(gStringVar2, GetItemName(show->pokemonToday.ball));
         ConvertIntToDecimalString(2, show->pokemonToday.nBallsUsed);
         if (show->pokemonToday.nBallsUsed < 4)
             sTVShowState = 3;
@@ -5363,7 +5366,8 @@ static void DoTVShow3CheersForPokeblocks(void)
         if (show->threeCheers.sheen > 24)
         {
             StringCopy(gStringVar2, gText_Excellent);
-        } else if (show->threeCheers.sheen > 22)
+        }
+        else if (show->threeCheers.sheen > 22)
         {
             StringCopy(gStringVar2, gText_VeryGood);
         }
@@ -5501,7 +5505,7 @@ static void DoTVShowPokemonAngler(void)
         TVShowDone();
         break;
     }
-    ShowFieldMessage(sTVPokemonAnslerTextGroup[state]);
+    ShowFieldMessage(sTVPokemonAnglerTextGroup[state]);
 }
 
 static void DoTVShowTheWorldOfMasters(void)
@@ -5712,7 +5716,7 @@ static void DoTVShowHoennTreasureInvestigators(void)
     switch (state)
     {
     case 0:
-        StringCopy(gStringVar1, ItemId_GetName(show->treasureInvestigators.item));
+        StringCopy(gStringVar1, GetItemName(show->treasureInvestigators.item));
         if (show->treasureInvestigators.location == MAPSEC_DYNAMIC)
         {
             switch (show->treasureInvestigators.mapLayoutId)
@@ -5733,13 +5737,13 @@ static void DoTVShowHoennTreasureInvestigators(void)
         }
         break;
     case 1:
-        StringCopy(gStringVar1, ItemId_GetName(show->treasureInvestigators.item));
+        StringCopy(gStringVar1, GetItemName(show->treasureInvestigators.item));
         TVShowConvertInternationalString(gStringVar2, show->treasureInvestigators.playerName, show->treasureInvestigators.language);
         GetMapName(gStringVar3, show->treasureInvestigators.location, 0);
         TVShowDone();
         break;
     case 2:
-        StringCopy(gStringVar1, ItemId_GetName(show->treasureInvestigators.item));
+        StringCopy(gStringVar1, GetItemName(show->treasureInvestigators.item));
         TVShowConvertInternationalString(gStringVar2, show->treasureInvestigators.playerName, show->treasureInvestigators.language);
         TVShowDone();
         break;
@@ -5847,7 +5851,7 @@ static void DoTVShowBreakingNewsTV(void)
         break;
     case 3:
         ConvertIntToDecimalString(0, show->breakingNews.balls);
-        StringCopy(gStringVar2, ItemId_GetName(show->breakingNews.caughtMonBall));
+        StringCopy(gStringVar2, GetItemName(show->breakingNews.caughtMonBall));
         sTVShowState = 4;
         break;
     case 4:
@@ -6009,7 +6013,7 @@ static void DoTVShowPokemonLotteryWinnerFlashReport(void)
         StringCopy(gStringVar2, gText_Second);
     else
         StringCopy(gStringVar2, gText_Third);
-    StringCopy(gStringVar3, ItemId_GetName(show->lottoWinner.item));
+    StringCopy(gStringVar3, GetItemName(show->lottoWinner.item));
     TVShowDone();
     ShowFieldMessage(sTVPokemonLotteryWinnerFlashReportTextGroup[state]);
 }
@@ -6240,7 +6244,7 @@ static void DoTVShowSpotTheCuties(void)
         TVShowConvertInternationalString(gStringVar1, show->cuties.playerName, show->cuties.language);
         TVShowConvertInternationalString(gStringVar2, show->cuties.nickname, show->cuties.pokemonNameLanguage);
 
-        // Comments following the intro depend on how many ribbons the pokemon has
+        // Comments following the intro depend on how many ribbons the Pokémon has
         if (show->cuties.nRibbons < 10)
             sTVShowState = SPOTCUTIES_STATE_RIBBONS_LOW;
         else if (show->cuties.nRibbons < 20)
@@ -6693,7 +6697,7 @@ static void DoTVShowSecretBaseSecrets(void)
         sTVShowState = show->secretBaseSecrets.savedState;
         break;
     case SBSECRETS_STATE_USED_BAG:
-        StringCopy(gStringVar2, ItemId_GetName(show->secretBaseSecrets.item));
+        StringCopy(gStringVar2, GetItemName(show->secretBaseSecrets.item));
         sTVShowState = show->secretBaseSecrets.savedState;
         break;
     case SBSECRETS_STATE_USED_CUSHION:

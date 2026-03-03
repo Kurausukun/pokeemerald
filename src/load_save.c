@@ -29,18 +29,18 @@ struct LoadedSaveData
 };
 
 // EWRAM DATA
-EWRAM_DATA struct SaveBlock2DMA gSaveblock2 = {0};
-EWRAM_DATA struct SaveBlock1DMA gSaveblock1 = {0};
-EWRAM_DATA struct PokemonStorageDMA gPokemonStorage = {0};
+EWRAM_DATA struct SaveBlock2ASLR gSaveblock2 = {0};
+EWRAM_DATA struct SaveBlock1ASLR gSaveblock1 = {0};
+EWRAM_DATA struct PokemonStorageASLR gPokemonStorage = {0};
 
 EWRAM_DATA struct LoadedSaveData gLoadedSaveData = {0};
 EWRAM_DATA u32 gLastEncryptionKey = 0;
 
 // IWRAM common
-bool32 gFlashMemoryPresent;
-struct SaveBlock1 *gSaveBlock1Ptr;
-struct SaveBlock2 *gSaveBlock2Ptr;
-struct PokemonStorage *gPokemonStoragePtr;
+COMMON_DATA bool32 gFlashMemoryPresent = 0;
+COMMON_DATA struct SaveBlock1 *gSaveBlock1Ptr = NULL;
+COMMON_DATA struct SaveBlock2 *gSaveBlock2Ptr = NULL;
+COMMON_DATA struct PokemonStorage *gPokemonStoragePtr = NULL;
 
 // code
 void CheckForFlashMemory(void)
@@ -58,24 +58,24 @@ void CheckForFlashMemory(void)
 
 void ClearSav2(void)
 {
-    CpuFill16(0, &gSaveblock2, sizeof(struct SaveBlock2DMA));
+    CpuFill16(0, &gSaveblock2, sizeof(struct SaveBlock2ASLR));
 }
 
 void ClearSav1(void)
 {
-    CpuFill16(0, &gSaveblock1, sizeof(struct SaveBlock1DMA));
+    CpuFill16(0, &gSaveblock1, sizeof(struct SaveBlock1ASLR));
 }
 
 // Offset is the sum of the trainer id bytes
 void SetSaveBlocksPointers(u16 offset)
 {
-    struct SaveBlock1** sav1_LocalVar = &gSaveBlock1Ptr;
+    struct SaveBlock1 **sav1_LocalVar = &gSaveBlock1Ptr;
 
     offset = (offset + Random()) & (SAVEBLOCK_MOVE_RANGE - 4);
 
-    gSaveBlock2Ptr = (void*)(&gSaveblock2) + offset;
-    *sav1_LocalVar = (void*)(&gSaveblock1) + offset;
-    gPokemonStoragePtr = (void*)(&gPokemonStorage) + offset;
+    gSaveBlock2Ptr = (void *)(&gSaveblock2) + offset;
+    *sav1_LocalVar = (void *)(&gSaveblock1) + offset;
+    gPokemonStoragePtr = (void *)(&gPokemonStorage) + offset;
 
     SetBagItemsPointers();
     SetDecorationInventoriesPointers();

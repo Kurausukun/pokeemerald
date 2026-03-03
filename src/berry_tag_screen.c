@@ -92,7 +92,7 @@ static const struct BgTemplate sBackgroundTemplates[] =
   }
 };
 
-static const u16 sFontPalette[] = INCBIN_U16("graphics/interface/berry_tag_screen.gbapal");
+static const u16 sFontPalette[] = INCBIN_U16("graphics/bag/berry_tag_screen.gbapal");
 
 static const u8 sTextColors[2][3] =
 {
@@ -102,7 +102,7 @@ static const u8 sTextColors[2][3] =
 
 static const struct WindowTemplate sWindowTemplates[] =
 {
-    { // WIN_BERRY_NAME
+    [WIN_BERRY_NAME] = {
         .bg = 1,
         .tilemapLeft = 11,
         .tilemapTop = 4,
@@ -111,7 +111,7 @@ static const struct WindowTemplate sWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 69,
     },
-    { // WIN_SIZE_FIRM
+    [WIN_SIZE_FIRM] = {
         .bg = 1,
         .tilemapLeft = 11,
         .tilemapTop = 7,
@@ -120,7 +120,7 @@ static const struct WindowTemplate sWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 85,
     },
-    { // WIN_DESC
+    [WIN_DESC] = {
         .bg = 1,
         .tilemapLeft = 4,
         .tilemapTop = 14,
@@ -129,7 +129,7 @@ static const struct WindowTemplate sWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 157,
     },
-    { // WIN_BERRY_TAG
+    [WIN_BERRY_TAG] = {
         .bg = 0,
         .tilemapLeft = 2,
         .tilemapTop = 0,
@@ -276,7 +276,7 @@ static bool8 InitBerryTagScreen(void)
         gMain.state++;
         break;
     case 14:
-        BlendPalettes(PALETTES_ALL, 0x10, 0);
+        BlendPalettes(PALETTES_ALL, 0x10, RGB_BLACK);
         gMain.state++;
         break;
     case 15:
@@ -310,6 +310,8 @@ static void HandleInitBackgrounds(void)
     ShowBg(3);
 }
 
+#define BG_TILE 0x42
+
 static bool8 LoadBerryTagGfx(void)
 {
     u16 i;
@@ -329,24 +331,25 @@ static bool8 LoadBerryTagGfx(void)
         }
         break;
     case 2:
-        LZDecompressWram(gBerryTag_Pal, sBerryTag->tilemapBuffers[2]);
+        LZDecompressWram(gBerryTag_Tilemap, sBerryTag->tilemapBuffers[2]);
         sBerryTag->gfxState++;
         break;
     case 3:
+        // Palette of the bg tiles changes depending on the player's gender
         if (gSaveBlock2Ptr->playerGender == MALE)
         {
             for (i = 0; i < ARRAY_COUNT(sBerryTag->tilemapBuffers[1]); i++)
-                sBerryTag->tilemapBuffers[1][i] = 0x4042;
+                sBerryTag->tilemapBuffers[1][i] = (4 << 12) | BG_TILE;
         }
         else
         {
             for (i = 0; i < ARRAY_COUNT(sBerryTag->tilemapBuffers[1]); i++)
-                sBerryTag->tilemapBuffers[1][i] = 0x5042;
+                sBerryTag->tilemapBuffers[1][i] = (5 << 12) | BG_TILE;
         }
         sBerryTag->gfxState++;
         break;
     case 4:
-        LoadCompressedPalette(gBerryCheck_Pal, 0, 0xC0);
+        LoadCompressedPalette(gBerryCheck_Pal, BG_PLTT_ID(0), 6 * PLTT_SIZE_4BPP);
         sBerryTag->gfxState++;
         break;
     case 5:
@@ -367,7 +370,7 @@ static void HandleInitWindows(void)
 
     InitWindows(sWindowTemplates);
     DeactivateAllTextPrinters();
-    LoadPalette(sFontPalette, 0xF0, 0x20);
+    LoadPalette(sFontPalette, BG_PLTT_ID(15), sizeof(sFontPalette));
     for (i = 0; i < ARRAY_COUNT(sWindowTemplates) - 1; i++)
         PutWindowTilemap(i);
     ScheduleBgCopyTilemapToVram(0);
@@ -545,6 +548,9 @@ static void Task_HandleInput(u8 taskId)
     }
 }
 
+#define tBerryY data[0]
+#define tBgOp   data[1]
+
 static void TryChangeDisplayedBerry(u8 taskId, s8 toMove)
 {
     s16 *data = gTasks[taskId].data;
@@ -553,11 +559,11 @@ static void TryChangeDisplayedBerry(u8 taskId, s8 toMove)
     if (newPocketPosition < ITEM_TO_BERRY(MAX_BERRY_INDEX) && BagGetItemIdByPocketPosition(POCKET_BERRIES, newPocketPosition) != ITEM_NONE)
     {
         if (toMove < 0)
-            data[1] = 2;
+            tBgOp = BG_COORD_SUB;
         else
-            data[1] = 1;
+            tBgOp = BG_COORD_ADD;
 
-        data[0] = 0;
+        tBerryY = 0;
         PlaySE(SE_SELECT);
         HandleBagCursorPositionChange(toMove);
         gTasks[taskId].func = Task_DisplayAnotherBerry;
@@ -586,101 +592,103 @@ static void HandleBagCursorPositionChange(s8 toMove)
     sBerryTag->berryId = ItemIdToBerryType(BagGetItemIdByPocketPosition(POCKET_BERRIES, *scrollPos + *cursorPos));
 }
 
+#define DISPLAY_SPEED 16
+
 static void Task_DisplayAnotherBerry(u8 taskId)
 {
     u16 i;
-    s16 posY;
+    s16 y;
     s16 *data = gTasks[taskId].data;
-    data[0] += 0x10;
-    data[0] &= 0xFF;
+    tBerryY += DISPLAY_SPEED;
+    tBerryY &= 0xFF;
 
-    if (data[1] == 1)
+    if (tBgOp == BG_COORD_ADD)
     {
-        switch (data[0])
+        switch (tBerryY)
         {
-        case 0x30:
-            FillWindowPixelBuffer(0, PIXEL_FILL(0));
+        case 3 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_BERRY_NAME, PIXEL_FILL(0));
             break;
-        case 0x40:
+        case 4 * DISPLAY_SPEED:
             PrintBerryNumberAndName();
             break;
-        case 0x50:
+        case 5 * DISPLAY_SPEED:
             DestroyBerrySprite();
             CreateBerrySprite();
             break;
-        case 0x60:
-            FillWindowPixelBuffer(1, PIXEL_FILL(0));
+        case 6 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_SIZE_FIRM, PIXEL_FILL(0));
             break;
-        case 0x70:
+        case 7 * DISPLAY_SPEED:
             PrintBerrySize();
             break;
-        case 0x80:
+        case 8 * DISPLAY_SPEED:
             PrintBerryFirmness();
             break;
-        case 0x90:
+        case 9 * DISPLAY_SPEED:
             SetFlavorCirclesVisiblity();
             break;
-        case 0xA0:
-            FillWindowPixelBuffer(2, PIXEL_FILL(0));
+        case 10 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_DESC, PIXEL_FILL(0));
             break;
-        case 0xB0:
+        case 11 * DISPLAY_SPEED:
             PrintBerryDescription1();
             break;
-        case 0xC0:
+        case 12 * DISPLAY_SPEED:
             PrintBerryDescription2();
             break;
         }
     }
-    else
+    else // BG_COORD_SUB
     {
-        switch (data[0])
+        switch (tBerryY)
         {
-        case 0x30:
-            FillWindowPixelBuffer(2, PIXEL_FILL(0));
+        case 3 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_DESC, PIXEL_FILL(0));
             break;
-        case 0x40:
+        case 4 * DISPLAY_SPEED:
             PrintBerryDescription2();
             break;
-        case 0x50:
+        case 5 * DISPLAY_SPEED:
             PrintBerryDescription1();
             break;
-        case 0x60:
+        case 6 * DISPLAY_SPEED:
             SetFlavorCirclesVisiblity();
             break;
-        case 0x70:
-            FillWindowPixelBuffer(1, PIXEL_FILL(0));
+        case 7 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_SIZE_FIRM, PIXEL_FILL(0));
             break;
-        case 0x80:
+        case 8 * DISPLAY_SPEED:
             PrintBerryFirmness();
             break;
-        case 0x90:
+        case 9 * DISPLAY_SPEED:
             PrintBerrySize();
             break;
-        case 0xA0:
+        case 10 * DISPLAY_SPEED:
             DestroyBerrySprite();
             CreateBerrySprite();
             break;
-        case 0xB0:
-            FillWindowPixelBuffer(0, PIXEL_FILL(0));
+        case 11 * DISPLAY_SPEED:
+            FillWindowPixelBuffer(WIN_BERRY_NAME, PIXEL_FILL(0));
             break;
-        case 0xC0:
+        case 12 * DISPLAY_SPEED:
             PrintBerryNumberAndName();
             break;
         }
     }
 
-    if (data[1] == 1)
-        posY = -data[0];
+    if (tBgOp == BG_COORD_ADD)
+        y = -tBerryY;
     else
-        posY = data[0];
+        y = tBerryY;
 
-    gSprites[sBerryTag->berrySpriteId].y2 = posY;
+    gSprites[sBerryTag->berrySpriteId].y2 = y;
     for (i = 0; i < FLAVOR_COUNT; i++)
-        gSprites[sBerryTag->flavorCircleIds[i]].y2 = posY;
+        gSprites[sBerryTag->flavorCircleIds[i]].y2 = y;
 
-    ChangeBgY(1, 0x1000, data[1]);
-    ChangeBgY(2, 0x1000, data[1]);
+    ChangeBgY(1, 0x1000, tBgOp);
+    ChangeBgY(2, 0x1000, tBgOp);
 
-    if (data[0] == 0)
+    if (tBerryY == 0)
         gTasks[taskId].func = Task_HandleInput;
 }

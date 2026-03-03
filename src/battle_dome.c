@@ -40,6 +40,8 @@
 #include "constants/battle_frontier.h"
 #include "constants/rgb.h"
 
+#define TAG_BUTTONS 0
+
 // Enough space to hold 2 match info cards worth of trainers and their parties
 #define NUM_INFOCARD_SPRITES ((FRONTIER_PARTY_SIZE + 1) * 4)
 #define NUM_INFOCARD_TRAINERS 2
@@ -56,7 +58,7 @@ struct TourneyTreeLineSection
 {
     u8 x;
     u8 y;
-    u16 src;
+    u16 tile;
 };
 
 #define DOME_TRAINERS gSaveBlock2Ptr->frontier.domeTrainers
@@ -73,40 +75,67 @@ struct TourneyTreeLineSection
 #define tMode               data[2]
 #define tPrevTaskId         data[3]
 
-// This file's functions.
-static u8 GetDomeTrainerMonIvs(u16 trainerId);
-static void SwapDomeTrainers(int id1, int id2, u16 *statsArray);
-static void CalcDomeMonStats(u16 species, int level, int ivs, u8 evBits, u8 nature, int *stats);
-static void CreateDomeOpponentMons(u16 tournamentTrainerId);
-static int SelectOpponentMonsUsingPersonality(u16 tournamentTrainerId, bool8 arg1);
-static int SelectOpponentMonsUsingOtId(u16 tournamentTrainerId, bool8 arg1);
-static int GetTypeEffectivenessPoints(int move, int species, int arg2);
-static int SelectOpponentMonsFromParty(int *arr, bool8 arg1);
-static void Task_ShowTourneyInfoCard(u8 taskId);
-static void Task_HandleInfoCardInput(u8 taskId);
-static u8 Task_GetInfoCardInput(u8 taskId);
+enum {
+    EFFECTIVENESS_MODE_GOOD,
+    EFFECTIVENESS_MODE_BAD,
+    EFFECTIVENESS_MODE_AI_VS_AI,
+};
+
+// Window IDs for the tourney tree
+enum {
+    TOURNEYWIN_NAMES_LEFT,
+    TOURNEYWIN_NAMES_RIGHT,
+    TOURNEYWIN_TITLE,
+};
+
+// Window IDs for the trainer (WIN_TRAINER_*) and match (WIN_MATCH_*) info cards.
+// All 9 have a duplicate window at WIN + NUM_INFO_CARD_WINDOWS used by the alternate info card
+enum {
+    WIN_TRAINER_NAME,
+    WIN_TRAINER_MON1_NAME,
+    WIN_TRAINER_MON2_NAME, // Used implicitly
+    WIN_TRAINER_MON3_NAME, // Used implicitly
+    WIN_TRAINER_FLAVOR_TEXT = WIN_TRAINER_MON1_NAME + FRONTIER_PARTY_SIZE, // Trainer's potential, battle style, and stat texts
+    WIN_MATCH_NUMBER,
+    WIN_MATCH_TRAINER_NAME_LEFT,
+    WIN_MATCH_TRAINER_NAME_RIGHT,
+    WIN_MATCH_WIN_TEXT,
+    NUM_INFO_CARD_WINDOWS
+};
+
+static u8 GetDomeTrainerMonIvs(u16);
+static void SwapDomeTrainers(int, int, u16 *);
+static void CalcDomeMonStats(u16, int, int, u8, u8, int *);
+static void CreateDomeOpponentMons(u16);
+static int SelectOpponentMons_Good(u16, bool8);
+static int SelectOpponentMons_Bad(u16, bool8);
+static int GetTypeEffectivenessPoints(int, int, int);
+static int SelectOpponentMonsFromParty(int *, bool8);
+static void Task_ShowTourneyInfoCard(u8);
+static void Task_HandleInfoCardInput(u8);
+static u8 Task_GetInfoCardInput(u8);
 static void SetFacilityTrainerAndMonPtrs(void);
-static int TrainerIdToTournamentId(u16 trainerId);
+static int TrainerIdToTournamentId(u16);
 static u16 TrainerIdOfPlayerOpponent(void);
-static void Task_ShowTourneyTree(u8 taskId);
-static void Task_HandleStaticTourneyTreeInput(u8 taskId);
+static void Task_ShowTourneyTree(u8);
+static void Task_HandleStaticTourneyTreeInput(u8);
 static void CB2_TourneyTree(void);
 static void VblankCb_TourneyInfoCard(void);
-static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo);
-static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId);
-static int BufferDomeWinString(u8, u8*);
+static void DisplayMatchInfoOnCard(u8, u8);
+static void DisplayTrainerInfoOnCard(u8, u8);
+static int BufferDomeWinString(u8, u8 *);
 static u8 GetDomeBrainTrainerPicId(void);
 static u8 GetDomeBrainTrainerClass(void);
-static void CopyDomeBrainTrainerName(u8 *str);
-static void CopyDomeTrainerName(u8 *str, u16 trainerId);
+static void CopyDomeBrainTrainerName(u8 *);
+static void CopyDomeTrainerName(u8 *, u16);
 static void HblankCb_TourneyTree(void);
 static void VblankCb_TourneyTree(void);
-static u8 UpdateTourneyTreeCursor(u8 taskId);
-static void DecideRoundWinners(u8 roundId);
-static u8 GetOpposingNPCTournamentIdByRound(u8 tournamentId, u8);
+static u8 UpdateTourneyTreeCursor(u8);
+static void DecideRoundWinners(u8);
+static u8 GetOpposingNPCTournamentIdByRound(u8, u8);
 static void DrawTourneyAdvancementLine(u8, u8);
-static void SpriteCb_HorizontalScrollArrow(struct Sprite *sprite);
-static void SpriteCb_VerticalScrollArrow(struct Sprite *sprite);
+static void SpriteCB_HorizontalScrollArrow(struct Sprite *);
+static void SpriteCB_VerticalScrollArrow(struct Sprite *);
 static void InitDomeChallenge(void);
 static void GetDomeData(void);
 static void SetDomeData(void);
@@ -130,7 +159,6 @@ static void BufferLastDomeWinnerName(void);
 static void InitRandomTourneyTreeResults(void);
 static void InitDomeTrainers(void);
 
-// EWRAM variables.
 EWRAM_DATA u32 gPlayerPartyLostHP = 0; // never read
 static EWRAM_DATA u32 sPlayerPartyMaxHP = 0; // never read
 static EWRAM_DATA struct TourneyTreeInfoCard *sInfoCard = {0};
@@ -668,7 +696,7 @@ static const struct BgTemplate sInfoCardBgTemplates[4] =
 
 static const struct WindowTemplate sTourneyTreeWindowTemplates[] =
 {
-    {
+    [TOURNEYWIN_NAMES_LEFT] = {
         .bg = 0,
         .tilemapLeft = 0,
         .tilemapTop = 3,
@@ -677,7 +705,7 @@ static const struct WindowTemplate sTourneyTreeWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 16,
     },
-    {
+    [TOURNEYWIN_NAMES_RIGHT] = {
         .bg = 0,
         .tilemapLeft = 22,
         .tilemapTop = 3,
@@ -686,7 +714,7 @@ static const struct WindowTemplate sTourneyTreeWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 144,
     },
-    {
+    [TOURNEYWIN_TITLE] = {
         .bg = 0,
         .tilemapLeft = 8,
         .tilemapTop = 1,
@@ -700,7 +728,7 @@ static const struct WindowTemplate sTourneyTreeWindowTemplates[] =
 
 static const struct WindowTemplate sInfoCardWindowTemplates[] =
 {
-    {
+    [WIN_TRAINER_NAME] = {
         .bg = 0,
         .tilemapLeft = 2,
         .tilemapTop = 2,
@@ -709,7 +737,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 1,
     },
-    {
+    [WIN_TRAINER_MON1_NAME] = {
         .bg = 0,
         .tilemapLeft = 16,
         .tilemapTop = 5,
@@ -718,7 +746,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 53,
     },
-    {
+    [WIN_TRAINER_MON2_NAME] = {
         .bg = 0,
         .tilemapLeft = 19,
         .tilemapTop = 7,
@@ -727,7 +755,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 69,
     },
-    {
+    [WIN_TRAINER_MON3_NAME] = {
         .bg = 0,
         .tilemapLeft = 16,
         .tilemapTop = 10,
@@ -736,7 +764,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 96,
     },
-    {
+    [WIN_TRAINER_FLAVOR_TEXT] = {
         .bg = 0,
         .tilemapLeft = 2,
         .tilemapTop = 12,
@@ -745,7 +773,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 112,
     },
-    {
+    [WIN_MATCH_NUMBER] = {
         .bg = 0,
         .tilemapLeft = 5,
         .tilemapTop = 2,
@@ -754,7 +782,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 294,
     },
-    {
+    [WIN_MATCH_TRAINER_NAME_LEFT] = {
         .bg = 0,
         .tilemapLeft = 2,
         .tilemapTop = 5,
@@ -763,7 +791,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 340,
     },
-    {
+    [WIN_MATCH_TRAINER_NAME_RIGHT] = {
         .bg = 0,
         .tilemapLeft = 20,
         .tilemapTop = 5,
@@ -772,7 +800,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 356,
     },
-    {
+    [WIN_MATCH_WIN_TEXT] = {
         .bg = 0,
         .tilemapLeft = 2,
         .tilemapTop = 16,
@@ -781,7 +809,9 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 372,
     },
-    {
+    // Duplicate windows used by the alternate info card
+    // Same as above but on bg 1 instead of bg 0
+    [WIN_TRAINER_NAME + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 2,
         .tilemapTop = 2,
@@ -790,7 +820,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 1,
     },
-    {
+    [WIN_TRAINER_MON1_NAME + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 16,
         .tilemapTop = 5,
@@ -799,7 +829,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 53,
     },
-    {
+    [WIN_TRAINER_MON2_NAME + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 19,
         .tilemapTop = 7,
@@ -808,7 +838,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 69,
     },
-    {
+    [WIN_TRAINER_MON3_NAME + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 16,
         .tilemapTop = 10,
@@ -817,7 +847,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 96,
     },
-    {
+    [WIN_TRAINER_FLAVOR_TEXT + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 2,
         .tilemapTop = 12,
@@ -826,7 +856,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 112,
     },
-    {
+    [WIN_MATCH_NUMBER + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 5,
         .tilemapTop = 2,
@@ -835,7 +865,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 294,
     },
-    {
+    [WIN_MATCH_TRAINER_NAME_LEFT + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 2,
         .tilemapTop = 5,
@@ -844,7 +874,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 340,
     },
-    {
+    [WIN_MATCH_TRAINER_NAME_RIGHT + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 20,
         .tilemapTop = 5,
@@ -853,7 +883,7 @@ static const struct WindowTemplate sInfoCardWindowTemplates[] =
         .paletteNum = 15,
         .baseBlock = 356,
     },
-    {
+    [WIN_MATCH_WIN_TEXT + NUM_INFO_CARD_WINDOWS] = {
         .bg = 1,
         .tilemapLeft = 2,
         .tilemapTop = 16,
@@ -876,14 +906,14 @@ static const struct ScanlineEffectParams sTourneyTreeScanlineEffectParams =
 
 static const struct CompressedSpriteSheet sTourneyTreeButtonsSpriteSheet[] =
 {
-    {gDomeTourneyTreeButtons_Gfx, 0x0600, 0x0000},
+    {.data = gDomeTourneyTreeButtons_Gfx, .size = 0x0600, .tag = TAG_BUTTONS},
     {},
 };
 
 // Unused
 static const struct CompressedSpritePalette sTourneyTreeButtonsSpritePal[] =
 {
-    {gDomeTourneyTreeButtons_Pal, 0x0000},
+    {.data = gDomeTourneyTreeButtons_Pal, .tag = TAG_BUTTONS},
     {},
 };
 
@@ -892,7 +922,7 @@ static const struct OamData sOamData_TourneyTreePokeball =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x16),
     .x = 0,
@@ -910,7 +940,7 @@ static const struct OamData sOamData_TourneyTreeCloseButton =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x16),
     .x = 0,
@@ -927,7 +957,7 @@ static const struct OamData sOamData_VerticalScrollArrow =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(16x8),
     .x = 0,
@@ -944,7 +974,7 @@ static const struct OamData sOamData_HorizontalScrollArrow =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(8x16),
     .x = 0,
@@ -967,7 +997,7 @@ static const union AnimCmd sSpriteAnim_TourneyTreePokeballSelected[] =
     ANIMCMD_END,
 };
 
-static const union AnimCmd * const sSpriteAnimTable_TourneyTreePokeball[] =
+static const union AnimCmd *const sSpriteAnimTable_TourneyTreePokeball[] =
 {
     sSpriteAnim_TourneyTreePokeballNormal,
     sSpriteAnim_TourneyTreePokeballSelected,
@@ -976,7 +1006,7 @@ static const union AnimCmd * const sSpriteAnimTable_TourneyTreePokeball[] =
 // Sprite template for the pokeballs on the tourney tree that act as buttons to view a trainer/match info card
 static const struct SpriteTemplate sTourneyTreePokeballSpriteTemplate =
 {
-    .tileTag = 0x0000,
+    .tileTag = TAG_BUTTONS,
     .paletteTag = TAG_NONE,
     .oam = &sOamData_TourneyTreePokeball,
     .anims = sSpriteAnimTable_TourneyTreePokeball,
@@ -997,7 +1027,7 @@ static const union AnimCmd sSpriteAnim_TourneyTreeCancelButtonSelected[] =
     ANIMCMD_END,
 };
 
-static const union AnimCmd * const sSpriteAnimTable_TourneyTreeCancelButton[] =
+static const union AnimCmd *const sSpriteAnimTable_TourneyTreeCancelButton[] =
 {
     sSpriteAnim_TourneyTreeCancelButtonNormal,
     sSpriteAnim_TourneyTreeCancelButtonSelected,
@@ -1005,7 +1035,7 @@ static const union AnimCmd * const sSpriteAnimTable_TourneyTreeCancelButton[] =
 
 static const struct SpriteTemplate sCancelButtonSpriteTemplate =
 {
-    .tileTag = 0x0000,
+    .tileTag = TAG_BUTTONS,
     .paletteTag = TAG_NONE,
     .oam = &sOamData_TourneyTreeCloseButton,
     .anims = sSpriteAnimTable_TourneyTreeCancelButton,
@@ -1026,7 +1056,7 @@ static const union AnimCmd sSpriteAnim_TourneyTreeExitButtonSelected[] =
     ANIMCMD_END,
  };
 
-static const union AnimCmd * const sSpriteAnimTable_TourneyTreeExitButton[] =
+static const union AnimCmd *const sSpriteAnimTable_TourneyTreeExitButton[] =
 {
     sSpriteAnim_TourneyTreeExitButtonNormal,
     sSpriteAnim_TourneyTreeExitButtonSelected,
@@ -1034,7 +1064,7 @@ static const union AnimCmd * const sSpriteAnimTable_TourneyTreeExitButton[] =
 
 static const struct SpriteTemplate sExitButtonSpriteTemplate =
 {
-    .tileTag = 0x0000,
+    .tileTag = TAG_BUTTONS,
     .paletteTag = TAG_NONE,
     .oam = &sOamData_TourneyTreeCloseButton,
     .anims = sSpriteAnimTable_TourneyTreeExitButton,
@@ -1067,13 +1097,13 @@ static const union AnimCmd sSpriteAnim_RightArrow[] =
     ANIMCMD_END,
 };
 
-static const union AnimCmd * const sSpriteAnimTable_VerticalScrollArrow[] =
+static const union AnimCmd *const sSpriteAnimTable_VerticalScrollArrow[] =
 {
     sSpriteAnim_UpArrow,
     sSpriteAnim_DownArrow,
 };
 
-static const union AnimCmd * const sSpriteAnimTable_HorizontalScrollArrow[] =
+static const union AnimCmd *const sSpriteAnimTable_HorizontalScrollArrow[] =
 {
     sSpriteAnim_LeftArrow,
     sSpriteAnim_RightArrow,
@@ -1081,30 +1111,30 @@ static const union AnimCmd * const sSpriteAnimTable_HorizontalScrollArrow[] =
 
 static const struct SpriteTemplate sHorizontalScrollArrowSpriteTemplate =
 {
-    .tileTag = 0x0000,
+    .tileTag = TAG_BUTTONS,
     .paletteTag = TAG_NONE,
     .oam = &sOamData_HorizontalScrollArrow,
     .anims = sSpriteAnimTable_HorizontalScrollArrow,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCb_HorizontalScrollArrow
+    .callback = SpriteCB_HorizontalScrollArrow
 };
 
 static const struct SpriteTemplate sVerticalScrollArrowSpriteTemplate =
 {
-    .tileTag = 0x0000,
+    .tileTag = TAG_BUTTONS,
     .paletteTag = TAG_NONE,
     .oam = &sOamData_VerticalScrollArrow,
     .anims = sSpriteAnimTable_VerticalScrollArrow,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCb_VerticalScrollArrow
+    .callback = SpriteCB_VerticalScrollArrow
 };
 
 // Organized by seed starting position, i.e. seed 0 battles seed 8 first
 static const u8 sTourneyTreeTrainerIds[DOME_TOURNAMENT_TRAINERS_COUNT] = {0, 8, 12, 4, 7, 15, 11, 3, 2, 10, 14, 6, 5, 13, 9, 1};
 
-static void (* const sBattleDomeFunctions[])(void) =
+static void (*const sBattleDomeFunctions[])(void) =
 {
     [BATTLE_DOME_FUNC_INIT]                     = InitDomeChallenge,
     [BATTLE_DOME_FUNC_GET_DATA]                 = GetDomeData,
@@ -1395,26 +1425,27 @@ static const u8 sCompetitorRangeByMatch[DOME_TOURNAMENT_MATCHES_COUNT][3] =
     { NUM_POSSIBLE_MATCH_TRAINERS(DOME_FINAL) * 0,     NUM_POSSIBLE_MATCH_TRAINERS(DOME_FINAL),     DOME_FINAL},
 };
 
-// 1st value is the windowId (0 for left column, 1 for right column)
-// 2nd value is the y coord
+#define NAME_ROW_HEIGHT 16
+
+// 1st value is the windowId, 2nd value is the y coord
 static const u8 sTrainerNamePositions[DOME_TOURNAMENT_TRAINERS_COUNT][2] =
 {
-    { 0,   0},
-    { 1, 112},
-    { 1,   0},
-    { 0, 112},
-    { 0,  48},
-    { 1,  64},
-    { 1,  48},
-    { 0,  64},
-    { 0,  16},
-    { 1,  96},
-    { 1,  16},
-    { 0,  96},
-    { 0,  32},
-    { 1,  80},
-    { 1,  32},
-    { 0,  80},
+    { TOURNEYWIN_NAMES_LEFT,  0 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 7 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 0 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  7 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  3 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 4 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 3 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  4 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  1 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 6 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 1 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  6 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  2 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 5 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_RIGHT, 2 * NAME_ROW_HEIGHT},
+    { TOURNEYWIN_NAMES_LEFT,  5 * NAME_ROW_HEIGHT},
 };
 
 // Coords for the pokeballs on the tourney tree that act as buttons to view trainer/match info
@@ -1453,589 +1484,617 @@ static const u8 sTourneyTreePokeballCoords[DOME_TOURNAMENT_TRAINERS_COUNT + DOME
     {120,  89}, // Final match
 };
 
+// Tile values from tourney_tree.png for the highlighted lines of the tourney tree.
+// These tiles will be used to replace the existing, unhighlighted line tiles on the tourney tree tilemap.
+#define LINE_PAL           (6 << 12)
+#define LINE_H             (LINE_PAL | 0x21) // Horizontal
+#define LINE_CORNER_R      (LINE_PAL | 0x23) // Horizontal into a right-side vertical
+#define LINE_CORNER_L      (LINE_PAL | 0x25) // Horizontal into a left-side vertical
+#define LINE_V_R           (LINE_PAL | 0x27) // Right-side vertical
+#define LINE_V_L           (LINE_PAL | 0x29) // Left-side vertical
+#define LINE_H_BOTTOM      (LINE_PAL | 0x2B) // Horizontal on the bottom of the tree
+#define LINE_H_LOGO1       (LINE_PAL | 0x2C) // Horizontal, logo behind
+#define LINE_H_LOGO2       (LINE_PAL | 0x2D) // Horizontal, logo behind
+#define LINE_H_LOGO3       (LINE_PAL | 0x2E) // Horizontal, logo behind
+#define LINE_H_LOGO4       (LINE_PAL | 0x2F) // Horizontal, logo behind
+#define LINE_V_R_LOGO1     (LINE_PAL | 0x30) // Right-side vertical, logo behind
+#define LINE_V_R_LOGO2     (LINE_PAL | 0x31) // Right-side vertical, logo behind
+#define LINE_V_R_LOGO3     (LINE_PAL | 0x32) // Right-side vertical, logo behind
+#define LINE_V_R_LOGO4     (LINE_PAL | 0x33) // Right-side vertical, logo behind
+#define LINE_V_L_LOGO1     (LINE_PAL | 0x35) // Left-side vertical, logo behind
+#define LINE_V_L_LOGO2     (LINE_PAL | 0x36) // Left-side vertical, logo behind
+#define LINE_V_L_LOGO3     (LINE_PAL | 0x37) // Left-side vertical, logo behind
+#define LINE_V_L_LOGO4     (LINE_PAL | 0x38) // Left-side vertical, logo behind
+#define LINE_V_R_HALF_LOGO (LINE_PAL | 0x3B) // Right-side vertical, half lit from the top, logo behind
+#define LINE_V_L_HALF_LOGO (LINE_PAL | 0x3C) // Left-side vertical, half lit from the top, logo behind
+#define LINE_CORNER_R_HALF (LINE_PAL | 0x43) // Lit horizontal, unlit right-side vertical
+#define LINE_CORNER_L_HALF (LINE_PAL | 0x45) // Lit horizontal, unlit left-side vertical
+#define LINE_V_R_HALF      (LINE_PAL | 0x47) // Right-side vertical, half lit from the top
+#define LINE_V_L_HALF      (LINE_PAL | 0x49) // Left-side vertical, half lit from the top
+
 // Each of these line sections define the position of the advancement line on the tourney tree for the victor of that round
 // The trainers here are numbered by tourney ID (rank/seed) and ordered according to where they start on the tourney tree
-#define LINESECTION_ROUND1_TRAINER1(lastSrc) \
-    {.src = 0x6021,  .y = 0x04, .x = 0x09},  \
-    {.src = 0x6023,  .y = 0x04, .x = 0x0a},  \
-    {.src = 0x6047,  .y = 0x05, .x = 0x0a},  \
-    {.src = lastSrc, .y = 0x05, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER1(lastTile) \
+    {.tile = LINE_H,        .y =  4, .x =  9}, \
+    {.tile = LINE_CORNER_R, .y =  4, .x = 10}, \
+    {.tile = LINE_V_R_HALF, .y =  5, .x = 10}, \
+    {.tile = lastTile,      .y =  5, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER9(lastSrc) \
-    {.src = 0x6021,  .y = 0x06, .x = 0x09},  \
-    {.src = 0x6021,  .y = 0x06, .x = 0x0a},  \
-    {.src = 0x6027,  .y = 0x05, .x = 0x0a},  \
-    {.src = lastSrc, .y = 0x05, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER9(lastTile) \
+    {.tile = LINE_H,   .y =  6, .x =  9}, \
+    {.tile = LINE_H,   .y =  6, .x = 10}, \
+    {.tile = LINE_V_R, .y =  5, .x = 10}, \
+    {.tile = lastTile, .y =  5, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER13(lastSrc) \
-    {.src = 0x6021,  .y = 0x08, .x = 0x09},   \
-    {.src = 0x6023,  .y = 0x08, .x = 0x0a},   \
-    {.src = 0x6047,  .y = 0x09, .x = 0x0a},   \
-    {.src = lastSrc, .y = 0x09, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER13(lastTile) \
+    {.tile = LINE_H,        .y =  8, .x =  9}, \
+    {.tile = LINE_CORNER_R, .y =  8, .x = 10}, \
+    {.tile = LINE_V_R_HALF, .y =  9, .x = 10}, \
+    {.tile = lastTile,      .y =  9, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER5(lastSrc) \
-    {.src = 0x6021,  .y = 0x0a, .x = 0x09},  \
-    {.src = 0x6021,  .y = 0x0a, .x = 0x0a},  \
-    {.src = 0x6027,  .y = 0x09, .x = 0x0a},  \
-    {.src = lastSrc, .y = 0x09, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER5(lastTile) \
+    {.tile = LINE_H,   .y = 10, .x =  9}, \
+    {.tile = LINE_H,   .y = 10, .x = 10}, \
+    {.tile = LINE_V_R, .y =  9, .x = 10}, \
+    {.tile = lastTile, .y =  9, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER8(lastSrc) \
-    {.src = 0x6021,  .y = 0x0c, .x = 0x09},  \
-    {.src = 0x6023,  .y = 0x0c, .x = 0x0a},  \
-    {.src = 0x6047,  .y = 0x0d, .x = 0x0a},  \
-    {.src = lastSrc, .y = 0x0d, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER8(lastTile) \
+    {.tile = LINE_H,        .y = 12, .x =  9}, \
+    {.tile = LINE_CORNER_R, .y = 12, .x = 10}, \
+    {.tile = LINE_V_R_HALF, .y = 13, .x = 10}, \
+    {.tile = lastTile,      .y = 13, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER16(lastSrc) \
-    {.src = 0x6021,  .y = 0x0e, .x = 0x09},   \
-    {.src = 0x6021,  .y = 0x0e, .x = 0x0a},   \
-    {.src = 0x6027,  .y = 0x0d, .x = 0x0a},   \
-    {.src = lastSrc, .y = 0x0d, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER16(lastTile) \
+    {.tile = LINE_H,   .y = 14, .x =  9}, \
+    {.tile = LINE_H,   .y = 14, .x = 10}, \
+    {.tile = LINE_V_R, .y = 13, .x = 10}, \
+    {.tile = lastTile, .y = 13, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER12(lastSrc) \
-    {.src = 0x6021,  .y = 0x10, .x = 0x09},   \
-    {.src = 0x6023,  .y = 0x10, .x = 0x0a},   \
-    {.src = 0x6047,  .y = 0x11, .x = 0x0a},   \
-    {.src = lastSrc, .y = 0x11, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER12(lastTile) \
+    {.tile = LINE_H,        .y = 16, .x =  9}, \
+    {.tile = LINE_CORNER_R, .y = 16, .x = 10}, \
+    {.tile = LINE_V_R_HALF, .y = 17, .x = 10}, \
+    {.tile = lastTile,      .y = 17, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER4(lastSrc) \
-    {.src = 0x602b,  .y = 0x12, .x = 0x09},  \
-    {.src = 0x602b,  .y = 0x12, .x = 0x0a},  \
-    {.src = 0x6027,  .y = 0x11, .x = 0x0a},  \
-    {.src = lastSrc, .y = 0x11, .x = 0x0b},
+#define LINESECTION_ROUND1_TRAINER4(lastTile) \
+    {.tile = LINE_H_BOTTOM, .y = 18, .x =  9}, \
+    {.tile = LINE_H_BOTTOM, .y = 18, .x = 10}, \
+    {.tile = LINE_V_R,      .y = 17, .x = 10}, \
+    {.tile = lastTile,      .y = 17, .x = 11},
 
-#define LINESECTION_ROUND1_TRAINER3(lastSrc) \
-    {.src = 0x6021,  .y = 0x04, .x = 0x14},  \
-    {.src = 0x6025,  .y = 0x04, .x = 0x13},  \
-    {.src = 0x6049,  .y = 0x05, .x = 0x13},  \
-    {.src = lastSrc, .y = 0x05, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER3(lastTile) \
+    {.tile = LINE_H,        .y =  4, .x = 20}, \
+    {.tile = LINE_CORNER_L, .y =  4, .x = 19}, \
+    {.tile = LINE_V_L_HALF, .y =  5, .x = 19}, \
+    {.tile = lastTile,      .y =  5, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER11(lastSrc) \
-    {.src = 0x6021,  .y = 0x06, .x = 0x14},   \
-    {.src = 0x6021,  .y = 0x06, .x = 0x13},   \
-    {.src = 0x6029,  .y = 0x05, .x = 0x13},   \
-    {.src = lastSrc, .y = 0x05, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER11(lastTile) \
+    {.tile = LINE_H,   .y =  6, .x = 20}, \
+    {.tile = LINE_H,   .y =  6, .x = 19}, \
+    {.tile = LINE_V_L, .y =  5, .x = 19}, \
+    {.tile = lastTile, .y =  5, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER15(lastSrc) \
-    {.src = 0x6021,  .y = 0x08, .x = 0x14},   \
-    {.src = 0x6025,  .y = 0x08, .x = 0x13},   \
-    {.src = 0x6049,  .y = 0x09, .x = 0x13},   \
-    {.src = lastSrc, .y = 0x09, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER15(lastTile) \
+    {.tile = LINE_H,        .y =  8, .x = 20}, \
+    {.tile = LINE_CORNER_L, .y =  8, .x = 19}, \
+    {.tile = LINE_V_L_HALF, .y =  9, .x = 19}, \
+    {.tile = lastTile,      .y =  9, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER7(lastSrc) \
-    {.src = 0x6021,  .y = 0x0a, .x = 0x14},  \
-    {.src = 0x6021,  .y = 0x0a, .x = 0x13},  \
-    {.src = 0x6029,  .y = 0x09, .x = 0x13},  \
-    {.src = lastSrc, .y = 0x09, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER7(lastTile) \
+    {.tile = LINE_H,   .y = 10, .x = 20}, \
+    {.tile = LINE_H,   .y = 10, .x = 19}, \
+    {.tile = LINE_V_L, .y =  9, .x = 19}, \
+    {.tile = lastTile, .y =  9, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER6(lastSrc) \
-    {.src = 0x6021,  .y = 0x0c, .x = 0x14},  \
-    {.src = 0x6025,  .y = 0x0c, .x = 0x13},  \
-    {.src = 0x6049,  .y = 0x0d, .x = 0x13},  \
-    {.src = lastSrc, .y = 0x0d, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER6(lastTile) \
+    {.tile = LINE_H,        .y = 12, .x = 20}, \
+    {.tile = LINE_CORNER_L, .y = 12, .x = 19}, \
+    {.tile = LINE_V_L_HALF, .y = 13, .x = 19}, \
+    {.tile = lastTile,      .y = 13, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER14(lastSrc) \
-    {.src = 0x6021,  .y = 0x0e, .x = 0x14},   \
-    {.src = 0x6021,  .y = 0x0e, .x = 0x13},   \
-    {.src = 0x6029,  .y = 0x0d, .x = 0x13},   \
-    {.src = lastSrc, .y = 0x0d, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER14(lastTile) \
+    {.tile = LINE_H,   .y = 14, .x = 20}, \
+    {.tile = LINE_H,   .y = 14, .x = 19}, \
+    {.tile = LINE_V_L, .y = 13, .x = 19}, \
+    {.tile = lastTile, .y = 13, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER10(lastSrc) \
-    {.src = 0x6021,  .y = 0x10, .x = 0x14},   \
-    {.src = 0x6025,  .y = 0x10, .x = 0x13},   \
-    {.src = 0x6049,  .y = 0x11, .x = 0x13},   \
-    {.src = lastSrc, .y = 0x11, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER10(lastTile) \
+    {.tile = LINE_H,        .y = 16, .x = 20}, \
+    {.tile = LINE_CORNER_L, .y = 16, .x = 19}, \
+    {.tile = LINE_V_L_HALF, .y = 17, .x = 19}, \
+    {.tile = lastTile,      .y = 17, .x = 18},
 
-#define LINESECTION_ROUND1_TRAINER2(lastSrc) \
-    {.src = 0x602b,  .y = 0x12, .x = 0x14},  \
-    {.src = 0x602b,  .y = 0x12, .x = 0x13},  \
-    {.src = 0x6029,  .y = 0x11, .x = 0x13},  \
-    {.src = lastSrc, .y = 0x11, .x = 0x12},
+#define LINESECTION_ROUND1_TRAINER2(lastTile) \
+    {.tile = LINE_H_BOTTOM, .y = 18, .x = 20}, \
+    {.tile = LINE_H_BOTTOM, .y = 18, .x = 19}, \
+    {.tile = LINE_V_L,      .y = 17, .x = 19}, \
+    {.tile = lastTile,      .y = 17, .x = 18},
 
-#define LINESECTION_ROUND2_MATCH1(lastSrc)  \
-    {.src = 0x6027,  .y = 0x06, .x = 0x0b}, \
-    {.src = 0x6047,  .y = 0x07, .x = 0x0b}, \
-    {.src = lastSrc, .y = 0x07, .x = 0x0c},
+#define LINESECTION_ROUND2_MATCH1(lastTile) \
+    {.tile = LINE_V_R,      .y =  6, .x = 11}, \
+    {.tile = LINE_V_R_HALF, .y =  7, .x = 11}, \
+    {.tile = lastTile,      .y =  7, .x = 12},
 
-#define LINESECTION_ROUND2_MATCH2(lastSrc)  \
-    {.src = 0x6027,  .y = 0x08, .x = 0x0b}, \
-    {.src = 0x6027,  .y = 0x07, .x = 0x0b}, \
-    {.src = lastSrc, .y = 0x07, .x = 0x0c},
+#define LINESECTION_ROUND2_MATCH2(lastTile) \
+    {.tile = LINE_V_R, .y =  8, .x = 11}, \
+    {.tile = LINE_V_R, .y =  7, .x = 11}, \
+    {.tile = lastTile, .y =  7, .x = 12},
 
-#define LINESECTION_ROUND2_MATCH3(lastSrc)  \
-    {.src = 0x6027,  .y = 0x0e, .x = 0x0b}, \
-    {.src = 0x6047,  .y = 0x0f, .x = 0x0b}, \
-    {.src = lastSrc, .y = 0x0f, .x = 0x0c},
+#define LINESECTION_ROUND2_MATCH3(lastTile) \
+    {.tile = LINE_V_R,      .y = 14, .x = 11}, \
+    {.tile = LINE_V_R_HALF, .y = 15, .x = 11}, \
+    {.tile = lastTile,      .y = 15, .x = 12},
 
-#define LINESECTION_ROUND2_MATCH4(lastSrc)  \
-    {.src = 0x6027,  .y = 0x10, .x = 0x0b}, \
-    {.src = 0x6027,  .y = 0x0f, .x = 0x0b}, \
-    {.src = lastSrc, .y = 0x0f, .x = 0x0c},
+#define LINESECTION_ROUND2_MATCH4(lastTile) \
+    {.tile = LINE_V_R, .y = 16, .x = 11}, \
+    {.tile = LINE_V_R, .y = 15, .x = 11}, \
+    {.tile = lastTile, .y = 15, .x = 12},
 
-#define LINESECTION_ROUND2_MATCH5(lastSrc)  \
-    {.src = 0x6029,  .y = 0x06, .x = 0x12}, \
-    {.src = 0x6049,  .y = 0x07, .x = 0x12}, \
-    {.src = lastSrc, .y = 0x07, .x = 0x11},
+#define LINESECTION_ROUND2_MATCH5(lastTile) \
+    {.tile = LINE_V_L,      .y =  6, .x = 18}, \
+    {.tile = LINE_V_L_HALF, .y =  7, .x = 18}, \
+    {.tile = lastTile,      .y =  7, .x = 17},
 
-#define LINESECTION_ROUND2_MATCH6(lastSrc)  \
-    {.src = 0x6029,  .y = 0x08, .x = 0x12}, \
-    {.src = 0x6029,  .y = 0x07, .x = 0x12}, \
-    {.src = lastSrc, .y = 0x07, .x = 0x11},
+#define LINESECTION_ROUND2_MATCH6(lastTile) \
+    {.tile = LINE_V_L, .y =  8, .x = 18}, \
+    {.tile = LINE_V_L, .y =  7, .x = 18}, \
+    {.tile = lastTile, .y =  7, .x = 17},
 
-#define LINESECTION_ROUND2_MATCH7(lastSrc)  \
-    {.src = 0x6029,  .y = 0x0e, .x = 0x12}, \
-    {.src = 0x6049,  .y = 0x0f, .x = 0x12}, \
-    {.src = lastSrc, .y = 0x0f, .x = 0x11},
+#define LINESECTION_ROUND2_MATCH7(lastTile) \
+    {.tile = LINE_V_L,      .y = 14, .x = 18}, \
+    {.tile = LINE_V_L_HALF, .y = 15, .x = 18}, \
+    {.tile = lastTile,      .y = 15, .x = 17},
 
-#define LINESECTION_ROUND2_MATCH8(lastSrc)  \
-    {.src = 0x6029,  .y = 0x10, .x = 0x12}, \
-    {.src = 0x6029,  .y = 0x0f, .x = 0x12}, \
-    {.src = lastSrc, .y = 0x0f, .x = 0x11},
+#define LINESECTION_ROUND2_MATCH8(lastTile) \
+    {.tile = LINE_V_L, .y = 16, .x = 18}, \
+    {.tile = LINE_V_L, .y = 15, .x = 18}, \
+    {.tile = lastTile, .y = 15, .x = 17},
 
-#define LINESECTION_SEMIFINAL_TOP_LEFT     \
-    {.src = 0x6027, .y = 0x08, .x = 0x0c}, \
-    {.src = 0x6027, .y = 0x09, .x = 0x0c}, \
-    {.src = 0x6027, .y = 0x0a, .x = 0x0c}, \
-    {.src = 0x603b, .y = 0x0b, .x = 0x0c},
+#define LINESECTION_SEMIFINAL_TOP_LEFT \
+    {.tile = LINE_V_R,           .y =  8, .x = 12}, \
+    {.tile = LINE_V_R,           .y =  9, .x = 12}, \
+    {.tile = LINE_V_R,           .y = 10, .x = 12}, \
+    {.tile = LINE_V_R_HALF_LOGO, .y = 11, .x = 12},
 
-#define LINESECTION_SEMIFINAL_BOTTOM_LEFT  \
-    {.src = 0x6033, .y = 0x0e, .x = 0x0c}, \
-    {.src = 0x6032, .y = 0x0d, .x = 0x0c}, \
-    {.src = 0x6031, .y = 0x0c, .x = 0x0c}, \
-    {.src = 0x6030, .y = 0x0b, .x = 0x0c},
+#define LINESECTION_SEMIFINAL_BOTTOM_LEFT \
+    {.tile = LINE_V_R_LOGO4, .y = 14, .x = 12}, \
+    {.tile = LINE_V_R_LOGO3, .y = 13, .x = 12}, \
+    {.tile = LINE_V_R_LOGO2, .y = 12, .x = 12}, \
+    {.tile = LINE_V_R_LOGO1, .y = 11, .x = 12},
 
-#define LINESECTION_SEMIFINAL_TOP_RIGHT    \
-    {.src = 0x6029, .y = 0x08, .x = 0x11}, \
-    {.src = 0x6029, .y = 0x09, .x = 0x11}, \
-    {.src = 0x6029, .y = 0x0a, .x = 0x11}, \
-    {.src = 0x603c, .y = 0x0b, .x = 0x11},
+#define LINESECTION_SEMIFINAL_TOP_RIGHT \
+    {.tile = LINE_V_L,           .y =  8, .x = 17}, \
+    {.tile = LINE_V_L,           .y =  9, .x = 17}, \
+    {.tile = LINE_V_L,           .y = 10, .x = 17}, \
+    {.tile = LINE_V_L_HALF_LOGO, .y = 11, .x = 17},
 
 #define LINESECTION_SEMIFINAL_BOTTOM_RIGHT \
-    {.src = 0x6038, .y = 0x0e, .x = 0x11}, \
-    {.src = 0x6037, .y = 0x0d, .x = 0x11}, \
-    {.src = 0x6036, .y = 0x0c, .x = 0x11}, \
-    {.src = 0x6035, .y = 0x0b, .x = 0x11},
+    {.tile = LINE_V_L_LOGO4, .y = 14, .x = 17}, \
+    {.tile = LINE_V_L_LOGO3, .y = 13, .x = 17}, \
+    {.tile = LINE_V_L_LOGO2, .y = 12, .x = 17}, \
+    {.tile = LINE_V_L_LOGO1, .y = 11, .x = 17},
 
-#define LINESECTION_FINAL_LEFT             \
-    {.src = 0x602c, .y = 0x0b, .x = 0x0d}, \
-    {.src = 0x602d, .y = 0x0b, .x = 0x0e},
+#define LINESECTION_FINAL_LEFT \
+    {.tile = LINE_H_LOGO1, .y = 11, .x = 13}, \
+    {.tile = LINE_H_LOGO2, .y = 11, .x = 14},
 
-#define LINESECTION_FINAL_RIGHT            \
-    {.src = 0x602f, .y = 0x0b, .x = 0x10}, \
-    {.src = 0x602e, .y = 0x0b, .x = 0x0f},
+#define LINESECTION_FINAL_RIGHT \
+    {.tile = LINE_H_LOGO4, .y = 11, .x = 16}, \
+    {.tile = LINE_H_LOGO3, .y = 11, .x = 15},
 
 
 static const struct TourneyTreeLineSection sLineSectionTrainer1Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER1(0x6043)
+    LINESECTION_ROUND1_TRAINER1(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer1Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER1(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6043)
+    LINESECTION_ROUND1_TRAINER1(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer1Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER1(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6023)
+    LINESECTION_ROUND1_TRAINER1(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer1Final[] =
 {
-    LINESECTION_ROUND1_TRAINER1(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6023)
+    LINESECTION_ROUND1_TRAINER1(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer9Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER9(0x6043)
+    LINESECTION_ROUND1_TRAINER9(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer9Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER9(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6043)
+    LINESECTION_ROUND1_TRAINER9(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer9Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER9(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6023)
+    LINESECTION_ROUND1_TRAINER9(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer9Final[] =
 {
-    LINESECTION_ROUND1_TRAINER9(0x6023)
-    LINESECTION_ROUND2_MATCH1(0x6023)
+    LINESECTION_ROUND1_TRAINER9(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH1(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer13Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER13(0x6021)
+    LINESECTION_ROUND1_TRAINER13(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer13Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER13(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6043)
+    LINESECTION_ROUND1_TRAINER13(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer13Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER13(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6023)
+    LINESECTION_ROUND1_TRAINER13(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer13Final[] =
 {
-    LINESECTION_ROUND1_TRAINER13(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6023)
+    LINESECTION_ROUND1_TRAINER13(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer5Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER5(0x6021)
+    LINESECTION_ROUND1_TRAINER5(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer5Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER5(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6043)
+    LINESECTION_ROUND1_TRAINER5(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer5Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER5(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6023)
+    LINESECTION_ROUND1_TRAINER5(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer5Final[] =
 {
-    LINESECTION_ROUND1_TRAINER5(0x6021)
-    LINESECTION_ROUND2_MATCH2(0x6023)
+    LINESECTION_ROUND1_TRAINER5(LINE_H)
+    LINESECTION_ROUND2_MATCH2(LINE_CORNER_R)
     LINESECTION_SEMIFINAL_TOP_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer8Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER8(0x6043)
+    LINESECTION_ROUND1_TRAINER8(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer8Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER8(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER8(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer8Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER8(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER8(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer8Final[] =
 {
-    LINESECTION_ROUND1_TRAINER8(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER8(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer16Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER16(0x6043)
+    LINESECTION_ROUND1_TRAINER16(LINE_CORNER_R_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer16Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER16(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER16(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer16Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER16(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER16(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer16Final[] =
 {
-    LINESECTION_ROUND1_TRAINER16(0x6023)
-    LINESECTION_ROUND2_MATCH3(0x6021)
+    LINESECTION_ROUND1_TRAINER16(LINE_CORNER_R)
+    LINESECTION_ROUND2_MATCH3(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer12Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER12(0x6021)
+    LINESECTION_ROUND1_TRAINER12(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer12Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER12(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER12(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer12Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER12(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER12(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer12Final[] =
 {
-    LINESECTION_ROUND1_TRAINER12(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER12(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer4Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER4(0x6021)
+    LINESECTION_ROUND1_TRAINER4(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer4Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER4(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER4(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer4Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER4(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER4(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer4Final[] =
 {
-    LINESECTION_ROUND1_TRAINER4(0x6021)
-    LINESECTION_ROUND2_MATCH4(0x6021)
+    LINESECTION_ROUND1_TRAINER4(LINE_H)
+    LINESECTION_ROUND2_MATCH4(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_LEFT
     LINESECTION_FINAL_LEFT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer3Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER3(0x6045)
+    LINESECTION_ROUND1_TRAINER3(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer3Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER3(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6045)
+    LINESECTION_ROUND1_TRAINER3(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer3Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER3(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6025)
+    LINESECTION_ROUND1_TRAINER3(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer3Final[] =
 {
-    LINESECTION_ROUND1_TRAINER3(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6025)
+    LINESECTION_ROUND1_TRAINER3(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer11Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER11(0x6045)
+    LINESECTION_ROUND1_TRAINER11(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer11Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER11(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6045)
+    LINESECTION_ROUND1_TRAINER11(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer11Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER11(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6025)
+    LINESECTION_ROUND1_TRAINER11(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer11Final[] =
 {
-    LINESECTION_ROUND1_TRAINER11(0x6025)
-    LINESECTION_ROUND2_MATCH5(0x6025)
+    LINESECTION_ROUND1_TRAINER11(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH5(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer15Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER15(0x6021)
+    LINESECTION_ROUND1_TRAINER15(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer15Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER15(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6045)
+    LINESECTION_ROUND1_TRAINER15(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer15Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER15(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6025)
+    LINESECTION_ROUND1_TRAINER15(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer15Final[] =
 {
-    LINESECTION_ROUND1_TRAINER15(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6025)
+    LINESECTION_ROUND1_TRAINER15(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer7Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER7(0x6021)
+    LINESECTION_ROUND1_TRAINER7(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer7Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER7(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6045)
+    LINESECTION_ROUND1_TRAINER7(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer7Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER7(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6025)
+    LINESECTION_ROUND1_TRAINER7(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer7Final[] =
 {
-    LINESECTION_ROUND1_TRAINER7(0x6021)
-    LINESECTION_ROUND2_MATCH6(0x6025)
+    LINESECTION_ROUND1_TRAINER7(LINE_H)
+    LINESECTION_ROUND2_MATCH6(LINE_CORNER_L)
     LINESECTION_SEMIFINAL_TOP_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer6Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER6(0x6045)
+    LINESECTION_ROUND1_TRAINER6(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer6Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER6(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER6(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer6Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER6(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER6(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer6Final[] =
 {
-    LINESECTION_ROUND1_TRAINER6(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER6(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer14Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER14(0x6045)
+    LINESECTION_ROUND1_TRAINER14(LINE_CORNER_L_HALF)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer14Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER14(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER14(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer14Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER14(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER14(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer14Final[] =
 {
-    LINESECTION_ROUND1_TRAINER14(0x6025)
-    LINESECTION_ROUND2_MATCH7(0x6021)
+    LINESECTION_ROUND1_TRAINER14(LINE_CORNER_L)
+    LINESECTION_ROUND2_MATCH7(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer10Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER10(0x6021)
+    LINESECTION_ROUND1_TRAINER10(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer10Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER10(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER10(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer10Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER10(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER10(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer10Final[] =
 {
-    LINESECTION_ROUND1_TRAINER10(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER10(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
     LINESECTION_FINAL_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer2Round1[] =
 {
-    LINESECTION_ROUND1_TRAINER2(0x6021)
+    LINESECTION_ROUND1_TRAINER2(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer2Round2[] =
 {
-    LINESECTION_ROUND1_TRAINER2(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER2(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer2Semifinal[] =
 {
-    LINESECTION_ROUND1_TRAINER2(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER2(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
 };
 
 static const struct TourneyTreeLineSection sLineSectionTrainer2Final[] =
 {
-    LINESECTION_ROUND1_TRAINER2(0x6021)
-    LINESECTION_ROUND2_MATCH8(0x6021)
+    LINESECTION_ROUND1_TRAINER2(LINE_H)
+    LINESECTION_ROUND2_MATCH8(LINE_H)
     LINESECTION_SEMIFINAL_BOTTOM_RIGHT
     LINESECTION_FINAL_RIGHT
 };
@@ -2080,7 +2139,6 @@ static const u8 sTourneyTreeLineSectionArrayCounts[DOME_TOURNAMENT_TRAINERS_COUN
     {ARRAY_COUNT(sLineSectionTrainer16Round1), ARRAY_COUNT(sLineSectionTrainer16Round2), ARRAY_COUNT(sLineSectionTrainer16Semifinal), ARRAY_COUNT(sLineSectionTrainer16Final)},
 };
 
-// code
 void CallBattleDomeFunction(void)
 {
     sBattleDomeFunctions[gSpecialVar_0x8004]();
@@ -2347,8 +2405,8 @@ static void InitDomeTrainers(void)
         rankingScores[0] += GetMonData(&gPlayerParty[trainerId], MON_DATA_SPDEF, NULL);
         rankingScores[0] += GetMonData(&gPlayerParty[trainerId], MON_DATA_SPEED, NULL);
         rankingScores[0] += GetMonData(&gPlayerParty[trainerId], MON_DATA_MAX_HP, NULL);
-        monTypesBits |= gBitTable[gBaseStats[GetMonData(&gPlayerParty[trainerId], MON_DATA_SPECIES, NULL)].type1];
-        monTypesBits |= gBitTable[gBaseStats[GetMonData(&gPlayerParty[trainerId], MON_DATA_SPECIES, NULL)].type2];
+        monTypesBits |= gBitTable[gSpeciesInfo[GetMonData(&gPlayerParty[trainerId], MON_DATA_SPECIES, NULL)].types[0]];
+        monTypesBits |= gBitTable[gSpeciesInfo[GetMonData(&gPlayerParty[trainerId], MON_DATA_SPECIES, NULL)].types[1]];
     }
 
     // Count the number of types in the players party, to factor into the ranking
@@ -2382,8 +2440,8 @@ static void InitDomeTrainers(void)
             rankingScores[i] += statValues[STAT_SPDEF];
             rankingScores[i] += statValues[STAT_SPEED];
             rankingScores[i] += statValues[STAT_HP];
-            monTypesBits |= gBitTable[gBaseStats[gFacilityTrainerMons[DOME_MONS[i][j]].species].type1];
-            monTypesBits |= gBitTable[gBaseStats[gFacilityTrainerMons[DOME_MONS[i][j]].species].type2];
+            monTypesBits |= gBitTable[gSpeciesInfo[gFacilityTrainerMons[DOME_MONS[i][j]].species].types[0]];
+            monTypesBits |= gBitTable[gSpeciesInfo[gFacilityTrainerMons[DOME_MONS[i][j]].species].types[1]];
         }
 
         for (monTypesCount = 0, j = 0; j < 32; j++)
@@ -2426,7 +2484,7 @@ static void InitDomeTrainers(void)
                 break;
         }
 
-        if (sTrainerNamePositions[i][0] != 0)
+        if (sTrainerNamePositions[i][0] != TOURNEYWIN_NAMES_LEFT)
         {
             j = 0;
             DOME_TRAINERS[j].trainerId = TRAINER_FRONTIER_BRAIN;
@@ -2447,7 +2505,7 @@ static void InitDomeTrainers(void)
 
 #define CALC_STAT(base, statIndex)                                                          \
 {                                                                                           \
-    u8 baseStat = gBaseStats[species].base;                                                 \
+    u8 baseStat = gSpeciesInfo[species].base;                                                 \
     stats[statIndex] = (((2 * baseStat + ivs + evs[statIndex] / 4) * level) / 100) + 5;     \
     stats[statIndex] = (u8) ModifyStatByNature(nature, stats[statIndex], statIndex);        \
 }
@@ -2480,7 +2538,7 @@ static void CalcDomeMonStats(u16 species, int level, int ivs, u8 evBits, u8 natu
     }
     else
     {
-        int n = 2 * gBaseStats[species].baseHP;
+        int n = 2 * gSpeciesInfo[species].baseHP;
         stats[STAT_HP] = (((n + ivs + evs[STAT_HP] / 4) * level) / 100) + level + 10;
     }
 
@@ -2530,7 +2588,7 @@ static void CreateDomeOpponentMon(u8 monPartyId, u16 tournamentTrainerId, u8 tou
     #ifdef BUGFIX
     u8 fixedIv = GetDomeTrainerMonIvs(DOME_TRAINERS[tournamentTrainerId].trainerId);
     #else
-    u8 fixedIv = GetDomeTrainerMonIvs(tournamentTrainerId); // BUG: Using the wrong ID. As a result, all Pokemon have ivs of 3.
+    u8 fixedIv = GetDomeTrainerMonIvs(tournamentTrainerId); // BUG: Using the wrong ID. As a result, all Pokémon have ivs of 3.
     #endif
     u8 level = SetFacilityPtrsGetLevel();
     CreateMonWithEVSpreadNatureOTID(&gEnemyParty[monPartyId],
@@ -2592,48 +2650,53 @@ static void CreateDomeOpponentMons(u16 tournamentTrainerId)
     }
 }
 
+// Returns a bitmask representing which 2 of the trainer's 3 Pokémon to select.
+// The choice is calculated solely depending on the type effectiveness of their
+// movesets against the player's Pokémon.
+// There is a 50% chance of either a "good" or "bad" selection mode being used.
+// In the good mode movesets are preferred which are more effective against the
+// player, and in the bad mode the opposite is true. If all 3 Pokémon tie, the
+// other mode will be tried. If they tie again, the Pokémon selection is random.
 int GetDomeTrainerSelectedMons(u16 tournamentTrainerId)
 {
     int selectedMonBits;
     if (Random() & 1)
     {
-        selectedMonBits = SelectOpponentMonsUsingPersonality(tournamentTrainerId, FALSE);
+        selectedMonBits = SelectOpponentMons_Good(tournamentTrainerId, FALSE);
         if (selectedMonBits == 0)
-            selectedMonBits = SelectOpponentMonsUsingOtId(tournamentTrainerId, TRUE);
+            selectedMonBits = SelectOpponentMons_Bad(tournamentTrainerId, TRUE);
     }
     else
     {
-        selectedMonBits = SelectOpponentMonsUsingOtId(tournamentTrainerId, FALSE);
+        selectedMonBits = SelectOpponentMons_Bad(tournamentTrainerId, FALSE);
         if (selectedMonBits == 0)
-            selectedMonBits = SelectOpponentMonsUsingPersonality(tournamentTrainerId, TRUE);
+            selectedMonBits = SelectOpponentMons_Good(tournamentTrainerId, TRUE);
     }
 
     return selectedMonBits;
 }
 
-// Could probably use a better name once GetTypeEffectivenessPoints is clarified
-// Personality seems to be used to select a different weighting system for type effectiveness points
-static int SelectOpponentMonsUsingPersonality(u16 tournamentTrainerId, bool8 allowRandom)
+static int SelectOpponentMons_Good(u16 tournamentTrainerId, bool8 allowRandom)
 {
-    int i, moveId, playerMonId;
+    int i, moveIndex, playerMonId;
     int partyMovePoints[FRONTIER_PARTY_SIZE];
 
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         partyMovePoints[i] = 0;
-        for (moveId = 0; moveId < MAX_MON_MOVES; moveId++)
+        for (moveIndex = 0; moveIndex < MAX_MON_MOVES; moveIndex++)
         {
             for (playerMonId = 0; playerMonId < FRONTIER_PARTY_SIZE; playerMonId++)
             {
                 if (DOME_TRAINERS[tournamentTrainerId].trainerId == TRAINER_FRONTIER_BRAIN)
                 {
-                    partyMovePoints[i] += GetTypeEffectivenessPoints(GetFrontierBrainMonMove(i, moveId),
-                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), MON_DATA_PERSONALITY);
+                    partyMovePoints[i] += GetTypeEffectivenessPoints(GetFrontierBrainMonMove(i, moveIndex),
+                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), EFFECTIVENESS_MODE_GOOD);
                 }
                 else
                 {
-                    partyMovePoints[i] += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentTrainerId][i]].moves[moveId],
-                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), MON_DATA_PERSONALITY);
+                    partyMovePoints[i] += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentTrainerId][i]].moves[moveIndex],
+                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), EFFECTIVENESS_MODE_GOOD);
                 }
             }
         }
@@ -2641,28 +2704,28 @@ static int SelectOpponentMonsUsingPersonality(u16 tournamentTrainerId, bool8 all
     return SelectOpponentMonsFromParty(partyMovePoints, allowRandom);
 }
 
-// See above function, identical but uses MON_DATA_OT_ID
-static int SelectOpponentMonsUsingOtId(u16 tournamentTrainerId, bool8 allowRandom)
+// Identical to function above, but uses EFFECTIVENESS_MODE_BAD
+static int SelectOpponentMons_Bad(u16 tournamentTrainerId, bool8 allowRandom)
 {
-    int i, moveId, playerMonId;
+    int i, moveIndex, playerMonId;
     int partyMovePoints[FRONTIER_PARTY_SIZE];
 
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         partyMovePoints[i] = 0;
-        for (moveId = 0; moveId < MAX_MON_MOVES; moveId++)
+        for (moveIndex = 0; moveIndex < MAX_MON_MOVES; moveIndex++)
         {
             for (playerMonId = 0; playerMonId < FRONTIER_PARTY_SIZE; playerMonId++)
             {
                 if (DOME_TRAINERS[tournamentTrainerId].trainerId == TRAINER_FRONTIER_BRAIN)
                 {
-                    partyMovePoints[i] += GetTypeEffectivenessPoints(GetFrontierBrainMonMove(i, moveId),
-                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), MON_DATA_OT_ID);
+                    partyMovePoints[i] += GetTypeEffectivenessPoints(GetFrontierBrainMonMove(i, moveIndex),
+                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), EFFECTIVENESS_MODE_BAD);
                 }
                 else
                 {
-                    partyMovePoints[i] += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentTrainerId][i]].moves[moveId],
-                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), MON_DATA_OT_ID);
+                    partyMovePoints[i] += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentTrainerId][i]].moves[moveIndex],
+                                            GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL), EFFECTIVENESS_MODE_BAD);
                 }
             }
         }
@@ -2735,27 +2798,36 @@ static int SelectOpponentMonsFromParty(int *partyMovePoints, bool8 allowRandom)
 #define TYPE_x2     40
 #define TYPE_x4     80
 
-static int GetTypeEffectivenessPoints(int move, int targetSpecies, int arg2)
+static int GetTypeEffectivenessPoints(int move, int targetSpecies, int mode)
 {
     int defType1, defType2, defAbility, moveType;
     int i = 0;
     int typePower = TYPE_x1;
 
-    if (move == MOVE_NONE || move == 0xFFFF || gBattleMoves[move].power == 0)
+    if (move == MOVE_NONE || move == MOVE_UNAVAILABLE || gBattleMoves[move].power == 0)
         return 0;
 
-    defType1 = gBaseStats[targetSpecies].type1;
-    defType2 = gBaseStats[targetSpecies].type2;
-    defAbility = gBaseStats[targetSpecies].abilities[0];
+    defType1 = gSpeciesInfo[targetSpecies].types[0];
+    defType2 = gSpeciesInfo[targetSpecies].types[1];
+    defAbility = gSpeciesInfo[targetSpecies].abilities[0];
     moveType = gBattleMoves[move].type;
 
     if (defAbility == ABILITY_LEVITATE && moveType == TYPE_GROUND)
     {
-        if (arg2 == 1)
+        // They likely meant to return here, as 8 is the number of points normally used in this mode for moves with no effect.
+        // Because there's no return the value instead gets interpreted by the switch, and the number of points becomes 0.
+        if (mode == EFFECTIVENESS_MODE_BAD)
+        {
             typePower = 8;
+        #ifdef BUGFIX
+            return typePower;
+        #endif
+        }
     }
     else
     {
+        // Calculate a "type power" value to determine the benefit of using this type move against the target.
+        // This value will then be used to get the number of points to assign to the move.
         while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
         {
             if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
@@ -2767,33 +2839,30 @@ static int GetTypeEffectivenessPoints(int move, int targetSpecies, int arg2)
             {
                 // BUG: the value of TYPE_x2 does not exist in gTypeEffectiveness, so if defAbility is ABILITY_WONDER_GUARD, the conditional always fails
                 #ifndef BUGFIX
-                if (TYPE_EFFECT_DEF_TYPE(i) == defType1)
-                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == TYPE_x2) || defAbility != ABILITY_WONDER_GUARD)
-                        typePower = (typePower * TYPE_EFFECT_MULTIPLIER(i)) / 10;
-                if (TYPE_EFFECT_DEF_TYPE(i) == defType2 && defType1 != defType2)
-                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == TYPE_x2) || defAbility != ABILITY_WONDER_GUARD)
-                        typePower = (typePower * TYPE_EFFECT_MULTIPLIER(i)) / 10;
+                    #define WONDER_GUARD_EFFECTIVENESS TYPE_x2
                 #else
+                    #define WONDER_GUARD_EFFECTIVENESS TYPE_MUL_SUPER_EFFECTIVE
+                #endif
                 if (TYPE_EFFECT_DEF_TYPE(i) == defType1)
-                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == TYPE_MUL_SUPER_EFFECTIVE) || defAbility != ABILITY_WONDER_GUARD)
+                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == WONDER_GUARD_EFFECTIVENESS) || defAbility != ABILITY_WONDER_GUARD)
                         typePower = (typePower * TYPE_EFFECT_MULTIPLIER(i)) / 10;
                 if (TYPE_EFFECT_DEF_TYPE(i) == defType2 && defType1 != defType2)
-                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == TYPE_MUL_SUPER_EFFECTIVE) || defAbility != ABILITY_WONDER_GUARD)
+                    if ((defAbility == ABILITY_WONDER_GUARD && TYPE_EFFECT_MULTIPLIER(i) == WONDER_GUARD_EFFECTIVENESS) || defAbility != ABILITY_WONDER_GUARD)
                         typePower = (typePower * TYPE_EFFECT_MULTIPLIER(i)) / 10;
-                #endif
             }
             i += 3;
         }
     }
 
-    switch (arg2)
+    switch (mode)
     {
-    case 0:
+    case EFFECTIVENESS_MODE_GOOD:
+        // Weights moves that more effective.
         switch (typePower)
         {
-        case TYPE_x0_50:
-        case TYPE_x0_25:
         case TYPE_x0:
+        case TYPE_x0_25:
+        case TYPE_x0_50:
         default:
             typePower = 0;
             break;
@@ -2808,21 +2877,23 @@ static int GetTypeEffectivenessPoints(int move, int targetSpecies, int arg2)
             break;
         }
         break;
-    case 1:
+    case EFFECTIVENESS_MODE_BAD:
+        // Weights moves that are less effective.
+        // Odd that there's no limit on this being used, even the Frontier Brain could end up using this.
         switch (typePower)
         {
-        default:
-        case TYPE_x1:
-            typePower = 0;
+        case TYPE_x0:
+            typePower = 8;
             break;
         case TYPE_x0_25:
             typePower = 4;
             break;
-        case TYPE_x0:
-            typePower = 8;
-            break;
         case TYPE_x0_50:
             typePower = 2;
+            break;
+        default:
+        case TYPE_x1:
+            typePower = 0;
             break;
         case TYPE_x2:
             typePower = -2;
@@ -2832,7 +2903,9 @@ static int GetTypeEffectivenessPoints(int move, int targetSpecies, int arg2)
             break;
         }
         break;
-    case 2:
+    case EFFECTIVENESS_MODE_AI_VS_AI:
+        // Used as part of calculating the winner in a battle between two AIs.
+        // Weights moves that are more effective much more strongly in both directions.
         switch (typePower)
         {
         case TYPE_x0:
@@ -2947,7 +3020,7 @@ static void SetDomeOpponentGraphicsId(void)
 static void SaveDomeChallenge(void)
 {
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
-    VarSet(VAR_TEMP_0, 0);
+    VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
     SaveGameFrontier();
 }
@@ -3032,12 +3105,12 @@ static void Task_ShowTourneyInfoCard(u8 taskId)
         DecompressAndLoadBgGfxUsingHeap(2, gDomeTourneyInfoCard_Tilemap, 0x2000, 0, 1);
         DecompressAndLoadBgGfxUsingHeap(3, gDomeTourneyInfoCardBg_Tilemap, 0x800, 0, 1);
         LoadCompressedSpriteSheet(sTourneyTreeButtonsSpriteSheet);
-        LoadCompressedPalette(gDomeTourneyTree_Pal, 0, 0x200);
-        LoadCompressedPalette(gDomeTourneyTreeButtons_Pal, 0x100, 0x200);
-        LoadCompressedPalette(gBattleWindowTextPalette, 0xF0, 0x20);
+        LoadCompressedPalette(gDomeTourneyTree_Pal, BG_PLTT_OFFSET, BG_PLTT_SIZE);
+        LoadCompressedPalette(gDomeTourneyTreeButtons_Pal, OBJ_PLTT_OFFSET, OBJ_PLTT_SIZE);
+        LoadCompressedPalette(gBattleWindowTextPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
         if (mode == INFOCARD_MATCH)
-            LoadCompressedPalette(gDomeTourneyMatchCardBg_Pal, 0x50, 0x20); // Changes the moving info card bg to orange when in match card mode
-        CpuFill32(0, gPlttBufferFaded, 0x400);
+            LoadCompressedPalette(gDomeTourneyMatchCardBg_Pal, BG_PLTT_ID(5), PLTT_SIZE_4BPP); // Changes the moving info card bg to orange when in match card mode
+        CpuFill32(0, gPlttBufferFaded, PLTT_SIZE);
         ShowBg(0);
         ShowBg(1);
         ShowBg(2);
@@ -3099,7 +3172,7 @@ static void Task_ShowTourneyInfoCard(u8 taskId)
 // Note: Card scrolling up means the current card goes down and another one appears from top.
 // The same is true for scrolling left.
 // That means that the sprite needs to move with the moving card in the opposite scrolling direction.
-static void SpriteCb_TrainerIconCardScrollUp(struct Sprite *sprite)
+static void SpriteCB_TrainerIconCardScrollUp(struct Sprite *sprite)
 {
     sprite->y += 4;
     if (sprite->data[0] != 0)
@@ -3119,7 +3192,7 @@ static void SpriteCb_TrainerIconCardScrollUp(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_TrainerIconCardScrollDown(struct Sprite *sprite)
+static void SpriteCB_TrainerIconCardScrollDown(struct Sprite *sprite)
 {
     sprite->y -= 4;
     if (sprite->data[0] != 0)
@@ -3139,7 +3212,7 @@ static void SpriteCb_TrainerIconCardScrollDown(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_TrainerIconCardScrollLeft(struct Sprite *sprite)
+static void SpriteCB_TrainerIconCardScrollLeft(struct Sprite *sprite)
 {
     sprite->x += 4;
     if (sprite->data[0] != 0)
@@ -3159,7 +3232,7 @@ static void SpriteCb_TrainerIconCardScrollLeft(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_TrainerIconCardScrollRight(struct Sprite *sprite)
+static void SpriteCB_TrainerIconCardScrollRight(struct Sprite *sprite)
 {
     sprite->x -= 4;
     if (sprite->data[0] != 0)
@@ -3181,13 +3254,13 @@ static void SpriteCb_TrainerIconCardScrollRight(struct Sprite *sprite)
 
 #define sMonIconStill data[3]
 
-static void SpriteCb_MonIcon(struct Sprite *sprite)
+static void SpriteCB_MonIconDomeInfo(struct Sprite *sprite)
 {
     if (!sprite->sMonIconStill)
         UpdateMonIconFrame(sprite);
 }
 
-static void SpriteCb_MonIconCardScrollUp(struct Sprite *sprite)
+static void SpriteCB_MonIconCardScrollUp(struct Sprite *sprite)
 {
     if (!sprite->sMonIconStill)
         UpdateMonIconFrame(sprite);
@@ -3197,7 +3270,7 @@ static void SpriteCb_MonIconCardScrollUp(struct Sprite *sprite)
         if (sprite->y >= -16)
             sprite->invisible = FALSE;
         if (++sprite->data[1] == 40)
-            sprite->callback = SpriteCb_MonIcon;
+            sprite->callback = SpriteCB_MonIconDomeInfo;
     }
     else
     {
@@ -3209,7 +3282,7 @@ static void SpriteCb_MonIconCardScrollUp(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_MonIconCardScrollDown(struct Sprite *sprite)
+static void SpriteCB_MonIconCardScrollDown(struct Sprite *sprite)
 {
     if (!sprite->sMonIconStill)
         UpdateMonIconFrame(sprite);
@@ -3219,7 +3292,7 @@ static void SpriteCb_MonIconCardScrollDown(struct Sprite *sprite)
         if (sprite->y <= 176)
             sprite->invisible = FALSE;
         if (++sprite->data[1] == 40)
-            sprite->callback = SpriteCb_MonIcon;
+            sprite->callback = SpriteCB_MonIconDomeInfo;
     }
     else
     {
@@ -3231,7 +3304,7 @@ static void SpriteCb_MonIconCardScrollDown(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_MonIconCardScrollLeft(struct Sprite *sprite)
+static void SpriteCB_MonIconCardScrollLeft(struct Sprite *sprite)
 {
     if (!sprite->sMonIconStill)
         UpdateMonIconFrame(sprite);
@@ -3241,7 +3314,7 @@ static void SpriteCb_MonIconCardScrollLeft(struct Sprite *sprite)
         if (sprite->x >= -16)
             sprite->invisible = FALSE;
         if (++sprite->data[1] == 64)
-            sprite->callback = SpriteCb_MonIcon;
+            sprite->callback = SpriteCB_MonIconDomeInfo;
     }
     else
     {
@@ -3253,7 +3326,7 @@ static void SpriteCb_MonIconCardScrollLeft(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_MonIconCardScrollRight(struct Sprite *sprite)
+static void SpriteCB_MonIconCardScrollRight(struct Sprite *sprite)
 {
     if (!sprite->sMonIconStill)
         UpdateMonIconFrame(sprite);
@@ -3263,7 +3336,7 @@ static void SpriteCb_MonIconCardScrollRight(struct Sprite *sprite)
         if (sprite->x <= DISPLAY_WIDTH + 16)
             sprite->invisible = FALSE;
         if (++sprite->data[1] == 64)
-            sprite->callback = SpriteCb_MonIcon;
+            sprite->callback = SpriteCB_MonIconDomeInfo;
     }
     else
     {
@@ -3275,7 +3348,7 @@ static void SpriteCb_MonIconCardScrollRight(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_HorizontalScrollArrow(struct Sprite *sprite)
+static void SpriteCB_HorizontalScrollArrow(struct Sprite *sprite)
 {
     int taskId1 = sprite->data[0];
     int arrId = gTasks[gTasks[taskId1].data[4]].data[1];
@@ -3344,7 +3417,7 @@ static void SpriteCb_HorizontalScrollArrow(struct Sprite *sprite)
     }
 }
 
-static void SpriteCb_VerticalScrollArrow(struct Sprite *sprite)
+static void SpriteCB_VerticalScrollArrow(struct Sprite *sprite)
 {
     int taskId1 = sprite->data[0];
 
@@ -3421,11 +3494,11 @@ static void Task_HandleInfoCardInput(u8 taskId)
         case MATCHCARD_INPUT_UP ... MATCHCARD_INPUT_RIGHT:
             gTasks[taskId].data[5] = i;
             if (gTasks[taskId].tUsingAlternateSlot)
-                windowId = 9;
+                windowId = NUM_INFO_CARD_WINDOWS;
             else
                 windowId = 0;
 
-            for (i = windowId; i < windowId + 9; i++)
+            for (i = windowId; i < windowId + NUM_INFO_CARD_WINDOWS; i++)
             {
                 CopyWindowToVram(i, COPYWIN_GFX);
                 FillWindowPixelBuffer(i, PIXEL_FILL(0));
@@ -3510,7 +3583,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollUp;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollUp;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3521,7 +3594,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollUp;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollUp;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3534,7 +3607,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollUp;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollUp;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3545,7 +3618,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollUp;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollUp;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3626,7 +3699,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollDown;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollDown;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3637,7 +3710,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollDown;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollDown;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3650,7 +3723,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollDown;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollDown;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3661,7 +3734,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollDown;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollDown;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3709,7 +3782,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3720,7 +3793,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3733,7 +3806,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3744,7 +3817,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3792,7 +3865,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3803,7 +3876,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3816,7 +3889,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3827,7 +3900,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollLeft;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollLeft;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3873,7 +3946,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3884,7 +3957,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3897,7 +3970,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3908,7 +3981,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3956,7 +4029,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3967,7 +4040,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot ^ 1;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3980,7 +4053,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_TrainerIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_TrainerIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -3991,7 +4064,7 @@ static void Task_HandleInfoCardInput(u8 taskId)
                 {
                     if (sInfoCard->spriteIds[i] != SPRITE_NONE)
                     {
-                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCb_MonIconCardScrollRight;
+                        gSprites[sInfoCard->spriteIds[i]].callback = SpriteCB_MonIconCardScrollRight;
                         gSprites[sInfoCard->spriteIds[i]].data[0] = gTasks[taskId].tUsingAlternateSlot;
                         gSprites[sInfoCard->spriteIds[i]].data[1] = 0;
                         gSprites[sInfoCard->spriteIds[i]].data[2] = i;
@@ -4238,7 +4311,7 @@ static u8 Task_GetInfoCardInput(u8 taskId)
 #undef tUsingAlternateSlot
 
 // allocatedArray below needs to be large enough to hold stat totals for each mon, or totals of each type of move points
-#define ALLOC_ARRAY_SIZE (NUM_STATS * FRONTIER_PARTY_SIZE >= NUM_MOVE_POINT_TYPES ? (NUM_STATS * FRONTIER_PARTY_SIZE) :  NUM_MOVE_POINT_TYPES)
+#define ALLOC_ARRAY_SIZE max(NUM_STATS * FRONTIER_PARTY_SIZE, NUM_MOVE_POINT_TYPES)
 
 static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
 {
@@ -4247,14 +4320,14 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
     int trainerId = 0;
     u8 nature = 0;
     int arrId = 0;
-    int windowId = 0;
+    int windowId = WIN_TRAINER_NAME;
     int x = 0, y = 0;
     u8 palSlot = 0;
     s16 *allocatedArray = AllocZeroed(sizeof(s16) * ALLOC_ARRAY_SIZE);
     trainerId = DOME_TRAINERS[trainerTourneyId].trainerId;
 
     if (flags & CARD_ALTERNATE_SLOT)
-        arrId = 2 * (FRONTIER_PARTY_SIZE + 1), windowId = 9, palSlot = 2;
+        arrId = 2 * (FRONTIER_PARTY_SIZE + 1), windowId = WIN_TRAINER_NAME + NUM_INFO_CARD_WINDOWS, palSlot = 2;
     if (flags & MOVE_CARD_RIGHT)
         x = DISPLAY_WIDTH + 16;
     if (flags & MOVE_CARD_DOWN)
@@ -4281,7 +4354,7 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         if (trainerId == TRAINER_PLAYER)
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[trainerTourneyId][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4290,7 +4363,7 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         else if (trainerId == TRAINER_FRONTIER_BRAIN)
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[trainerTourneyId][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4299,7 +4372,7 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         else
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].species,
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4372,19 +4445,19 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         else
             textPrinter.currentChar = gSpeciesNames[gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].species];
 
-        textPrinter.windowId = 1 + i + windowId;
+        textPrinter.windowId = WIN_TRAINER_MON1_NAME + i + windowId;
         if (i == 1)
             textPrinter.currentX = 7;
         else
             textPrinter.currentX = 0;
 
-        PutWindowTilemap(1 + i + windowId);
-        CopyWindowToVram(1 + i + windowId, COPYWIN_FULL);
+        PutWindowTilemap(WIN_TRAINER_MON1_NAME + i + windowId);
+        CopyWindowToVram(WIN_TRAINER_MON1_NAME + i + windowId, COPYWIN_FULL);
         AddTextPrinter(&textPrinter, 0, NULL);
     }
 
-    PutWindowTilemap(windowId + 4);
-    CopyWindowToVram(windowId + 4, COPYWIN_FULL);
+    PutWindowTilemap(windowId + WIN_TRAINER_FLAVOR_TEXT);
+    CopyWindowToVram(windowId + WIN_TRAINER_FLAVOR_TEXT, COPYWIN_FULL);
 
     // Print text about trainers potential in the tourney
     if (trainerId == TRAINER_FRONTIER_BRAIN)
@@ -4393,7 +4466,7 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         textPrinter.currentChar = sBattleDomePotentialTexts[trainerTourneyId];
 
     textPrinter.fontId = FONT_NORMAL;
-    textPrinter.windowId = windowId + 4;
+    textPrinter.windowId = windowId + WIN_TRAINER_FLAVOR_TEXT;
     textPrinter.currentX = 0;
     textPrinter.y = 4;
     textPrinter.currentY = 4;
@@ -4715,7 +4788,7 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     u8 palSlot = 0;
 
     if (flags & CARD_ALTERNATE_SLOT)
-        arrId = 2 * (FRONTIER_PARTY_SIZE + 1), windowId = 9, palSlot = 2;
+        arrId = 2 * (FRONTIER_PARTY_SIZE + 1), windowId = NUM_INFO_CARD_WINDOWS, palSlot = 2;
     if (flags & MOVE_CARD_RIGHT)
         x = DISPLAY_WIDTH + 16;
     if (flags & MOVE_CARD_DOWN)
@@ -4764,13 +4837,13 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     if (lost[1])
         gSprites[sInfoCard->spriteIds[1 + arrId]].oam.paletteNum = 3;
 
-    // Draw left trainer's pokemon icons.
+    // Draw left trainer's Pokémon icons.
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         if (trainerIds[0] == TRAINER_PLAYER)
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[0]][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4779,7 +4852,7 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         else if (trainerIds[0] == TRAINER_FRONTIER_BRAIN)
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[0]][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4788,7 +4861,7 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         else
         {
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[tournamentIds[0]][i]].species,
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4804,13 +4877,13 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         }
     }
 
-    // Draw right trainer's pokemon icons.
+    // Draw right trainer's Pokémon icons.
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         if (trainerIds[1] == TRAINER_PLAYER)
         {
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[1]][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4819,7 +4892,7 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         else if (trainerIds[1] == TRAINER_FRONTIER_BRAIN)
         {
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[1]][i],
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4828,7 +4901,7 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         else
         {
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[tournamentIds[1]][i]].species,
-                                                                  SpriteCb_MonIcon,
+                                                                  SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0, TRUE);
@@ -4857,10 +4930,10 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     textPrinter.shadowColor = TEXT_DYNAMIC_COLOR_4;
     StringExpandPlaceholders(gStringVar4, sBattleDomeWinTexts[winStringId]);
     textPrinter.currentChar = gStringVar4;
-    textPrinter.windowId = windowId + 8;
+    textPrinter.windowId = windowId + WIN_MATCH_WIN_TEXT;
     textPrinter.fontId = FONT_NORMAL;
-    PutWindowTilemap(windowId + 8);
-    CopyWindowToVram(windowId + 8, COPYWIN_FULL);
+    PutWindowTilemap(windowId + WIN_MATCH_WIN_TEXT);
+    CopyWindowToVram(windowId + WIN_MATCH_WIN_TEXT, COPYWIN_FULL);
     textPrinter.currentX = 0;
     textPrinter.currentY = textPrinter.y = 0;
     AddTextPrinter(&textPrinter, 0, NULL);
@@ -4876,11 +4949,11 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     textPrinter.fontId = FONT_SHORT;
     textPrinter.letterSpacing = 2;
     textPrinter.currentChar = gStringVar1;
-    textPrinter.windowId = windowId + 6;
+    textPrinter.windowId = windowId + WIN_MATCH_TRAINER_NAME_LEFT;
     textPrinter.currentX = GetStringCenterAlignXOffsetWithLetterSpacing(textPrinter.fontId, textPrinter.currentChar, 0x40, textPrinter.letterSpacing);
     textPrinter.currentY = textPrinter.y = 2;
-    PutWindowTilemap(windowId + 6);
-    CopyWindowToVram(windowId + 6, COPYWIN_FULL);
+    PutWindowTilemap(windowId + WIN_MATCH_TRAINER_NAME_LEFT);
+    CopyWindowToVram(windowId + WIN_MATCH_TRAINER_NAME_LEFT, COPYWIN_FULL);
     AddTextPrinter(&textPrinter, 0, NULL);
 
     // Print right trainer's name.
@@ -4892,21 +4965,21 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
         CopyDomeTrainerName(gStringVar1, trainerIds[1]);
 
     textPrinter.currentChar = gStringVar1;
-    textPrinter.windowId = windowId + 7;
+    textPrinter.windowId = windowId + WIN_MATCH_TRAINER_NAME_RIGHT;
     textPrinter.currentX = GetStringCenterAlignXOffsetWithLetterSpacing(textPrinter.fontId, textPrinter.currentChar, 0x40, textPrinter.letterSpacing);
     textPrinter.currentY = textPrinter.y = 2;
-    PutWindowTilemap(windowId + 7);
-    CopyWindowToVram(windowId + 7, COPYWIN_FULL);
+    PutWindowTilemap(windowId + WIN_MATCH_TRAINER_NAME_RIGHT);
+    CopyWindowToVram(windowId + WIN_MATCH_TRAINER_NAME_RIGHT, COPYWIN_FULL);
     AddTextPrinter(&textPrinter, 0, NULL);
 
     // Print match number.
     textPrinter.letterSpacing = 0;
     textPrinter.currentChar = sBattleDomeMatchNumberTexts[matchNo];
-    textPrinter.windowId = windowId + 5;
+    textPrinter.windowId = windowId + WIN_MATCH_NUMBER;
     textPrinter.currentX = GetStringCenterAlignXOffsetWithLetterSpacing(textPrinter.fontId, textPrinter.currentChar, 0xA0, textPrinter.letterSpacing);
     textPrinter.currentY = textPrinter.y = 2;
-    PutWindowTilemap(windowId + 5);
-    CopyWindowToVram(windowId + 5, COPYWIN_FULL);
+    PutWindowTilemap(windowId + WIN_MATCH_NUMBER);
+    CopyWindowToVram(windowId + WIN_MATCH_NUMBER, COPYWIN_FULL);
     AddTextPrinter(&textPrinter, 0, NULL);
 }
 
@@ -5149,13 +5222,13 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
 {
     int i, j, k;
     int moveScores[MAX_MON_MOVES * FRONTIER_PARTY_SIZE];
-    u16 moveIds[MAX_MON_MOVES * FRONTIER_PARTY_SIZE];
+    u16 moves[MAX_MON_MOVES * FRONTIER_PARTY_SIZE];
     u16 bestScore = 0;
     u16 bestId = 0;
     int movePower = 0;
     SetFacilityPtrsGetLevel();
 
-    // Calc move points of all 4 moves for all 3 pokemon hitting all 3 target mons.
+    // Calc move points of all 4 moves for all 3 Pokémon hitting all 3 target mons.
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         for (j = 0; j < MAX_MON_MOVES; j++)
@@ -5163,17 +5236,17 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
             // TODO: Clean this up, looks like a different data structure (2D array)
             moveScores[i * MAX_MON_MOVES + j] = 0;
             if (DOME_TRAINERS[winnerTournamentId].trainerId == TRAINER_FRONTIER_BRAIN)
-                moveIds[i * MAX_MON_MOVES + j] = GetFrontierBrainMonMove(i, j);
+                moves[i * MAX_MON_MOVES + j] = GetFrontierBrainMonMove(i, j);
             else
-                moveIds[i * MAX_MON_MOVES + j] = gFacilityTrainerMons[DOME_MONS[winnerTournamentId][i]].moves[j];
+                moves[i * MAX_MON_MOVES + j] = gFacilityTrainerMons[DOME_MONS[winnerTournamentId][i]].moves[j];
 
-            movePower = gBattleMoves[moveIds[i * MAX_MON_MOVES + j]].power;
+            movePower = gBattleMoves[moves[i * MAX_MON_MOVES + j]].power;
             if (movePower == 0)
                 movePower = 40;
             else if (movePower == 1)
                 movePower = 60;
-            else if (moveIds[i * MAX_MON_MOVES + j] == MOVE_SELF_DESTRUCT
-                  || moveIds[i * MAX_MON_MOVES + j] == MOVE_EXPLOSION)
+            else if (moves[i * MAX_MON_MOVES + j] == MOVE_SELF_DESTRUCT
+                  || moves[i * MAX_MON_MOVES + j] == MOVE_EXPLOSION)
                 movePower /= 2;
 
             for (k = 0; k < FRONTIER_PARTY_SIZE; k++)
@@ -5188,11 +5261,11 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
 
                 targetSpecies = gFacilityTrainerMons[DOME_MONS[loserTournamentId][k]].species;
                 if (var & 1)
-                    targetAbility = gBaseStats[targetSpecies].abilities[1];
+                    targetAbility = gSpeciesInfo[targetSpecies].abilities[1];
                 else
-                    targetAbility = gBaseStats[targetSpecies].abilities[0];
+                    targetAbility = gSpeciesInfo[targetSpecies].abilities[0];
 
-                var = AI_TypeCalc(moveIds[i * MAX_MON_MOVES + j], targetSpecies, targetAbility);
+                var = AI_TypeCalc(moves[i * MAX_MON_MOVES + j], targetSpecies, targetAbility);
                 if (var & MOVE_RESULT_NOT_VERY_EFFECTIVE && var & MOVE_RESULT_SUPER_EFFECTIVE)
                     moveScores[i * MAX_MON_MOVES + j] += movePower;
                 else if (var & MOVE_RESULT_NO_EFFECT)
@@ -5212,7 +5285,7 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
             }
             else if (bestScore == moveScores[i * MAX_MON_MOVES + j])
             {
-                if (moveIds[bestId] < moveIds[i * MAX_MON_MOVES + j]) // Why not use (Random() & 1) instead of promoting moves with a higher id?
+                if (moves[bestId] < moves[i * MAX_MON_MOVES + j]) // Why not use (Random() & 1) instead of promoting moves with a higher id?
                     bestId = i * MAX_MON_MOVES + j;
             }
         }
@@ -5223,7 +5296,7 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
     {
         for (i = 0; i < roundId - 1; i++)
         {
-            if (gSaveBlock2Ptr->frontier.domeWinningMoves[GetOpposingNPCTournamentIdByRound(winnerTournamentId, i)] == moveIds[j])
+            if (gSaveBlock2Ptr->frontier.domeWinningMoves[GetOpposingNPCTournamentIdByRound(winnerTournamentId, i)] == moves[j])
                 break;
         }
         if (i != roundId - 1)
@@ -5243,7 +5316,7 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
                     j = k;
                     bestScore = moveScores[k];
                 }
-                else if (bestScore == moveScores[k] && moveIds[j] < moveIds[k]) // Yes, these conditions are redundant
+                else if (bestScore == moveScores[k] && moves[j] < moves[k]) // Yes, these conditions are redundant
                 {
                     j = k;
                     bestScore = moveScores[k];
@@ -5255,7 +5328,7 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
     if (moveScores[j] == 0)
         j = bestId;
 
-    return moveIds[j];
+    return moves[j];
 }
 
 static void Task_ShowTourneyTree(u8 taskId)
@@ -5304,17 +5377,17 @@ static void Task_ShowTourneyTree(u8 taskId)
         break;
     case 2:
         sTilemapBuffer = AllocZeroed(BG_SCREEN_SIZE);
-        LZDecompressWram(gDomeTourneyLineMask_Tilemap, sTilemapBuffer);
+        LZDecompressWram(gDomeTourneyTree_Tilemap, sTilemapBuffer);
         SetBgTilemapBuffer(1, sTilemapBuffer);
         CopyBgTilemapBufferToVram(1);
-        DecompressAndLoadBgGfxUsingHeap(1, gDomeTourneyBg_Gfx, 0x2000, 0, 0);
+        DecompressAndLoadBgGfxUsingHeap(1, gDomeTourneyTree_Gfx, 0x2000, 0, 0);
         DecompressAndLoadBgGfxUsingHeap(2, gDomeTourneyLine_Gfx, 0x2000, 0, 0);
         DecompressAndLoadBgGfxUsingHeap(2, gDomeTourneyLineDown_Tilemap, 0x2000, 0, 1);
         DecompressAndLoadBgGfxUsingHeap(3, gDomeTourneyLineUp_Tilemap, 0x2000, 0, 1);
-        LoadCompressedPalette(gDomeTourneyTree_Pal, 0, 0x200);
-        LoadCompressedPalette(gDomeTourneyTreeButtons_Pal, 0x100, 0x200);
-        LoadCompressedPalette(gBattleWindowTextPalette, 0xF0, 0x20);
-        CpuFill32(0, gPlttBufferFaded, 0x400);
+        LoadCompressedPalette(gDomeTourneyTree_Pal, BG_PLTT_OFFSET, BG_PLTT_SIZE);
+        LoadCompressedPalette(gDomeTourneyTreeButtons_Pal, OBJ_PLTT_OFFSET, OBJ_PLTT_SIZE);
+        LoadCompressedPalette(gBattleWindowTextPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+        CpuFill32(0, gPlttBufferFaded, PLTT_SIZE);
         ShowBg(0);
         ShowBg(1);
         ShowBg(2);
@@ -5340,7 +5413,7 @@ static void Task_ShowTourneyTree(u8 taskId)
     case 4:
         textPrinter.fontId = FONT_SHORT;
         textPrinter.currentChar = gText_BattleTourney;
-        textPrinter.windowId = 2;
+        textPrinter.windowId = TOURNEYWIN_TITLE;
         textPrinter.x = 0;
         textPrinter.y = 0;
         textPrinter.letterSpacing = 2;
@@ -5426,7 +5499,7 @@ static void Task_ShowTourneyTree(u8 taskId)
                 }
             }
 
-            if (sTrainerNamePositions[i][0] == 0)
+            if (sTrainerNamePositions[i][0] == TOURNEYWIN_NAMES_LEFT)
                 textPrinter.currentX = GetStringWidthDifference(textPrinter.fontId, gDisplayedStringBattle, 0x3D, textPrinter.letterSpacing);
             else
                 textPrinter.currentX = 3;
@@ -5438,12 +5511,12 @@ static void Task_ShowTourneyTree(u8 taskId)
         gTasks[taskId].tState++;
         break;
     case 5:
-        PutWindowTilemap(0);
-        PutWindowTilemap(1);
-        PutWindowTilemap(2);
-        CopyWindowToVram(0, COPYWIN_FULL);
-        CopyWindowToVram(1, COPYWIN_FULL);
-        CopyWindowToVram(2, COPYWIN_FULL);
+        PutWindowTilemap(TOURNEYWIN_NAMES_LEFT);
+        PutWindowTilemap(TOURNEYWIN_NAMES_RIGHT);
+        PutWindowTilemap(TOURNEYWIN_TITLE);
+        CopyWindowToVram(TOURNEYWIN_NAMES_LEFT, COPYWIN_FULL);
+        CopyWindowToVram(TOURNEYWIN_NAMES_RIGHT, COPYWIN_FULL);
+        CopyWindowToVram(TOURNEYWIN_TITLE, COPYWIN_FULL);
         SetHBlankCallback(HblankCb_TourneyTree);
         SetVBlankCallback(VblankCb_TourneyTree);
         if (r4 == 2)
@@ -5495,7 +5568,7 @@ static void DrawTourneyAdvancementLine(u8 tournamentId, u8 roundId)
     const struct TourneyTreeLineSection *lineSection = sTourneyTreeLineSections[tournamentId][roundId];
 
     for (i = 0; i < sTourneyTreeLineSectionArrayCounts[tournamentId][roundId]; i++)
-        CopyToBgTilemapBufferRect_ChangePalette(1, &lineSection[i].src, lineSection[i].x, lineSection[i].y, 1, 1, 17);
+        CopyToBgTilemapBufferRect_ChangePalette(1, &lineSection[i].tile, lineSection[i].x, lineSection[i].y, 1, 1, 17);
 
     CopyBgTilemapBufferToVram(1);
 }
@@ -5540,7 +5613,7 @@ static void Task_HandleStaticTourneyTreeInput(u8 taskId)
                 if (DOME_TRAINERS[i].eliminatedAt == gSaveBlock2Ptr->frontier.curChallengeBattleNum - 1
                     && DOME_TRAINERS[i].isEliminated)
                 {
-                    if (sTrainerNamePositions[i][0] == 0)
+                    if (sTrainerNamePositions[i][0] == TOURNEYWIN_NAMES_LEFT)
                         textPrinter.currentX = GetStringWidthDifference(textPrinter.fontId, gDisplayedStringBattle, 0x3D, textPrinter.letterSpacing);
                     else
                         textPrinter.currentX = 3;
@@ -5847,7 +5920,7 @@ static void InitRandomTourneyTreeResults(void)
         DOME_TRAINERS[i].forfeited = FALSE;
     }
 
-    monLevel = 50;
+    monLevel = FRONTIER_MAX_LEVEL_50;
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
         monTypesBits = 0;
@@ -5867,8 +5940,8 @@ static void InitRandomTourneyTreeResults(void)
             statSums[i] += statValues[STAT_SPDEF];
             statSums[i] += statValues[STAT_SPEED];
             statSums[i] += statValues[STAT_HP];
-            monTypesBits |= gBitTable[gBaseStats[gFacilityTrainerMons[DOME_MONS[i][j]].species].type1];
-            monTypesBits |= gBitTable[gBaseStats[gFacilityTrainerMons[DOME_MONS[i][j]].species].type2];
+            monTypesBits |= gBitTable[gSpeciesInfo[gFacilityTrainerMons[DOME_MONS[i][j]].species].types[0]];
+            monTypesBits |= gBitTable[gSpeciesInfo[gFacilityTrainerMons[DOME_MONS[i][j]].species].types[1]];
         }
 
         // Because GF hates temporary vars, trainerId acts like monTypesCount here.
@@ -5990,16 +6063,16 @@ static void DecideRoundWinners(u8 roundId)
                     for (monId2 = 0; monId2 < FRONTIER_PARTY_SIZE; monId2++)
                     {
                         points1 += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentId1][monId1]].moves[moveSlot],
-                                                gFacilityTrainerMons[DOME_MONS[tournamentId2][monId2]].species, 2);
+                                                gFacilityTrainerMons[DOME_MONS[tournamentId2][monId2]].species, EFFECTIVENESS_MODE_AI_VS_AI);
                     }
                 }
                 species = gFacilityTrainerMons[DOME_MONS[tournamentId1][monId1]].species;
-                points1 += ( gBaseStats[species].baseHP
-                           + gBaseStats[species].baseAttack
-                           + gBaseStats[species].baseDefense
-                           + gBaseStats[species].baseSpeed
-                           + gBaseStats[species].baseSpAttack
-                           + gBaseStats[species].baseSpDefense) / 10;
+                points1 += ( gSpeciesInfo[species].baseHP
+                           + gSpeciesInfo[species].baseAttack
+                           + gSpeciesInfo[species].baseDefense
+                           + gSpeciesInfo[species].baseSpeed
+                           + gSpeciesInfo[species].baseSpAttack
+                           + gSpeciesInfo[species].baseSpDefense) / 10;
             }
             // Random part of the formula.
             points1 += (Random() & 0x1F);
@@ -6013,16 +6086,16 @@ static void DecideRoundWinners(u8 roundId)
                     for (monId2 = 0; monId2 < FRONTIER_PARTY_SIZE; monId2++)
                     {
                         points2 += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentId2][monId1]].moves[moveSlot],
-                                                gFacilityTrainerMons[DOME_MONS[tournamentId1][monId2]].species, 2);
+                                                gFacilityTrainerMons[DOME_MONS[tournamentId1][monId2]].species, EFFECTIVENESS_MODE_AI_VS_AI);
                     }
                 }
                 species = gFacilityTrainerMons[DOME_MONS[tournamentId2][monId1]].species;
-                points2 += ( gBaseStats[species].baseHP
-                           + gBaseStats[species].baseAttack
-                           + gBaseStats[species].baseDefense
-                           + gBaseStats[species].baseSpeed
-                           + gBaseStats[species].baseSpAttack
-                           + gBaseStats[species].baseSpDefense) / 10;
+                points2 += ( gSpeciesInfo[species].baseHP
+                           + gSpeciesInfo[species].baseAttack
+                           + gSpeciesInfo[species].baseDefense
+                           + gSpeciesInfo[species].baseSpeed
+                           + gSpeciesInfo[species].baseSpAttack
+                           + gSpeciesInfo[species].baseSpDefense) / 10;
             }
             // Random part of the formula.
             points2 += (Random() & 0x1F);

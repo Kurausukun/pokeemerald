@@ -1,5 +1,3 @@
-@ Note: LOCALID_FARAWAY_ISLAND_MEW is a local id for this map used elsewhere. It's defined in event_objects.h
-
 FarawayIsland_Interior_MapScripts::
 	map_script MAP_SCRIPT_ON_RESUME, FarawayIsland_Interior_OnResume
 	map_script MAP_SCRIPT_ON_TRANSITION, FarawayIsland_Interior_OnTransition
@@ -129,10 +127,7 @@ FarawayIsland_Interior_EventScript_Mew::
 	special DestroyMewEmergingGrassSprite
 	delay 40
 	waitmoncry
-	setvar VAR_0x8004, SPECIES_MEW
-	setvar VAR_0x8005, 30 @ level
-	setvar VAR_0x8006, ITEM_NONE
-	special CreateEventLegalEnemyMon
+	seteventmon SPECIES_MEW, 30
 	setflag FLAG_SYS_CTRL_OBJ_DELETE
 	special BattleSetup_StartLegendaryBattle
 	waitstate

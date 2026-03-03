@@ -27,6 +27,8 @@
 
 #define WAVEFORM_WINDOW_HEIGHT 56
 
+#define TAG_NEEDLE 0x2000
+
 struct PokedexCryMeterNeedle {
     s8 rotation;
     s8 targetRotation;
@@ -58,7 +60,7 @@ static void SpriteCB_CryMeterNeedle(struct Sprite *);
 static void SetCryMeterNeedleTarget(s8);
 
 // IWRAM common
-u8 gDexCryScreenState;
+COMMON_DATA u8 gDexCryScreenState = 0;
 
 // EWRAM vars
 static EWRAM_DATA struct PokedexCryScreen *sDexCryScreen = NULL;
@@ -202,8 +204,8 @@ static const struct OamData sOamData_CryMeterNeedle =
 
 static const struct SpriteTemplate sCryMeterNeedleSpriteTemplate =
 {
-    .tileTag = 0x2000,
-    .paletteTag = 0x2000,
+    .tileTag = TAG_NEEDLE,
+    .paletteTag = TAG_NEEDLE,
     .oam = &sOamData_CryMeterNeedle,
     .anims = sSpriteAnimTable_CryMeterNeedle,
     .images = NULL,
@@ -213,13 +215,13 @@ static const struct SpriteTemplate sCryMeterNeedleSpriteTemplate =
 
 static const struct SpriteSheet sCryMeterNeedleSpriteSheets[] =
 {
-    {sCryMeterNeedle_Gfx, 0x800, 0x2000},
+    {sCryMeterNeedle_Gfx, sizeof(sCryMeterNeedle_Gfx), TAG_NEEDLE},
     {}
 };
 
 static const struct SpritePalette sCryMeterNeedleSpritePalettes[] =
 {
-    {sCryMeterNeedle_Pal, 0x2000},
+    {sCryMeterNeedle_Pal, TAG_NEEDLE},
     {}
 };
 
@@ -234,7 +236,7 @@ bool8 LoadCryWaveformWindow(struct CryScreenWindow *window, u8 windowId)
         if (!sDexCryScreen)
         {
             sDexCryScreen = AllocZeroed(sizeof(*sDexCryScreen));
-            sCryWaveformWindowTiledata = (u8*)GetWindowAttribute(windowId, WINDOW_TILE_DATA);
+            sCryWaveformWindowTiledata = (u8 *)GetWindowAttribute(windowId, WINDOW_TILE_DATA);
         }
 
         sDexCryScreen->unk = window->unk0;
@@ -258,7 +260,7 @@ bool8 LoadCryWaveformWindow(struct CryScreenWindow *window, u8 windowId)
         break;
     case 2:
         DrawWaveformWindow(windowId);
-        LoadPalette(sCryScreenBg_Pal, window->paletteNo * 16, 32);
+        LoadPalette(sCryScreenBg_Pal, BG_PLTT_ID(window->paletteNo), PLTT_SIZE_4BPP);
         finished = TRUE;
         break;
     }
@@ -360,7 +362,7 @@ static void BufferCryWaveformSegment(void)
     else
         baseBuffer = gSoundInfo.pcmBuffer + (gSoundInfo.pcmDmaPeriod + 1 - gPcmDmaCounter) * gSoundInfo.pcmSamplesPerVBlank;
 
-    buffer = baseBuffer + 0x630;
+    buffer = baseBuffer + PCM_DMA_BUF_SIZE;
     for (i = 0; i < ARRAY_COUNT(sDexCryScreen->cryWaveformBuffer); i++)
         sDexCryScreen->cryWaveformBuffer[i] = buffer[i * 2] * 2;
 }
@@ -458,7 +460,7 @@ bool8 LoadCryMeter(struct CryScreenWindow *window, u8 windowId)
             sCryMeterNeedle = AllocZeroed(sizeof(*sCryMeterNeedle));
 
         CopyToWindowPixelBuffer(windowId, sCryMeter_Gfx, 0, 0);
-        LoadPalette(sCryMeter_Pal, window->paletteNo * 16, 32);
+        LoadPalette(sCryMeter_Pal, BG_PLTT_ID(window->paletteNo), PLTT_SIZE_4BPP);
         gDexCryScreenState++;
         break;
     case 1:

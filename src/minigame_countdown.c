@@ -48,8 +48,8 @@ static void Task_StaticCountdown_Free(u8 taskId);
 static void Task_StaticCountdown_Start(u8 taskId);
 static void Task_StaticCountdown_Run(u8 taskId);
 
-static const u16 s321Start_Static_Pal[] = INCBIN_U16("graphics/minigame_countdown/321start_static.gbapal");
-static const u32 s321Start_Static_Gfx[] = INCBIN_U32("graphics/minigame_countdown/321start_static.4bpp.lz");
+static const u16 s321Start_Static_Pal[] = INCBIN_U16("graphics/link/321start_static.gbapal");
+static const u32 s321Start_Static_Gfx[] = INCBIN_U32("graphics/link/321start_static.4bpp.lz");
 
 static const struct CompressedSpriteSheet sSpriteSheet_321Start_Static[] =
 {
@@ -158,8 +158,7 @@ static const TaskFunc sStaticCountdownFuncs[][4] =
 #define sId             data[4] // Never read
 #define sNumberSpriteId data[5] // Never read
 
-// Unused
-static u32 CreateStaticCountdownTask(u8 funcSetId, u8 taskPriority)
+static u32 UNUSED CreateStaticCountdownTask(u8 funcSetId, u8 taskPriority)
 {
     u8 taskId = CreateTask(Task_StaticCountdown, taskPriority);
     struct Task *task = &gTasks[taskId];
@@ -170,7 +169,7 @@ static u32 CreateStaticCountdownTask(u8 funcSetId, u8 taskPriority)
     return taskId;
 }
 
-static bool32 StartStaticCountdown(void)
+static bool32 UNUSED StartStaticCountdown(void)
 {
     u8 taskId = FindTaskIdByFunc(Task_StaticCountdown);
     if (taskId == TASK_NONE)
@@ -180,7 +179,7 @@ static bool32 StartStaticCountdown(void)
     return TRUE;
 }
 
-static bool32 IsStaticCountdownRunning(void)
+static bool32 UNUSED IsStaticCountdownRunning(void)
 {
     return FuncIsActiveTask(Task_StaticCountdown);
 }
@@ -315,7 +314,7 @@ static void Task_StaticCountdown_Run(u8 taskId)
     u16 packet[RFU_PACKET_SIZE];
     s16 *data = gTasks[taskId].data;
 
-    if (gReceivedRemoteLinkPlayers != 0)
+    if (gReceivedRemoteLinkPlayers)
     {
         // Read link timer
         if (gRecvCmds[0][1] == LINKCMD_COUNTDOWN)
@@ -374,8 +373,8 @@ static void CreateStartSprite(u16 tileTag, u16 palTag, s16 x, s16 y, u8 subprior
 static void InitStartGraphic(u8 spriteId1, u8 spriteId2, u8 spriteId3);
 static void SpriteCB_Start(struct Sprite *sprite);
 
-static const u16 s321Start_Pal[] = INCBIN_U16("graphics/minigame_countdown/321start.gbapal");
-static const u32 s321Start_Gfx[] = INCBIN_U32("graphics/minigame_countdown/321start.4bpp.lz");
+static const u16 s321Start_Pal[] = INCBIN_U16("graphics/link/321start.gbapal");
+static const u32 s321Start_Gfx[] = INCBIN_U32("graphics/link/321start.4bpp.lz");
 
 #define tState       data[0]
 #define tTilesTag    data[2]
@@ -618,7 +617,7 @@ static const struct OamData sOamData_Numbers =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_DOUBLE,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -635,7 +634,7 @@ static const struct OamData sOamData_Start =
     .y = 0,
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(64x32),
     .x = 0,

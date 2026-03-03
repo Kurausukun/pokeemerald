@@ -14,18 +14,19 @@
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": [
     {
-      "direction": "up",
+      "map": "MAP_SLATEPORT_CITY",
       "offset": 0,
-      "map": "MAP_SLATEPORT_CITY"
+      "direction": "up"
     },
     {
-      "direction": "left",
+      "map": "MAP_ROUTE108",
       "offset": 40,
-      "map": "MAP_ROUTE108"
+      "direction": "left"
     }
   ],
   "object_events": [
     {
+      "local_id": "LOCALID_ROUTE109_BOAT",
       "graphics_id": "OBJ_EVENT_GFX_MR_BRINEYS_BOAT",
       "x": 21,
       "y": 26,
@@ -39,6 +40,7 @@
       "flag": "FLAG_HIDE_ROUTE_109_MR_BRINEY_BOAT"
     },
     {
+      "local_id": "LOCALID_ROUTE109_BRINEY",
       "graphics_id": "OBJ_EVENT_GFX_EXPERT_M",
       "x": 21,
       "y": 24,
@@ -344,7 +346,7 @@
       "y": 5,
       "elevation": 0,
       "dest_map": "MAP_ROUTE109_SEASHORE_HOUSE",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [],

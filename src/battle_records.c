@@ -201,7 +201,7 @@ static void UpdateLinkBattleGameStats(s32 battleOutcome)
         IncrementGameStat(stat);
 }
 
-static void UpdateLinkBattleRecords(struct LinkBattleRecords *records, const u8 *name, u16 trainerId, s32 battleOutcome, u8 battlerId)
+static void UpdateLinkBattleRecords(struct LinkBattleRecords *records, const u8 *name, u16 trainerId, s32 battleOutcome, u8 battler)
 {
     s32 index;
 
@@ -214,7 +214,7 @@ static void UpdateLinkBattleRecords(struct LinkBattleRecords *records, const u8 
         ClearLinkBattleRecord(&records->entries[index]);
         StringCopyN(records->entries[index].name, name, PLAYER_NAME_LENGTH);
         records->entries[index].trainerId = trainerId;
-        records->languages[index] = gLinkPlayers[battlerId].language;
+        records->languages[index] = gLinkPlayers[battler].language;
     }
     UpdateLinkBattleRecord(&records->entries[index], battleOutcome);
     SortLinkBattleRecords(records);
@@ -225,48 +225,48 @@ void ClearPlayerLinkBattleRecords(void)
     ClearLinkBattleRecords(gSaveBlock1Ptr->linkBattleRecords.entries);
 }
 
-static void IncTrainerCardWins(s32 battlerId)
+static void IncTrainerCardWins(s32 battler)
 {
-    u16 *wins = &gTrainerCards[battlerId].linkBattleWins;
+    u16 *wins = &gTrainerCards[battler].linkBattleWins;
     (*wins)++;
     if (*wins > 9999)
         *wins = 9999;
 }
 
-static void IncTrainerCardLosses(s32 battlerId)
+static void IncTrainerCardLosses(s32 battler)
 {
-    u16 *losses = &gTrainerCards[battlerId].linkBattleLosses;
+    u16 *losses = &gTrainerCards[battler].linkBattleLosses;
     (*losses)++;
     if (*losses > 9999)
         *losses = 9999;
 }
 
-static void UpdateTrainerCardWinsLosses(s32 battlerId)
+static void UpdateTrainerCardWinsLosses(s32 battler)
 {
     switch (gBattleOutcome)
     {
     case B_OUTCOME_WON:
-        IncTrainerCardWins(BATTLE_OPPOSITE(battlerId));
-        IncTrainerCardLosses(battlerId);
+        IncTrainerCardWins(BATTLE_OPPOSITE(battler));
+        IncTrainerCardLosses(battler);
         break;
     case B_OUTCOME_LOST:
-        IncTrainerCardLosses(BATTLE_OPPOSITE(battlerId));
-        IncTrainerCardWins(battlerId);
+        IncTrainerCardLosses(BATTLE_OPPOSITE(battler));
+        IncTrainerCardWins(battler);
         break;
     }
 }
 
-void UpdatePlayerLinkBattleRecords(s32 battlerId)
+void UpdatePlayerLinkBattleRecords(s32 battler)
 {
     if (InUnionRoom() != TRUE)
     {
-        UpdateTrainerCardWinsLosses(battlerId);
+        UpdateTrainerCardWinsLosses(battler);
         UpdateLinkBattleRecords(
             &gSaveBlock1Ptr->linkBattleRecords,
-            gTrainerCards[battlerId].playerName,
-            gTrainerCards[battlerId].trainerId,
+            gTrainerCards[battler].playerName,
+            gTrainerCards[battler].trainerId,
             gBattleOutcome,
-            battlerId);
+            battler);
     }
 }
 
@@ -388,7 +388,7 @@ static void RemoveTrainerHillRecordsWindow(u8 windowId)
 
 static void ClearVramOamPlttRegs(void)
 {
-    DmaClearLarge16(3, (void*)(VRAM), VRAM_SIZE, 0x1000);
+    DmaClearLarge16(3, (void *)(VRAM), VRAM_SIZE, 0x1000);
     DmaClear32(3, OAM, OAM_SIZE);
     DmaClear16(3, PLTT, PLTT_SIZE);
 
@@ -444,7 +444,7 @@ static void LoadTrainerHillRecordsWindowGfx(u8 bgId)
 {
     LoadBgTiles(bgId, sTrainerHillWindowTileset, sizeof(sTrainerHillWindowTileset), 0);
     CopyToBgTilemapBufferRect(bgId, sTrainerHillWindowTilemap, 0, 0, 0x20, 0x20);
-    LoadPalette(sTrainerHillWindowPalette, 0, 0x20);
+    LoadPalette(sTrainerHillWindowPalette, BG_PLTT_ID(0), sizeof(sTrainerHillWindowPalette));
 }
 
 static void VblankCB_TrainerHillRecords(void)
@@ -491,7 +491,7 @@ static void CB2_ShowTrainerHillRecords(void)
         break;
     case 3:
         LoadTrainerHillRecordsWindowGfx(3);
-        LoadPalette(GetTextWindowPalette(0), 0xF0, 0x20);
+        LoadPalette(GetTextWindowPalette(0), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
         gMain.state++;
         break;
     case 4:

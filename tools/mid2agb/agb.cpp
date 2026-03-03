@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#include <cmath>
 #include <cstdio>
 #include <cstdarg>
 #include <cstring>
@@ -45,7 +46,7 @@ static int s_memaccParam2;
 void PrintAgbHeader()
 {
     std::fprintf(g_outputFile, "\t.include \"MPlayDef.s\"\n\n");
-    std::fprintf(g_outputFile, "\t.equ\t%s_grp, voicegroup%03u\n", g_asmLabel.c_str(), g_voiceGroup);
+    std::fprintf(g_outputFile, "\t.equ\t%s_grp, voicegroup%s\n", g_asmLabel.c_str(), g_voiceGroup.c_str());
     std::fprintf(g_outputFile, "\t.equ\t%s_pri, %u\n", g_asmLabel.c_str(), g_priority);
 
     if (g_reverb >= 0)
@@ -503,7 +504,7 @@ void PrintAgbTrack(std::vector<Event>& events)
             ResetTrackVars();
             break;
         case EventType::Tempo:
-            PrintByte("TEMPO , %u*%s_tbs/2", 60000000 / event.param2, g_asmLabel.c_str());
+            PrintByte("TEMPO , %u*%s_tbs/2", static_cast<int>(round(60000000.0f / static_cast<float>(event.param2))), g_asmLabel.c_str());
             PrintWait(event.time);
             break;
         case EventType::InstrumentChange:

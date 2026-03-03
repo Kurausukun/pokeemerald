@@ -10,7 +10,7 @@ struct Landmark
 
 struct LandmarkList
 {
-    u8 mapSection;
+    mapsec_u8_t mapSection;
     u8 id;
     const struct Landmark *const *landmarks;
 };
@@ -336,7 +336,7 @@ static const struct Landmark *const Landmarks_MtChimney_2[]  =
     NULL,
 };
 
-static const struct LandmarkList gLandmarkLists[] =
+static const struct LandmarkList sLandmarkLists[] =
 {
     {MAPSEC_ROUTE_103, 2, Landmarks_Route103_2},
     {MAPSEC_ROUTE_104, 0, Landmarks_Route104_0},
@@ -369,8 +369,13 @@ static const struct LandmarkList gLandmarkLists[] =
     {MAPSEC_ROUTE_120, 2, Landmarks_Route120_2},
     {MAPSEC_ROUTE_121, 2, Landmarks_Route121_2},
     {MAPSEC_ROUTE_122, 0, Landmarks_Route122_0},
+#ifdef BUGFIX
+    {MAPSEC_ROUTE_122, 1, Landmarks_Route122_0},
+    {MAPSEC_ROUTE_123, 0, Landmarks_Route123_0},
+#else
     {MAPSEC_ROUTE_123, 0, Landmarks_Route123_0},
     {MAPSEC_ROUTE_122, 1, Landmarks_Route122_0},
+#endif
     {MAPSEC_ROUTE_124, 7, Landmarks_Route124_7},
     {MAPSEC_ROUTE_125, 2, Landmarks_Route125_2},
     {MAPSEC_ROUTE_128, 1, Landmarks_Route128_1},
@@ -387,9 +392,9 @@ static const struct LandmarkList gLandmarkLists[] =
     {MAPSEC_NONE, 0, NULL},
 };
 
-static const struct Landmark *const *GetLandmarks(u8 mapSection, u8 id);
+static const struct Landmark *const *GetLandmarks(mapsec_u8_t mapSection, u8 id);
 
-const u8 *GetLandmarkName(u8 mapSection, u8 id, u8 count)
+const u8 *GetLandmarkName(mapsec_u8_t mapSection, u8 id, u8 count)
 {
     const struct Landmark *const *landmarks = GetLandmarks(mapSection, id);
 
@@ -416,25 +421,25 @@ const u8 *GetLandmarkName(u8 mapSection, u8 id, u8 count)
     return (*landmarks)->name;
 }
 
-static const struct Landmark *const *GetLandmarks(u8 mapSection, u8 id)
+static const struct Landmark *const *GetLandmarks(mapsec_u8_t mapSection, u8 id)
 {
     u16 i = 0;
 
-    for (; gLandmarkLists[i].mapSection != MAPSEC_NONE; i++)
+    for (; sLandmarkLists[i].mapSection != MAPSEC_NONE; i++)
     {
-        if (gLandmarkLists[i].mapSection > mapSection)
+        if (sLandmarkLists[i].mapSection > mapSection)
             return NULL;
-        if (gLandmarkLists[i].mapSection == mapSection)
+        if (sLandmarkLists[i].mapSection == mapSection)
             break;
     }
 
-    if (gLandmarkLists[i].mapSection == MAPSEC_NONE)
+    if (sLandmarkLists[i].mapSection == MAPSEC_NONE)
         return NULL;
 
-    for (; gLandmarkLists[i].mapSection == mapSection; i++)
+    for (; sLandmarkLists[i].mapSection == mapSection; i++)
     {
-        if (gLandmarkLists[i].id == id)
-            return gLandmarkLists[i].landmarks;
+        if (sLandmarkLists[i].id == id)
+            return sLandmarkLists[i].landmarks;
     }
 
     return NULL;

@@ -14,19 +14,19 @@
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": [
     {
-      "direction": "up",
+      "map": "MAP_ROUTE119",
       "offset": 40,
-      "map": "MAP_ROUTE119"
+      "direction": "up"
     },
     {
-      "direction": "left",
+      "map": "MAP_MAUVILLE_CITY",
       "offset": 0,
-      "map": "MAP_MAUVILLE_CITY"
+      "direction": "left"
     },
     {
-      "direction": "right",
+      "map": "MAP_ROUTE123",
       "offset": 0,
-      "map": "MAP_ROUTE123"
+      "direction": "right"
     }
   ],
   "object_events": [
@@ -83,6 +83,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_ROUTE118_GABBY_1",
       "graphics_id": "OBJ_EVENT_GFX_REPORTER_F",
       "x": 33,
       "y": 8,
@@ -96,6 +97,7 @@
       "flag": "FLAG_HIDE_ROUTE_118_GABBY_AND_TY_1"
     },
     {
+      "local_id": "LOCALID_ROUTE118_TY_1",
       "graphics_id": "OBJ_EVENT_GFX_CAMERAMAN",
       "x": 34,
       "y": 8,
@@ -122,6 +124,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_ROUTE118_GABBY_2",
       "graphics_id": "OBJ_EVENT_GFX_REPORTER_F",
       "x": 33,
       "y": 8,
@@ -135,6 +138,7 @@
       "flag": "FLAG_HIDE_ROUTE_118_GABBY_AND_TY_2"
     },
     {
+      "local_id": "LOCALID_ROUTE118_TY_2",
       "graphics_id": "OBJ_EVENT_GFX_CAMERAMAN",
       "x": 34,
       "y": 8,
@@ -148,6 +152,7 @@
       "flag": "FLAG_HIDE_ROUTE_118_GABBY_AND_TY_2"
     },
     {
+      "local_id": "LOCALID_ROUTE118_GABBY_3",
       "graphics_id": "OBJ_EVENT_GFX_REPORTER_F",
       "x": 33,
       "y": 8,
@@ -161,6 +166,7 @@
       "flag": "FLAG_HIDE_ROUTE_118_GABBY_AND_TY_3"
     },
     {
+      "local_id": "LOCALID_ROUTE118_TY_3",
       "graphics_id": "OBJ_EVENT_GFX_CAMERAMAN",
       "x": 34,
       "y": 8,
@@ -265,6 +271,7 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_ROUTE118_STEVEN",
       "graphics_id": "OBJ_EVENT_GFX_STEVEN",
       "x": 44,
       "y": 7,
@@ -310,14 +317,14 @@
       "y": 6,
       "elevation": 0,
       "dest_map": "MAP_TERRA_CAVE_ENTRANCE",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     },
     {
       "x": 9,
       "y": 6,
       "elevation": 0,
       "dest_map": "MAP_TERRA_CAVE_ENTRANCE",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [

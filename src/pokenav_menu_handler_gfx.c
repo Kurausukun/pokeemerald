@@ -45,8 +45,8 @@ struct Pokenav_MenuGfx
     u8 numIconsBlending;
     bool8 pokenavAlreadyOpen;
     bool32 iconVisible[MAX_POKENAV_MENUITEMS];
-    struct Sprite * blueLightSprite;
-    struct Sprite * iconSprites[MAX_POKENAV_MENUITEMS][NUM_OPTION_SUBSPRITES];
+    struct Sprite *blueLightSprite;
+    struct Sprite *iconSprites[MAX_POKENAV_MENUITEMS][NUM_OPTION_SUBSPRITES];
     u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
 };
 
@@ -380,7 +380,7 @@ static bool32 AreAnyTrainerRematchesNearby(void)
 
 bool32 OpenPokenavMenuInitial(void)
 {
-    struct Pokenav_MenuGfx * gfx = OpenPokenavMenu();
+    struct Pokenav_MenuGfx *gfx = OpenPokenavMenu();
 
     if (gfx == NULL)
         return FALSE;
@@ -391,7 +391,7 @@ bool32 OpenPokenavMenuInitial(void)
 
 bool32 OpenPokenavMenuNotInitial(void)
 {
-    struct Pokenav_MenuGfx * gfx = OpenPokenavMenu();
+    struct Pokenav_MenuGfx *gfx = OpenPokenavMenu();
 
     if (gfx == NULL)
         return FALSE;
@@ -402,7 +402,7 @@ bool32 OpenPokenavMenuNotInitial(void)
 
 static struct Pokenav_MenuGfx * OpenPokenavMenu(void)
 {
-    struct Pokenav_MenuGfx * gfx = AllocSubstruct(POKENAV_SUBSTRUCT_MENU_GFX, sizeof(struct Pokenav_MenuGfx));
+    struct Pokenav_MenuGfx *gfx = AllocSubstruct(POKENAV_SUBSTRUCT_MENU_GFX, sizeof(struct Pokenav_MenuGfx));
 
     if (gfx != NULL)
     {
@@ -416,20 +416,20 @@ static struct Pokenav_MenuGfx * OpenPokenavMenu(void)
 
 void CreateMenuHandlerLoopedTask(s32 ltIdx)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     gfx->loopedTaskId = CreateLoopedTask(sMenuHandlerLoopTaskFuncs[ltIdx], 1);
     gfx->isTaskActiveCB = GetCurrentLoopedTaskActive;
 }
 
 bool32 IsMenuHandlerLoopedTaskActive(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     return gfx->isTaskActiveCB();
 }
 
 void FreeMenuHandlerSubstruct2(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     DestroyMovingDotsBgTask();
     RemoveWindow(gfx->optionDescWindowId);
@@ -440,14 +440,14 @@ void FreeMenuHandlerSubstruct2(void)
 
 static bool32 GetCurrentLoopedTaskActive(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     return IsLoopedTaskActive(gfx->loopedTaskId);
 }
 
 static u32 LoopedTask_OpenMenu(s32 state)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     switch (state)
     {
@@ -457,7 +457,7 @@ static u32 LoopedTask_OpenMenu(s32 state)
         SetBgTilemapBuffer(1, gfx->bg1TilemapBuffer);
         CopyToBgTilemapBuffer(1, gPokenavMessageBox_Tilemap, 0, 0);
         CopyBgTilemapBufferToVram(1);
-        CopyPaletteIntoBufferUnfaded(gPokenavMessageBox_Pal, 0x10, 0x20);
+        CopyPaletteIntoBufferUnfaded(gPokenavMessageBox_Pal, BG_PLTT_ID(1), PLTT_SIZE_4BPP);
         ChangeBgX(1, 0, BG_COORD_SET);
         ChangeBgY(1, 0, BG_COORD_SET);
         ChangeBgX(2, 0, BG_COORD_SET);
@@ -470,14 +470,14 @@ static u32 LoopedTask_OpenMenu(s32 state)
             return LT_PAUSE;
         DecompressAndCopyTileDataToVram(2, sPokenavDeviceBgTiles, 0, 0, 0);
         DecompressAndCopyTileDataToVram(2, sPokenavDeviceBgTilemap, 0, 0, 1);
-        CopyPaletteIntoBufferUnfaded(sPokenavDeviceBgPal, 0x20, 0x20);
+        CopyPaletteIntoBufferUnfaded(sPokenavDeviceBgPal, BG_PLTT_ID(2), sizeof(sPokenavDeviceBgPal));
         return LT_INC_AND_PAUSE;
     case 2:
         if (FreeTempTileDataBuffersIfPossible())
             return LT_PAUSE;
         DecompressAndCopyTileDataToVram(3, sPokenavBgDotsTiles, 0, 0, 0);
         DecompressAndCopyTileDataToVram(3, sPokenavBgDotsTilemap, 0, 0, 1);
-        CopyPaletteIntoBufferUnfaded(sPokenavBgDotsPal, 0x30, 0x20);
+        CopyPaletteIntoBufferUnfaded(sPokenavBgDotsPal, BG_PLTT_ID(3), sizeof(sPokenavBgDotsPal));
         if (GetPokenavMenuType() == POKENAV_MENU_TYPE_CONDITION || GetPokenavMenuType() == POKENAV_MENU_TYPE_CONDITION_SEARCH)
             ChangeBgDotsColorToPurple();
         return LT_INC_AND_PAUSE;
@@ -505,7 +505,9 @@ static u32 LoopedTask_OpenMenu(s32 state)
         ShowBg(2);
         ShowBg(3);
         if (gfx->pokenavAlreadyOpen)
+        {
             PokenavFadeScreen(POKENAV_FADE_FROM_BLACK);
+        }
         else
         {
             PlaySE(SE_POKENAV_ON);
@@ -579,7 +581,7 @@ static u32 LoopedTask_OpenConditionMenu(s32 state)
     case 0:
         ResetBldCnt();
         StartOptionAnimations_Exit();
-        HideMainOrSubMenuLeftHeader(POKENAV_GFX_MAIN_MENU, 0);
+        HideMainOrSubMenuLeftHeader(POKENAV_GFX_MAIN_MENU, FALSE);
         PlaySE(SE_SELECT);
         return LT_INC_AND_PAUSE;
     case 1:
@@ -618,7 +620,7 @@ static u32 LoopedTask_ReturnToMainMenu(s32 state)
     case 0:
         ResetBldCnt();
         StartOptionAnimations_Exit();
-        HideMainOrSubMenuLeftHeader(POKENAV_GFX_CONDITION_MENU, 0);
+        HideMainOrSubMenuLeftHeader(POKENAV_GFX_CONDITION_MENU, FALSE);
         return LT_INC_AND_PAUSE;
     case 1:
         if (AreMenuOptionSpritesMoving())
@@ -689,7 +691,7 @@ static u32 LoopedTask_ReturnToConditionMenu(s32 state)
     case 0:
         ResetBldCnt();
         StartOptionAnimations_Exit();
-        HideMainOrSubMenuLeftHeader(POKENAV_GFX_SEARCH_MENU, 0);
+        HideMainOrSubMenuLeftHeader(POKENAV_GFX_SEARCH_MENU, FALSE);
         return LT_INC_AND_PAUSE;
     case 1:
         if (AreMenuOptionSpritesMoving())
@@ -815,7 +817,7 @@ static void FreeAndDestroyMainMenuSprites(void)
 static void CreateMenuOptionSprites(void)
 {
     s32 i, j;
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     for (i = 0; i < MAX_POKENAV_MENUITEMS; i++)
     {
@@ -831,7 +833,7 @@ static void CreateMenuOptionSprites(void)
 static void DestroyMenuOptionSprites(void)
 {
     s32 i, j;
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     for (i = 0; i < MAX_POKENAV_MENUITEMS; i++)
     {
@@ -852,7 +854,7 @@ static void DrawCurrentMenuOptionLabels(void)
 static void DrawOptionLabelGfx(const u16 *const *optionGfx, s32 yPos, s32 deltaY)
 {
     s32 i, j;
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     s32 baseTile = GetSpriteTileStartByTag(GFXTAG_OPTIONS);
 
     for (i = 0; i < MAX_POKENAV_MENUITEMS; i++)
@@ -904,7 +906,7 @@ static void StartOptionAnimations_Enter(void)
                 // Not selected, set default position
                 x = OPTION_DEFAULT_X;
             }
-            
+
             // Slide new options in
             StartOptionSlide(gfx->iconSprites[i], OPTION_EXIT_X, x, 12);
             SetOptionInvisibility(gfx->iconSprites[i], FALSE);
@@ -985,7 +987,7 @@ static bool32 AreMenuOptionSpritesMoving(void)
 #define sSlideSpeed data[2]
 #define sSlideEndX  data[7]
 
-static void StartOptionSlide(struct Sprite ** sprites, s32 startX, s32 endX, s32 time)
+static void StartOptionSlide(struct Sprite **sprites, s32 startX, s32 endX, s32 time)
 {
     s32 i;
 
@@ -1014,10 +1016,10 @@ static void StartOptionSlide(struct Sprite ** sprites, s32 startX, s32 endX, s32
 
 // When an option is selected it zooms in and blends away as part
 // of the transition to the next screen.
-static void StartOptionZoom(struct Sprite ** sprites)
+static void StartOptionZoom(struct Sprite **sprites)
 {
     s32 i;
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     u8 taskId;
 
     for (i = 0; i < NUM_OPTION_SUBSPRITES; i++)
@@ -1039,7 +1041,7 @@ static void StartOptionZoom(struct Sprite ** sprites)
     gfx->numIconsBlending++;
 }
 
-static void SetOptionInvisibility(struct Sprite ** sprites, bool32 invisible)
+static void SetOptionInvisibility(struct Sprite **sprites, bool32 invisible)
 {
     s32 i;
 
@@ -1050,7 +1052,7 @@ static void SetOptionInvisibility(struct Sprite ** sprites, bool32 invisible)
     }
 }
 
-static void SpriteCB_OptionSlide(struct Sprite * sprite)
+static void SpriteCB_OptionSlide(struct Sprite *sprite)
 {
     sprite->sSlideTime--;
     if (sprite->sSlideTime != -1)
@@ -1070,7 +1072,7 @@ static void SpriteCB_OptionSlide(struct Sprite * sprite)
 #undef sSlideSpeed
 #undef sSlideEndX
 
-static void SpriteCB_OptionZoom(struct Sprite * sprite)
+static void SpriteCB_OptionZoom(struct Sprite *sprite)
 {
     s32 temp;
     s32 x;
@@ -1131,7 +1133,7 @@ static void SpriteCB_OptionZoom(struct Sprite * sprite)
 
 static void Task_OptionBlend(u8 taskId)
 {
-    s16 * data = gTasks[taskId].data;
+    s16 *data = gTasks[taskId].data;
 
     if (tBlendDelay == 0)
     {
@@ -1183,7 +1185,7 @@ static void Task_OptionBlend(u8 taskId)
 // Blue light that blinks if there are available rematches nearby
 static void CreateMatchCallBlueLightSprite(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     u8 spriteId = CreateSprite(&sMatchCallBlueLightSpriteTemplate, 0x10, 0x60, 4);
     gfx->blueLightSprite = &gSprites[spriteId];
     if (AreAnyTrainerRematchesNearby())
@@ -1198,7 +1200,7 @@ static void DestroyRematchBlueLightSprite(void)
     DestroySprite(gfx->blueLightSprite);
 }
 
-static void SpriteCB_BlinkingBlueLight(struct Sprite * sprite)
+static void SpriteCB_BlinkingBlueLight(struct Sprite *sprite)
 {
     sprite->data[0]++;
     if (sprite->data[0] > 8)
@@ -1210,7 +1212,7 @@ static void SpriteCB_BlinkingBlueLight(struct Sprite * sprite)
 
 static void AddOptionDescriptionWindow(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
     gfx->optionDescWindowId = AddWindow(&sOptionDescWindowTemplate);
     PutWindowTilemap(gfx->optionDescWindowId);
@@ -1220,9 +1222,9 @@ static void AddOptionDescriptionWindow(void)
 
 static void PrintCurrentOptionDescription(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     int menuItem = GetCurrentMenuItemId();
-    const u8 * desc = sPageDescriptions[menuItem];
+    const u8 *desc = sPageDescriptions[menuItem];
     u32 width = GetStringWidth(FONT_NORMAL, desc, -1);
     FillWindowPixelBuffer(gfx->optionDescWindowId, PIXEL_FILL(6));
     AddTextPrinterParameterized3(gfx->optionDescWindowId, FONT_NORMAL, (192 - width) / 2, 1, sOptionDescTextColors, 0, desc);
@@ -1232,8 +1234,8 @@ static void PrintCurrentOptionDescription(void)
 // Can occur by obtaining a mon with a ribbon and then releasing all ribbon winners
 static void PrintNoRibbonWinners(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
-    const u8 * s = gText_NoRibbonWinners;
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    const u8 *s = gText_NoRibbonWinners;
     u32 width = GetStringWidth(FONT_NORMAL, s, -1);
     FillWindowPixelBuffer(gfx->optionDescWindowId, PIXEL_FILL(6));
     AddTextPrinterParameterized3(gfx->optionDescWindowId, FONT_NORMAL, (192 - width) / 2, 1, sOptionDescTextColors2, 0, s);
@@ -1246,13 +1248,13 @@ static bool32 IsDma3ManagerBusyWithBgCopy_(void)
 
 static void CreateMovingBgDotsTask(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     gfx->bg3ScrollTaskId = CreateTask(Task_MoveBgDots, 2);
 }
 
 static void DestroyMovingDotsBgTask(void)
 {
-    struct Pokenav_MenuGfx * gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
+    struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
     DestroyTask(gfx->bg3ScrollTaskId);
 }
 
@@ -1270,7 +1272,7 @@ static void CreateBgDotPurplePalTask(void)
 
 static void ChangeBgDotsColorToPurple(void)
 {
-    CopyPaletteIntoBufferUnfaded(sPokenavBgDotsPal + 7, 0x31, 4);
+    CopyPaletteIntoBufferUnfaded(sPokenavBgDotsPal + 7, BG_PLTT_ID(3) + 1, PLTT_SIZEOF(2));
 }
 
 static void CreateBgDotLightBluePalTask(void)
@@ -1288,12 +1290,12 @@ static bool32 IsTaskActive_UpdateBgDotsPalette(void)
 static void Task_UpdateBgDotsPalette(u8 taskId)
 {
     u16 sp8[2];
-    s16 * data = gTasks[taskId].data;
-    const u16 * pal1 = (const u16 *)GetWordTaskArg(taskId, 1);
-    const u16 * pal2 = (const u16 *)GetWordTaskArg(taskId, 3);
+    s16 *data = gTasks[taskId].data;
+    const u16 *pal1 = (const u16 *)GetWordTaskArg(taskId, 1);
+    const u16 *pal2 = (const u16 *)GetWordTaskArg(taskId, 3);
 
     PokenavCopyPalette(pal1, pal2, 2, 12, ++data[0], sp8);
-    LoadPalette(sp8, 0x31, 4);
+    LoadPalette(sp8, BG_PLTT_ID(3) + 1, PLTT_SIZEOF(2));
     if (data[0] == 12)
         DestroyTask(taskId);
 }
@@ -1313,7 +1315,14 @@ static void SetupPokenavMenuScanlineEffects(void)
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_ALL);
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ);
+#ifdef BUGFIX
+    // BUGFIX: Use full register write instead of |=.
+    // SetGpuRegBits left leftover window values from the Party screen,
+    // causing partial/missing glow highlights. SetGpuReg clears them fully.
+    SetGpuReg(REG_OFFSET_WIN0V, DISPLAY_HEIGHT);
+#else
     SetGpuRegBits(REG_OFFSET_WIN0V, DISPLAY_HEIGHT);
+#endif
     ScanlineEffect_Stop();
     SetMenuOptionGlow();
     ScanlineEffect_SetParams(sPokenavMainMenuScanlineEffectParams);
@@ -1343,7 +1352,7 @@ static void InitMenuOptionGlow(void)
 
 static void Task_CurrentMenuOptionGlow(u8 taskId)
 {
-    s16 * data = gTasks[taskId].data;
+    s16 *data = gTasks[taskId].data;
     data[0]++;
     if (data[0] > 0)
     {

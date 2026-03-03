@@ -100,7 +100,7 @@ void SoundTask_LoopSEAdjustPanning(u8 taskId)
     gTasks[taskId].data[12] = r9;
 
     gTasks[taskId].func = SoundTask_LoopSEAdjustPanning_Step;
-    SoundTask_LoopSEAdjustPanning_Step(taskId);
+    gTasks[taskId].func(taskId);
 }
 
 static void SoundTask_LoopSEAdjustPanning_Step(u8 taskId)
@@ -135,36 +135,38 @@ void SoundTask_PlayCryHighPitch(u8 taskId)
     {
         if (gBattleAnimArgs[0] == ANIM_ATTACKER)
             species = gContestResources->moveAnim->species;
-        #ifndef UBFIX
+    // Destroying the task twice (here and at end of function)
+    // results in an incorrect value for gAnimVisualTaskCount
+    #ifndef BUGFIX
         else
-            DestroyAnimVisualTask(taskId); // UB: task gets destroyed twice.
-        #endif
+            DestroyAnimVisualTask(taskId);
+    #endif
     }
     else
     {
-        u8 battlerId;
+        u8 battler;
 
         // Get wanted battler.
         if (gBattleAnimArgs[0] == ANIM_ATTACKER)
-            battlerId = gBattleAnimAttacker;
+            battler = gBattleAnimAttacker;
         else if (gBattleAnimArgs[0] == ANIM_TARGET)
-            battlerId = gBattleAnimTarget;
+            battler = gBattleAnimTarget;
         else if (gBattleAnimArgs[0] == ANIM_ATK_PARTNER)
-            battlerId = BATTLE_PARTNER(gBattleAnimAttacker);
+            battler = BATTLE_PARTNER(gBattleAnimAttacker);
         else
-            battlerId = BATTLE_PARTNER(gBattleAnimTarget);
+            battler = BATTLE_PARTNER(gBattleAnimTarget);
 
         // Check if battler is visible.
-        if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battlerId))
+        if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battler))
         {
             DestroyAnimVisualTask(taskId);
             return;
         }
 
-        if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-            species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
+            species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
         else
-            species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+            species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
     }
 
     if (species != SPECIES_NONE)
@@ -181,36 +183,38 @@ void SoundTask_PlayDoubleCry(u8 taskId)
     {
         if (gBattleAnimArgs[0] == ANIM_ATTACKER)
             species = gContestResources->moveAnim->species;
-        #ifndef UBFIX
+    // Destroying the task twice (here and at end of function)
+    // results in an incorrect value for gAnimVisualTaskCount
+    #ifndef BUGFIX
         else
-            DestroyAnimVisualTask(taskId); // UB: task gets destroyed twice.
-        #endif
+            DestroyAnimVisualTask(taskId);
+    #endif
     }
     else
     {
-        u8 battlerId;
+        u8 battler;
 
         // Get wanted battler.
         if (gBattleAnimArgs[0] == ANIM_ATTACKER)
-            battlerId = gBattleAnimAttacker;
+            battler = gBattleAnimAttacker;
         else if (gBattleAnimArgs[0] == ANIM_TARGET)
-            battlerId = gBattleAnimTarget;
+            battler = gBattleAnimTarget;
         else if (gBattleAnimArgs[0] == ANIM_ATK_PARTNER)
-            battlerId = BATTLE_PARTNER(gBattleAnimAttacker);
+            battler = BATTLE_PARTNER(gBattleAnimAttacker);
         else
-            battlerId = BATTLE_PARTNER(gBattleAnimTarget);
+            battler = BATTLE_PARTNER(gBattleAnimTarget);
 
         // Check if battler is visible.
-        if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battlerId))
+        if ((gBattleAnimArgs[0] == ANIM_TARGET || gBattleAnimArgs[0] == ANIM_DEF_PARTNER) && !IsBattlerSpriteVisible(battler))
         {
             DestroyAnimVisualTask(taskId);
             return;
         }
 
-        if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
-            species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
+            species = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
         else
-            species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battlerId]], MON_DATA_SPECIES);
+            species = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
     }
 
     gTasks[taskId].data[0] = gBattleAnimArgs[1];
@@ -381,7 +385,7 @@ void SoundTask_AdjustPanningVar(u8 taskId)
     gTasks[taskId].data[11] = sourcePan;
 
     gTasks[taskId].func = SoundTask_AdjustPanningVar_Step;
-    SoundTask_AdjustPanningVar_Step(taskId);
+    gTasks[taskId].func(taskId);
 }
 
 static void SoundTask_AdjustPanningVar_Step(u8 taskId)

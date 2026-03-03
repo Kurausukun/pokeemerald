@@ -83,7 +83,7 @@ struct RfuGameCompatibilityData
     u16 hasNews:1;
     u16 hasCard:1;
     u16 unknown:1; // Never read
-    u16 isChampion:1;
+    u16 canLinkNationally:1;
     u16 hasNationalDex:1;
     u16 gameClear:1;
     u16 version:4;
@@ -97,19 +97,19 @@ struct RfuGameCompatibilityData
 // wireless play (the kind the Pokémon games use) the gname data can be used for
 // anything the developers want. This struct is what GF decided to use it for.
 // It can be up to 13 bytes in size (RFU_GAME_NAME_LENGTH).
-// The player's name is sent separately as the username ("uname"), and does not 
-// use a struct (gHostRfuUsername). 
+// The player's name is sent separately as the username ("uname"), and does not
+// use a struct (gHostRfuUsername).
 struct __attribute__((packed, aligned(2))) RfuGameData
 {
     struct RfuGameCompatibilityData compatibility;
-    u8 partnerInfo[RFU_CHILD_MAX]; 
+    u8 partnerInfo[RFU_CHILD_MAX];
     u16 tradeSpecies:10;
     u16 tradeType:6;
     u8 activity:7;
     u8 startedActivity:1;
     u8 playerGender:1;
     u8 tradeLevel:7;
-    u8 padding;
+    u8 filler;
 };
 
 // Constants for getting/setting information in 'partnerInfo' of RfuGameData.
@@ -118,7 +118,7 @@ struct __attribute__((packed, aligned(2))) RfuGameData
 // Bits 0-2 are a shortened trainerId
 // Bit 3 is the player's gender
 // Bits 4-6 are unknown/unused
-// Bit 7 is an 'active' flag 
+// Bit 7 is an 'active' flag
 #define PINFO_TID_MASK 0x7
 #define PINFO_GENDER_SHIFT 3
 #define PINFO_ACTIVE_FLAG (1 << 7)
@@ -268,7 +268,7 @@ void RfuVSync(void);
 void RfuSetIgnoreError(bool32 enable);
 u8 RfuGetStatus(void);
 struct RfuGameData *GetHostRfuGameData(void);
-void UpdateGameData_GroupLockedIn(u8 startedActivity);
+void UpdateGameData_GroupLockedIn(bool8 startedActivity);
 void RfuSetErrorParams(u32 errorInfo);
 void RfuSetStatus(u8 status, u16 errorInfo);
 u8 Rfu_SetLinkRecovery(bool32 enable);
@@ -320,8 +320,8 @@ void RfuRecvQueue_Reset(struct RfuRecvQueue *queue);
 void RfuSendQueue_Reset(struct RfuSendQueue *queue);
 void RfuRecvQueue_Enqueue(struct RfuRecvQueue *queue, u8 *data);
 void RfuSendQueue_Enqueue(struct RfuSendQueue *queue, u8 *data);
-bool8 RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *dest);
-bool8 RfuSendQueue_Dequeue(struct RfuSendQueue *queue, u8 *dest);
+bool8 RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *src);
+bool8 RfuSendQueue_Dequeue(struct RfuSendQueue *queue, u8 *src);
 void RfuBackupQueue_Enqueue(struct RfuBackupQueue *queue, const u8 *data);
 bool8 RfuBackupQueue_Dequeue(struct RfuBackupQueue *queue, u8 *src);
 void InitHostRfuGameData(struct RfuGameData *data, u8 activity, bool32 startedActivity, s32 partnerInfo);

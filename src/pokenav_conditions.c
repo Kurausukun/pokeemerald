@@ -332,7 +332,7 @@ u8 *CopyStringLeftAlignedToConditionData(u8 *dst, const u8 *src, s16 n)
     return dst;
 }
 
-static u8 *CopyConditionMonNameGender(u8 *str, u16 listId, bool8 arg3)
+static u8 *CopyConditionMonNameGender(u8 *str, u16 listId, bool8 skipPadding)
 {
     u16 boxId, monId, gender, species, level, lvlDigits;
     struct BoxPokemon *boxMon;
@@ -348,7 +348,7 @@ static u8 *CopyConditionMonNameGender(u8 *str, u16 listId, bool8 arg3)
     *(str++) = TEXT_COLOR_LIGHT_BLUE;
 
     if (GetBoxOrPartyMonData(boxId, monId, MON_DATA_IS_EGG, NULL))
-        return StringCopyPadded(str, gText_EggNickname, CHAR_SPACE, 12);
+        return StringCopyPadded(str, gText_EggNickname, CHAR_SPACE, POKEMON_NAME_LENGTH + 2);
 
     GetBoxOrPartyMonData(boxId, monId, MON_DATA_NICKNAME, str);
     StringGet_Nickname(str);
@@ -412,7 +412,7 @@ static u8 *CopyConditionMonNameGender(u8 *str, u16 listId, bool8 arg3)
     str_ = ConvertIntToDecimalStringN(str_, level, STR_CONV_MODE_LEFT_ALIGN, 3);
     lvlDigits = str_ - txtPtr;
     *(str_++) = CHAR_SPACE;
-    if (!arg3)
+    if (!skipPadding)
     {
         lvlDigits = 3 - lvlDigits;
         while (lvlDigits-- != 0)
@@ -445,7 +445,7 @@ static void CopyMonNameGenderLocation(s16 listId, u8 loadId)
     }
     else
     {
-        for (i = 0; i < 12; i++)
+        for (i = 0; i < POKEMON_NAME_LENGTH + 2; i++)
             menu->nameText[loadId][i] = CHAR_SPACE;
         menu->nameText[loadId][i] = EOS;
 
@@ -531,7 +531,7 @@ static void ConditionGraphDrawMonPic(s16 listId, u8 loadId)
 
     boxId = monListPtr->monData[listId].boxId;
     monId = monListPtr->monData[listId].monId;
-    species = GetBoxOrPartyMonData(boxId, monId, MON_DATA_SPECIES2, NULL);
+    species = GetBoxOrPartyMonData(boxId, monId, MON_DATA_SPECIES_OR_EGG, NULL);
     tid = GetBoxOrPartyMonData(boxId, monId, MON_DATA_OT_ID, NULL);
     personality = GetBoxOrPartyMonData(boxId, monId, MON_DATA_PERSONALITY, NULL);
     LoadSpecialPokePic(&gMonFrontPicTable[species], menu->monPicGfx[loadId], species, personality, TRUE);

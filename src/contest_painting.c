@@ -21,10 +21,10 @@
 #include "window.h"
 #include "constants/rgb.h"
 
-u16 (*gContestMonPixels)[][32];
-struct ImageProcessingContext gImageProcessingContext;
-struct ContestWinner *gContestPaintingWinner;
-u16 *gContestPaintingMonPalette;
+COMMON_DATA u16 (*gContestMonPixels)[][32] = {0};
+COMMON_DATA struct ImageProcessingContext gImageProcessingContext = {0};
+COMMON_DATA struct ContestWinner *gContestPaintingWinner = {0};
+COMMON_DATA u16 *gContestPaintingMonPalette = NULL;
 
 static u8 sHoldState;
 static u16 sMosaicVal;
@@ -69,19 +69,19 @@ extern const u8 gContestPaintingTough1[];
 extern const u8 gContestPaintingTough2[];
 extern const u8 gContestPaintingTough3[];
 
-static const u16 sPictureFramePalettes[]         = INCBIN_U16("graphics/picture_frame/bg.gbapal");
-static const u8 sPictureFrameTiles_Cool[]        = INCBIN_U8("graphics/picture_frame/cool.4bpp.rl");
-static const u8 sPictureFrameTiles_Beauty[]      = INCBIN_U8("graphics/picture_frame/beauty.4bpp.rl");
-static const u8 sPictureFrameTiles_Cute[]        = INCBIN_U8("graphics/picture_frame/cute.4bpp.rl");
-static const u8 sPictureFrameTiles_Smart[]       = INCBIN_U8("graphics/picture_frame/smart.4bpp.rl");
-static const u8 sPictureFrameTiles_Tough[]       = INCBIN_U8("graphics/picture_frame/tough.4bpp.rl");
-static const u8 sPictureFrameTiles_HallLobby[]   = INCBIN_U8("graphics/picture_frame/lobby.4bpp.rl");
-static const u8 sPictureFrameTilemap_Cool[]      = INCBIN_U8("graphics/picture_frame/cool_map.bin.rl");
-static const u8 sPictureFrameTilemap_Beauty[]    = INCBIN_U8("graphics/picture_frame/beauty_map.bin.rl");
-static const u8 sPictureFrameTilemap_Cute[]      = INCBIN_U8("graphics/picture_frame/cute_map.bin.rl");
-static const u8 sPictureFrameTilemap_Smart[]     = INCBIN_U8("graphics/picture_frame/smart_map.bin.rl");
-static const u8 sPictureFrameTilemap_Tough[]     = INCBIN_U8("graphics/picture_frame/tough_map.bin.rl");
-static const u8 sPictureFrameTilemap_HallLobby[] = INCBIN_U8("graphics/picture_frame/lobby_map.bin.rl");
+static const u16 sPictureFramePalettes[]          = INCBIN_U16("graphics/picture_frame/bg.gbapal");
+static const u32 sPictureFrameTiles_Cool[]        = INCBIN_U32("graphics/picture_frame/cool.4bpp.rl");
+static const u32 sPictureFrameTiles_Beauty[]      = INCBIN_U32("graphics/picture_frame/beauty.4bpp.rl");
+static const u32 sPictureFrameTiles_Cute[]        = INCBIN_U32("graphics/picture_frame/cute.4bpp.rl");
+static const u32 sPictureFrameTiles_Smart[]       = INCBIN_U32("graphics/picture_frame/smart.4bpp.rl");
+static const u32 sPictureFrameTiles_Tough[]       = INCBIN_U32("graphics/picture_frame/tough.4bpp.rl");
+static const u32 sPictureFrameTiles_HallLobby[]   = INCBIN_U32("graphics/picture_frame/lobby.4bpp.rl");
+static const u32 sPictureFrameTilemap_Cool[]      = INCBIN_U32("graphics/picture_frame/cool_map.bin.rl");
+static const u32 sPictureFrameTilemap_Beauty[]    = INCBIN_U32("graphics/picture_frame/beauty_map.bin.rl");
+static const u32 sPictureFrameTilemap_Cute[]      = INCBIN_U32("graphics/picture_frame/cute_map.bin.rl");
+static const u32 sPictureFrameTilemap_Smart[]     = INCBIN_U32("graphics/picture_frame/smart_map.bin.rl");
+static const u32 sPictureFrameTilemap_Tough[]     = INCBIN_U32("graphics/picture_frame/tough_map.bin.rl");
+static const u32 sPictureFrameTilemap_HallLobby[] = INCBIN_U32("graphics/picture_frame/lobby_map.bin.rl");
 
 static const u8 *const sContestCategoryNames_Unused[] =
 {
@@ -223,7 +223,7 @@ static void ShowContestPainting(void)
         break;
     case 4:
         PrintContestPaintingCaption(gCurContestWinnerSaveIdx, gCurContestWinnerIsForArtist);
-        LoadPalette(sBgPalette, 0, 1 * 2);
+        SetBackdropFromPalette(sBgPalette);
         DmaClear32(3, PLTT, PLTT_SIZE);
         BeginFastPaletteFade(2);
         SetVBlankCallback(VBlankCB_ContestPainting);
@@ -248,7 +248,7 @@ static void HoldContestPainting(void)
         if ((JOY_NEW(A_BUTTON)) || (JOY_NEW(B_BUTTON)))
         {
             sHoldState++;
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB(0, 0, 0));
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         }
 
         if (sVarsInitialized)
@@ -420,7 +420,7 @@ static void LoadContestPaintingFrame(u8 contestWinnerId, bool8 isForArtist)
 {
     u8 x, y;
 
-    LoadPalette(sPictureFramePalettes, 0, 0x100);
+    LoadPalette(sPictureFramePalettes, BG_PLTT_ID(0), 8 * PLTT_SIZE_4BPP);
     if (isForArtist == TRUE)
     {
         // Load Artist's frame
@@ -586,7 +586,7 @@ static void DoContestPaintingImageProcessing(u8 imageEffect)
     ApplyImageProcessingEffects(&gImageProcessingContext);
     ApplyImageProcessingQuantization(&gImageProcessingContext);
     ConvertImageProcessingToGBA(&gImageProcessingContext);
-    LoadPalette(gContestPaintingMonPalette, 0x100, 0x200);
+    LoadPalette(gContestPaintingMonPalette, OBJ_PLTT_ID(0), 16 * PLTT_SIZE_4BPP);
 }
 
 static void CreateContestPaintingPicture(u8 contestWinnerId, bool8 isForArtist)

@@ -451,7 +451,7 @@ ALIGNED(4) static const u8 sText_NobodyHasRegistered[] = _("Nobody has registere
 ALIGNED(4) static const u8 sText_ChooseRequestedMonType[] = _("Please choose the type of POKéMON\nthat you would like in the trade.\n");
 ALIGNED(4) static const u8 sText_WhichMonWillYouOffer[] = _("Which of your party POKéMON will\nyou offer in trade?\p");
 ALIGNED(4) static const u8 sText_RegistrationCanceled[] = _("Registration has been canceled.\p");
-ALIGNED(4) static const u8 sText_RegistraionCompleted[] = _("Registration has been completed.\p");
+ALIGNED(4) static const u8 sText_RegistrationCompleted[] = _("Registration has been completed.\p");
 ALIGNED(4) static const u8 sText_TradeCanceled[] = _("The trade has been canceled.\p");
 ALIGNED(4) static const u8 sText_CancelRegistrationOfMon[] = _("Cancel the registration of your\nLv. {STR_VAR_2} {STR_VAR_1}?");
 ALIGNED(4) static const u8 sText_CancelRegistrationOfEgg[] = _("Cancel the registration of your\nEGG?");
@@ -633,10 +633,10 @@ static const struct WindowTemplate sWindowTemplate_BButtonCancel = {
 
 // Minimum and maximum number of players for a link group
 // A minimum of 0 means the min and max are equal
-#define LINK_GROUP_CAPACITY(min, max)(((min) << 12) | ((max) << 8))
-#define GROUP_MAX(capacity)(capacity & 0x0F)
-#define GROUP_MIN(capacity)(capacity >> 4)
-#define GROUP_MIN2(capacity)(capacity & 0xF0) // Unnecessary to have both, but needed to match
+#define LINK_GROUP_CAPACITY(min, max) (((min) << 12) | ((max) << 8))
+#define GROUP_MAX(capacity) (capacity & 0x0F)
+#define GROUP_MIN(capacity) (capacity >> 4)
+#define GROUP_MIN2(capacity) (capacity & 0xF0) // Unnecessary to have both, but needed to match
 
 static const u32 sLinkGroupToActivityAndCapacity[NUM_LINK_GROUP_TYPES] = {
     [LINK_GROUP_SINGLE_BATTLE]     = ACTIVITY_BATTLE_SINGLE     | LINK_GROUP_CAPACITY(0, 2),
@@ -717,9 +717,9 @@ static const struct ListMenuTemplate sListMenuTemplate_PossibleGroupMembers = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 0,
-    .fontId = 1,
-    .cursorKind = 1
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_INVISIBLE
 };
 
 static const struct WindowTemplate sWindowTemplate_GroupList = {
@@ -777,9 +777,9 @@ static const struct ListMenuTemplate sListMenuTemplate_UnionRoomGroups = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 1,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_MULTIPLE_SCROLL_DPAD,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 static const struct WindowTemplate sWindowTemplate_InviteToActivity = {
@@ -815,9 +815,9 @@ static const struct ListMenuTemplate sListMenuTemplate_InviteToActivity = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 0,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 static const struct WindowTemplate sWindowTemplate_RegisterForTrade = {
@@ -852,9 +852,9 @@ static const struct ListMenuTemplate sListMenuTemplate_RegisterForTrade = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 0,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 static const struct WindowTemplate sWindowTemplate_TradingBoardRequestType = {
@@ -904,9 +904,9 @@ static const struct ListMenuTemplate sMenuTemplate_TradingBoardRequestType = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 0,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 static const struct WindowTemplate sWindowTemplate_TradingBoardHeader = {
@@ -930,7 +930,7 @@ static const struct WindowTemplate sWindowTemplate_TradingBoardMain = {
 };
 
 static const struct ListMenuItem sTradeBoardListMenuItems[] = {
-    { sText_EmptyString, -3 },
+    { sText_EmptyString, LIST_HEADER },
     { sText_EmptyString,  0 },
     { sText_EmptyString,  1 },
     { sText_EmptyString,  2 },
@@ -958,9 +958,9 @@ static const struct ListMenuTemplate sTradeBoardListMenuTemplate = {
     .cursorShadowPal = 13,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 0,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 // Unused
@@ -1010,9 +1010,9 @@ static const struct ListMenuTemplate sEmptyListMenuTemplate = {
     .cursorShadowPal = 3,
     .lettersSpacing = 0,
     .itemVerticalPadding = 0,
-    .scrollMultiple = 1,
-    .fontId = 1,
-    .cursorKind = 0
+    .scrollMultiple = LIST_MULTIPLE_SCROLL_DPAD,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
 };
 
 static const struct RfuPlayerData sUnionRoomPlayer_DummyRfu = {0};

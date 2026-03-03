@@ -171,6 +171,7 @@
       "flag": "FLAG_HIDE_SLATEPORT_MUSEUM_POPULATION"
     },
     {
+      "local_id": "LOCALID_OCEANIC_MUSEUM_FAMILIAR_GRUNT",
       "graphics_id": "OBJ_EVENT_GFX_AQUA_MEMBER_M",
       "x": 9,
       "y": 4,
@@ -203,21 +204,21 @@
       "y": 8,
       "elevation": 0,
       "dest_map": "MAP_SLATEPORT_CITY",
-      "dest_warp_id": 5
+      "dest_warp_id": "5"
     },
     {
       "x": 10,
       "y": 8,
       "elevation": 0,
       "dest_map": "MAP_SLATEPORT_CITY",
-      "dest_warp_id": 7
+      "dest_warp_id": "7"
     },
     {
       "x": 6,
       "y": 1,
       "elevation": 0,
       "dest_map": "MAP_SLATEPORT_CITY_OCEANIC_MUSEUM_2F",
-      "dest_warp_id": 0
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [

@@ -24,7 +24,7 @@ struct Pokenav_MatchCallMenu
     u16 numSpecialTrainers;
     bool32 initFinished;
     u32 loopedTaskId;
-    u32 (*callback)(struct Pokenav_MatchCallMenu*);
+    u32 (*callback)(struct Pokenav_MatchCallMenu *);
     struct PokenavMatchCallEntry matchCallEntries[MAX_REMATCH_ENTRIES - 1];
 };
 
@@ -261,7 +261,7 @@ static u32 LoopedTask_BuildMatchCallList(s32 taskState)
 bool32 IsRematchEntryRegistered(int rematchIndex)
 {
     if (rematchIndex < REMATCH_TABLE_ENTRIES)
-        return FlagGet(FLAG_MATCH_CALL_REGISTERED + rematchIndex);
+        return FlagGet(TRAINER_REGISTERED_FLAGS_START + rematchIndex);
 
     return FALSE;
 }
@@ -278,22 +278,19 @@ int GetNumberRegistered(void)
     return state->numRegistered;
 }
 
-// Unused
-static int GetNumSpecialTrainers(void)
+static int UNUSED GetNumSpecialTrainers(void)
 {
     struct Pokenav_MatchCallMenu *state = GetSubstructPtr(POKENAV_SUBSTRUCT_MATCH_CALL_MAIN);
     return state->numSpecialTrainers;
 }
 
-// Unused
-static int GetNumNormalTrainers(void)
+static int UNUSED GetNumNormalTrainers(void)
 {
     struct Pokenav_MatchCallMenu *state = GetSubstructPtr(POKENAV_SUBSTRUCT_MATCH_CALL_MAIN);
     return state->numRegistered - state->numSpecialTrainers;
 }
 
-// Unused
-static int GetNormalTrainerHeaderId(int index)
+static int UNUSED GetNormalTrainerHeaderId(int index)
 {
     struct Pokenav_MatchCallMenu *state = GetSubstructPtr(POKENAV_SUBSTRUCT_MATCH_CALL_MAIN);
     index += state->numSpecialTrainers;
@@ -309,7 +306,7 @@ struct PokenavMatchCallEntry *GetMatchCallList(void)
     return state->matchCallEntries;
 }
 
-u16 GetMatchCallMapSec(int index)
+mapsec_u16_t GetMatchCallMapSec(int index)
 {
     struct Pokenav_MatchCallMenu *state = GetSubstructPtr(POKENAV_SUBSTRUCT_MATCH_CALL_MAIN);
     return state->matchCallEntries[index].mapSec;
@@ -427,7 +424,7 @@ void BufferMatchCallNameAndDesc(struct PokenavMatchCallEntry *matchCallEntry, u8
     }
 }
 
-u8 GetMatchTableMapSectionId(int rematchIndex)
+mapsec_u8_t GetMatchTableMapSectionId(int rematchIndex)
 {
     int mapGroup = gRematchTable[rematchIndex].mapGroup;
     int mapNum = gRematchTable[rematchIndex].mapNum;
@@ -468,8 +465,7 @@ int GetIndexDeltaOfNextCheckPageUp(int index)
     return 0;
 }
 
-// Unused
-static bool32 HasRematchEntry(void)
+static bool32 UNUSED HasRematchEntry(void)
 {
     int i;
 
