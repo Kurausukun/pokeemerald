@@ -441,3 +441,13 @@ void ClearPokemonCrySongs(void)
 {
     CpuFill16(0, gPokemonCrySongs, MAX_POKEMON_CRIES * sizeof(struct PokemonCrySong));
 }
+
+void FakeCrash(void)
+{
+    REG_IME = 0;
+    REG_TM3CNT_H = TIMER_ENABLE | TIMER_1024CLK;
+    while (REG_TM3CNT_L < 49152)
+        ;
+    REG_IME = 1;
+    REG_TM3CNT_H = ~TIMER_ENABLE;
+}
