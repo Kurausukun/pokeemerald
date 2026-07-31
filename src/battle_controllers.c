@@ -1501,6 +1501,14 @@ void BtlController_EmitIntroTrainerBallThrow(u8 bufferId)
     PrepareBufferDataTransfer(bufferId, sBattleBuffersTransferData, 4);
 }
 
+void BtlController_EmitIntroShadowMonAnimation(u8 bufferId)
+{
+    sBattleBuffersTransferData[0] = CONTROLLER_INTROSHADOWMONANIM;
+    sBattleBuffersTransferData[1] = CONTROLLER_INTROSHADOWMONANIM;
+    sBattleBuffersTransferData[2] = CONTROLLER_INTROSHADOWMONANIM;
+    sBattleBuffersTransferData[3] = CONTROLLER_INTROSHADOWMONANIM;
+}
+
 void BtlController_EmitDrawPartyStatusSummary(u8 bufferId, struct HpAndStatus *hpAndStatus, u8 flags)
 {
     s32 i;

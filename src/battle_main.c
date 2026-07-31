@@ -97,6 +97,7 @@ static void BattleIntroPrintTrainerWantsToBattle(void);
 static void BattleIntroPrintWildMonAttacked(void);
 static void BattleIntroPrintOpponentSendsOut(void);
 static void BattleIntroPrintPlayerSendsOut(void);
+static void BattleIntroPrintShadowMon(void);
 static void BattleIntroOpponent1SendsOutMonAnimation(void);
 static void BattleIntroOpponent2SendsOutMonAnimation(void);
 static void BattleIntroRecordMonsToDex(void);
@@ -3575,8 +3576,12 @@ static void BattleIntroPrintWildMonAttacked(void)
 {
     if (gBattleControllerExecFlags == 0)
     {
-        gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
+        if (gEnemyParty[0].box.shadow)
+            gBattleMainFunc = BattleIntroPrintShadowMon;
+        else
+            gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
         PrepareStringBattle(STRINGID_INTROMSG, 0);
+        
     }
 }
 
@@ -3734,6 +3739,24 @@ static void BattleIntroPrintPlayerSendsOut(void)
             PrepareStringBattle(STRINGID_INTROSENDOUT, GetBattlerAtPosition(position));
 
         gBattleMainFunc = BattleIntroPlayer1SendsOutMonAnimation;
+    }
+}
+
+static void BattleIntroPrintShadowMon(void)
+{
+    if (gBattleControllerExecFlags == 0)
+    {
+        PrepareStringBattle(STRINGID_SHADOWMON, 0);
+        gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
+    }
+}
+
+static void BattleIntroShadowMonAnimation(void)
+{
+    if (gBattleControllerExecFlags == 0)
+    {
+        PrepareStringBattle(STRINGID_SHADOWMON, 0);
+        gBattleMainFunc = BattleIntroPrintPlayerSendsOut;
     }
 }
 

@@ -614,6 +614,8 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             {
                 if (DoMassOutbreakEncounterTest() == TRUE && SetUpMassOutbreakEncounter(WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
+                    if (Random() < 32768)
+                        SetMonShadow(&gEnemyParty[0]);
                     BattleSetup_StartWildBattle();
                     return TRUE;
                 }
@@ -621,6 +623,8 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
                 // try a regular wild land encounter
                 if (TryGenerateWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
+                    if (Random() < 32768)
+                        SetMonShadow(&gEnemyParty[0]);
                     BattleSetup_StartWildBattle();
                     return TRUE;
                 }
@@ -653,6 +657,8 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             {
                 if (TryGenerateWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
+                    if (Random() < 32768)
+                        SetMonShadow(&gEnemyParty[0]);
                     BattleSetup_StartWildBattle();
                     return TRUE;
                 }
@@ -680,6 +686,8 @@ void RockSmashWildEncounter(void)
         else if (WildEncounterCheck(wildPokemonInfo->encounterRate, TRUE) == TRUE
          && TryGenerateWildMon(wildPokemonInfo, WILD_AREA_ROCKS, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
         {
+            if (Random() < 32768)
+                SetMonShadow(&gEnemyParty[0]);
             BattleSetup_StartWildBattle();
             gSpecialVar_Result = TRUE;
         }
@@ -742,6 +750,8 @@ bool8 SweetScentWildEncounter(void)
             else
                 TryGenerateWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, 0);
 
+            if (Random() < 32768)
+                SetMonShadow(&gEnemyParty[0]);
             BattleSetup_StartWildBattle();
             return TRUE;
         }
@@ -759,6 +769,8 @@ bool8 SweetScentWildEncounter(void)
             }
 
             TryGenerateWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, 0);
+            if (Random() < 32768)
+                SetMonShadow(&gEnemyParty[0]);
             BattleSetup_StartWildBattle();
             return TRUE;
         }
@@ -794,6 +806,8 @@ void FishingWildEncounter(u8 rod)
     }
     IncrementGameStat(GAME_STAT_FISHING_ENCOUNTERS);
     SetPokemonAnglerSpecies(species);
+    if (Random() < 32768)
+        SetMonShadow(&gEnemyParty[0]);
     BattleSetup_StartWildBattle();
 }
 
