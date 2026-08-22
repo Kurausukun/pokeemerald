@@ -1,3 +1,6 @@
+#ifndef GUARD_CONSTANTS_M4A_CONSTANTS_INC
+#define GUARD_CONSTANTS_M4A_CONSTANTS_INC
+
 	.equiv ID_NUMBER, 0x68736d53
 
 	.equiv PCM_DMA_BUF_SIZE, 1584
@@ -178,7 +181,7 @@
 	struct_field o_MusicPlayerTrack_ToneData_sustain, 1
 	struct_field o_MusicPlayerTrack_ToneData_release, 1
 	struct_field o_MusicPlayerTrack_gap, 10
-	struct_field o_MusicPlayerTrack_unk_3A, 2
+	struct_field o_MusicPlayerTrack_timer, 2
 	struct_field o_MusicPlayerTrack_unk_3C, 4
 	struct_field o_MusicPlayerTrack_cmdPtr, 4
 	struct_field o_MusicPlayerTrack_patternStack, 12
@@ -250,3 +253,5 @@
 	struct_field o_CgbChannel_nextChannelPointer, 4
 	struct_field o_CgbChannel_dummy4, 8
 	struct_field CgbChannel_size, 0
+
+#endif  @ GUARD_CONSTANTS_M4A_CONSTANTS_INC

@@ -1,10 +1,3 @@
-.set LOCALID_ATTENDANT_SINGLES, 1
-.set LOCALID_ATTENDANT_DOUBLES, 7
-.set LOCALID_ATTENDANT_MULTIS, 8
-.set LOCALID_ATTENDANT_LINK_MULTIS, 9
-
-@ Note: LOCALID_BATTLE_TOWER_LOBBY_REPORTER is a local id for this map used elsewhere. It's defined in event_objects.h
-
 BattleFrontier_BattleTowerLobby_MapScripts::
 	map_script MAP_SCRIPT_ON_RESUME, BattleFrontier_BattleTowerLobby_OnResume
 	map_script MAP_SCRIPT_ON_TRANSITION, BattleFrontier_BattleTowerLobby_OnTransition
@@ -37,15 +30,15 @@ BattleFrontier_BattleTowerLobby_OnWarp:
 
 BattleFrontier_BattleTowerLobby_EventScript_PlayerFaceNorth::
 	setvar VAR_TEMP_1, 1
-	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
+	turnobject LOCALID_PLAYER, DIR_NORTH
 	end
 
 BattleFrontier_BattleTowerLobby_OnFrame:
-	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleTowerLobby_EventScript_GetChallengeStatus
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_SAVING, BattleFrontier_BattleTowerLobby_EventScript_QuitWithoutSaving
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattleTowerLobby_EventScript_ResumeChallenge
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, BattleFrontier_BattleTowerLobby_EventScript_WonChallenge
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, BattleFrontier_BattleTowerLobby_EventScript_LostChallenge
+	map_script_2 VAR_TEMP_CHALLENGE_STATUS, 0, BattleFrontier_BattleTowerLobby_EventScript_GetChallengeStatus
+	map_script_2 VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING, BattleFrontier_BattleTowerLobby_EventScript_QuitWithoutSaving
+	map_script_2 VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattleTowerLobby_EventScript_ResumeChallenge
+	map_script_2 VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_WON, BattleFrontier_BattleTowerLobby_EventScript_WonChallenge
+	map_script_2 VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST, BattleFrontier_BattleTowerLobby_EventScript_LostChallenge
 	.2byte 0
 
 BattleFrontier_BattleTowerLobby_EventScript_GetChallengeStatus::
@@ -60,7 +53,7 @@ BattleFrontier_BattleTowerLobby_EventScript_QuitWithoutSaving::
 	tower_set TOWER_DATA_WIN_STREAK, 0
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, FALSE
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, 0
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	release
 	end
 
@@ -94,7 +87,7 @@ BattleFrontier_BattleTowerLobby_EventScript_GiveBattlePoints::
 BattleFrontier_BattleTowerLobby_EventScript_LookForwardToChallenge::
 	msgbox BattleFrontier_BattleTowerLobby_Text_LookForwardToAnotherChallenge, MSGBOX_DEFAULT
 	closemessage
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	release
 	end
 
@@ -113,7 +106,7 @@ BattleFrontier_BattleTowerLobby_EventScript_LostThanksForPlaying::
 	call BattleFrontier_BattleTowerLobby_EventScript_AskSaveBattle
 	msgbox BattleFrontier_BattleTowerLobby_Text_LookForwardToAnotherChallenge, MSGBOX_DEFAULT
 	closemessage
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	release
 	end
 
@@ -204,7 +197,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterSinglesChallenge::
 	copyvar VAR_0x8004, VAR_RESULT
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	special ChoosePartyForBattleFrontier
-	waitstate
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_LoadPartyCancelChallenge
 	msgbox BattleFrontier_BattleTowerLobby_Text_OkayToSaveBeforeEntering, MSGBOX_YESNO
 	switch VAR_RESULT
@@ -214,7 +206,7 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterSinglesChallenge::
 
 BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeSinglesChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-	setvar VAR_TEMP_0, 0
+	setvar VAR_TEMP_CHALLENGE_STATUS, 0
 	tower_init
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, TRUE
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
@@ -222,7 +214,7 @@ BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeSinglesChallenge::
 	closemessage
 	delay 2
 	call Common_EventScript_SaveGame
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_CancelChallengeSaveFailed
 	incrementgamestat GAME_STAT_ENTERED_BATTLE_TOWER
 	setvar VAR_BRAVO_TRAINER_BATTLE_TOWER_ON, TRUE
@@ -267,7 +259,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterDoublesChallenge::
 	copyvar VAR_0x8004, VAR_RESULT
 	setvar VAR_0x8005, FRONTIER_DOUBLES_PARTY_SIZE
 	special ChoosePartyForBattleFrontier
-	waitstate
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_LoadPartyCancelChallenge
 	msgbox BattleFrontier_BattleTowerLobby_Text_OkayToSaveBeforeEntering, MSGBOX_YESNO
 	switch VAR_RESULT
@@ -277,7 +268,7 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterDoublesChallenge::
 
 BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeDoublesChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-	setvar VAR_TEMP_0, 0
+	setvar VAR_TEMP_CHALLENGE_STATUS, 0
 	tower_init
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, TRUE
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
@@ -285,7 +276,7 @@ BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeDoublesChallenge::
 	closemessage
 	delay 2
 	call Common_EventScript_SaveGame
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_CancelChallengeSaveFailed
 	incrementgamestat GAME_STAT_ENTERED_BATTLE_TOWER
 	setvar VAR_BRAVO_TRAINER_BATTLE_TOWER_ON, FALSE
@@ -331,7 +322,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterMultisChallenge::
 	copyvar VAR_0x8004, VAR_RESULT
 	setvar VAR_0x8005, FRONTIER_MULTI_PARTY_SIZE
 	special ChoosePartyForBattleFrontier
-	waitstate
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_LoadPartyCancelChallenge
 	msgbox BattleFrontier_BattleTowerLobby_Text_OkayToSaveBeforeEntering, MSGBOX_YESNO
 	switch VAR_RESULT
@@ -341,7 +331,7 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterMultisChallenge::
 
 BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeMultisChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-	setvar VAR_TEMP_0, 0
+	setvar VAR_TEMP_CHALLENGE_STATUS, 0
 	tower_init
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, TRUE
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
@@ -349,7 +339,7 @@ BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeMultisChallenge::
 	closemessage
 	delay 2
 	call Common_EventScript_SaveGame
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_CancelChallengeSaveFailed
 	incrementgamestat GAME_STAT_ENTERED_BATTLE_TOWER
 	setvar VAR_BRAVO_TRAINER_BATTLE_TOWER_ON, FALSE
@@ -394,7 +384,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterLinkMultisChallenge::
 	copyvar VAR_0x8004, VAR_RESULT
 	setvar VAR_0x8005, FRONTIER_MULTI_PARTY_SIZE
 	special ChoosePartyForBattleFrontier
-	waitstate
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_LoadPartyCancelChallenge
 	msgbox BattleFrontier_BattleTowerLobby_Text_OkayToSaveBeforeEntering, MSGBOX_YESNO
 	switch VAR_RESULT
@@ -404,7 +393,7 @@ BattleFrontier_BattleTowerLobby_EventScript_TryEnterLinkMultisChallenge::
 
 BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeLinkMultisChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-	setvar VAR_TEMP_0, 0
+	setvar VAR_TEMP_CHALLENGE_STATUS, 0
 	tower_init
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, TRUE
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
@@ -415,13 +404,18 @@ BattleFrontier_BattleTowerLobby_EventScript_SaveBeforeLinkMultisChallenge::
 @ to the flash, but not data in PokemonStorage. The SaveGame script that follows asks the player to do a full save,
 @ which they can opt out of. As a result the player can save their party and quit without having saved the PC.
 @ This allows players to clone pokemon and their held items by withdrawing them (or erase them by despositing).
-.ifndef BUGFIX
+#ifndef BUGFIX
 	tower_save 0
-.endif
+#endif
 	call Common_EventScript_SaveGame
-	setvar VAR_TEMP_0, 255
+	setvar VAR_TEMP_CHALLENGE_STATUS, 255
 	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleTowerLobby_EventScript_CancelChallengeSaveFailed
+@ GAME_STAT_ENTERED_BATTLE_TOWER should not be incremented here, for two reasons:
+@ 1. It is incremented again in BattleFrontier_BattleTowerLobby_EventScript_CableLinkSuccessful or BattleFrontier_BattleTowerLobby_EventScript_WirelessLinkSuccessful
+@ 2. If the player tries to connect, but fails, the counter will still be incremented even if the player never enters the tower.
+#ifndef BUGFIX
 	incrementgamestat GAME_STAT_ENTERED_BATTLE_TOWER
+#endif
 	specialvar VAR_RESULT, IsWirelessAdapterConnected
 	goto_if_eq VAR_RESULT, TRUE, BattleFrontier_BattleTowerLobby_EventScript_TryWirelessLink
 	goto BattleFrontier_BattleTowerLobby_EventScript_TryCableLink
@@ -597,7 +591,7 @@ BattleFrontier_BattleTowerLobby_EventScript_WaitForLinkOpponentLoad::
 	call BattleFrontier_BattleTowerLobby_EventScript_ShowYouToBattleRoom
 	clearflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
 	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_ELEVATOR, 1, 6
-	setvar VAR_TEMP_0, 0
+	setvar VAR_TEMP_CHALLENGE_STATUS, 0
 	waitstate
 	end
 
@@ -616,12 +610,12 @@ BattleFrontier_BattleTowerLobby_EventScript_WalkToElevator::
 	call BattleFrontier_BattleTowerLobby_EventScript_SetAttendantTalkedTo
 	call BattleFrontier_BattleTowerLobby_EventScript_GetDoorXCoord
 	applymovement VAR_LAST_TALKED, BattleFrontier_BattleTowerLobby_Movement_WalkToElevator
-	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerLobby_Movement_WalkToElevator
+	applymovement LOCALID_PLAYER, BattleFrontier_BattleTowerLobby_Movement_WalkToElevator
 	waitmovement 0
 	opendoor VAR_0x8004, 1
 	waitdooranim
 	applymovement VAR_LAST_TALKED, BattleFrontier_BattleTowerLobby_Movement_AttendantEnterElevator
-	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerLobby_Movement_PlayerEnterElevator
+	applymovement LOCALID_PLAYER, BattleFrontier_BattleTowerLobby_Movement_PlayerEnterElevator
 	waitmovement 0
 	closedoor VAR_0x8004, 1
 	waitdooranim
@@ -685,19 +679,19 @@ BattleFrontier_BattleTowerLobby_EventScript_SetAttendantTalkedTo::
 	return
 
 BattleFrontier_BattleTowerLobby_EventScript_TalkedToSinglesAttendant::
-	setvar VAR_LAST_TALKED, LOCALID_ATTENDANT_SINGLES
+	setvar VAR_LAST_TALKED, LOCALID_TOWER_ATTENDANT_SINGLES
 	return
 
 BattleFrontier_BattleTowerLobby_EventScript_TalkedToDoublesAttendant::
-	setvar VAR_LAST_TALKED, LOCALID_ATTENDANT_DOUBLES
+	setvar VAR_LAST_TALKED, LOCALID_TOWER_ATTENDANT_DOUBLES
 	return
 
 BattleFrontier_BattleTowerLobby_EventScript_TalkedToMultisAttendant::
-	setvar VAR_LAST_TALKED, LOCALID_ATTENDANT_MULTIS
+	setvar VAR_LAST_TALKED, LOCALID_TOWER_ATTENDANT_MULTIS
 	return
 
 BattleFrontier_BattleTowerLobby_EventScript_TalkedToLinkMultisAttendant::
-	setvar VAR_LAST_TALKED, LOCALID_ATTENDANT_LINK_MULTIS
+	setvar VAR_LAST_TALKED, LOCALID_TOWER_ATTENDANT_LINK_MULTIS
 	return
 
 BattleFrontier_BattleTowerLobby_EventScript_GetDoorXCoord::
@@ -756,7 +750,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryCableLink::
 	waitmessage
 	setvar VAR_0x8005, 0
 	special TryBattleLinkup
-	waitstate
 	goto_if_eq VAR_RESULT, LINKUP_SUCCESS, BattleFrontier_BattleTowerLobby_EventScript_CableLinkSuccessful
 	goto_if_eq VAR_RESULT, LINKUP_SOMEONE_NOT_READY, CableClub_EventScript_AbortLinkSomeoneNotReady
 	goto_if_eq VAR_RESULT, LINKUP_DIFF_SELECTIONS, BattleFrontier_BattleTowerLobby_EventScript_AbortLinkDifferentSelections
@@ -814,7 +807,6 @@ BattleFrontier_BattleTowerLobby_EventScript_CableLinkSuccessful::
 	waitmessage
 	tower_save CHALLENGE_STATUS_SAVING
 	special SaveForBattleTowerLink
-	waitstate
 	playse SE_SAVE
 	waitse
 	special TrySetBattleTowerLinkType
@@ -867,7 +859,6 @@ BattleFrontier_BattleTowerLobby_EventScript_WirelessLinkSuccessful::
 	waitmessage
 	tower_save CHALLENGE_STATUS_SAVING
 	special SaveForBattleTowerLink
-	waitstate
 	playse SE_SAVE
 	waitse
 	goto BattleFrontier_BattleTowerLobby_EventScript_EnterElevator

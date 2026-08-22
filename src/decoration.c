@@ -113,7 +113,7 @@ EWRAM_DATA static u16 sDecorationsCursorPos = 0;
 EWRAM_DATA static u16 sDecorationsScrollOffset = 0;
 EWRAM_DATA u8 gCurDecorationIndex = 0;
 EWRAM_DATA static u8 sCurDecorationCategory = DECORCAT_DESK;
-EWRAM_DATA static u32 sFiller[2] = {};
+EWRAM_DATA static u32 UNUSED sFiller[2] = {};
 EWRAM_DATA static struct DecorationPCContext sDecorationContext = {};
 EWRAM_DATA static u8 sDecorMenuWindowIds[WINDOW_COUNT] = {};
 EWRAM_DATA static struct DecorationItemsMenu *sDecorationItemsMenu = NULL;
@@ -295,7 +295,7 @@ static const struct WindowTemplate sDecorationWindowTemplates[WINDOW_COUNT] =
     }
 };
 
-static const u16 sDecorationMenuPalette[] = INCBIN_U16("graphics/decorations/decoration_menu.gbapal");
+static const u16 sDecorationMenuPalette[] = INCGFX_U16("graphics/decorations/decoration_menu.pal", ".gbapal");
 
 static const struct ListMenuTemplate sDecorationItemsListMenuTemplate =
 {
@@ -422,12 +422,21 @@ static const u8 sDecorationSlideElevation[] =
 };
 
 static const u16 sDecorShapeSizes[] = {
-    0x04, 0x08, 0x10, 0x20, 0x10, 0x08, 0x10, 0x20, 0x40, 0x20
+    [DECORSHAPE_1x1] = 4,
+    [DECORSHAPE_2x1] = 8,
+    [DECORSHAPE_3x1] = 16,
+    [DECORSHAPE_4x2] = 32,
+    [DECORSHAPE_2x2] = 16,
+    [DECORSHAPE_1x2] = 8,
+    [DECORSHAPE_1x3] = 16,
+    [DECORSHAPE_2x4] = 32,
+    [DECORSHAPE_3x3] = 64,
+    [DECORSHAPE_3x2] = 32,
 };
 
-static const u16 sBrendanPalette[] = INCBIN_U16("graphics/decorations/brendan.gbapal");
+static const u16 sBrendanPalette[] = INCGFX_U16("graphics/decorations/brendan.pal", ".gbapal");
 
-static const u16 sMayPalette[] = INCBIN_U16("graphics/decorations/may.gbapal");
+static const u16 sMayPalette[] = INCGFX_U16("graphics/decorations/may.pal", ".gbapal");
 
 static const struct YesNoFuncTable sReturnDecorationYesNoFunctions =
 {
@@ -441,7 +450,7 @@ static const struct YesNoFuncTable sStopPuttingAwayDecorationsYesNoFunctions =
     .noFunc = ContinuePuttingAwayDecorations,
 };
 
-static const u8 sDecorationPuttingAwayCursor[] = INCBIN_U8("graphics/decorations/put_away_cursor.4bpp");
+static const u8 sDecorationPuttingAwayCursor[] = INCGFX_U8("graphics/decorations/put_away_cursor.png", ".4bpp");
 
 static const struct SpritePalette sSpritePal_PuttingAwayCursorBrendan =
 {
@@ -688,7 +697,7 @@ static void ReturnToDecorationActionsAfterInvalidSelection(u8 taskId)
 
 static void SecretBasePC_PrepMenuForSelectingStoredDecors(u8 taskId)
 {
-    LoadPalette(sDecorationMenuPalette, BG_PLTT_ID(13), PLTT_SIZE_4BPP);
+    LoadPalette(sDecorationMenuPalette, BG_PLTT_ID(13), sizeof(sDecorationMenuPalette));
     ClearDialogWindowAndFrame(0, FALSE);
     RemoveDecorationWindow(WINDOW_MAIN_MENU);
     InitDecorationCategoriesWindow(taskId);
@@ -834,7 +843,7 @@ static void ReturnToActionsMenuFromCategories(u8 taskId)
 
 void ShowDecorationCategoriesWindow(u8 taskId)
 {
-    LoadPalette(sDecorationMenuPalette, BG_PLTT_ID(13), PLTT_SIZE_4BPP);
+    LoadPalette(sDecorationMenuPalette, BG_PLTT_ID(13), sizeof(sDecorationMenuPalette));
     ClearDialogWindowAndFrame(0, FALSE);
     gTasks[taskId].tDecorationMenuCommand = DECOR_MENU_TRADE;
     sCurDecorationCategory = DECORCAT_DESK;
@@ -1182,7 +1191,7 @@ static void WarpToInitialPosition(u8 taskId)
 
 static u16 GetDecorationElevation(u8 decoration, u8 tileIndex)
 {
-    u16 elevation = -1;
+    u16 elevation = ELEVATION_INVALID;
     switch (decoration)
     {
     case DECOR_STAND:
@@ -1212,9 +1221,9 @@ static void ShowDecorationOnMap_(u16 mapX, u16 mapY, u8 decWidth, u8 decHeight, 
         {
             x = mapX + i;
             attributes = GetMetatileAttributesById(NUM_TILES_IN_PRIMARY + gDecorations[decoration].tiles[j * decWidth + i]);
-            if (MetatileBehavior_IsSecretBaseImpassable(attributes & METATILE_ATTR_BEHAVIOR_MASK) == TRUE
+            if (MetatileBehavior_IsSecretBaseImpassable(UNPACK_BEHAVIOR(attributes)) == TRUE
              || (gDecorations[decoration].permission != DECORPERM_PASS_FLOOR && (attributes >> METATILE_ATTR_LAYER_SHIFT) != METATILE_LAYER_TYPE_NORMAL))
-                impassableFlag = MAPGRID_COLLISION_MASK;
+                impassableFlag = MAPGRID_IMPASSABLE;
             else
                 impassableFlag = 0;
 
@@ -1225,7 +1234,7 @@ static void ShowDecorationOnMap_(u16 mapX, u16 mapY, u8 decWidth, u8 decHeight, 
                 overlapsWall = 0;
 
             elevation = GetDecorationElevation(gDecorations[decoration].id, j * decWidth + i);
-            if (elevation != 0xFFFF)
+            if (elevation != ELEVATION_INVALID)
                 MapGridSetMetatileEntryAt(x, y, (gDecorations[decoration].tiles[j * decWidth + i] + (NUM_TILES_IN_PRIMARY | overlapsWall)) | impassableFlag | elevation);
             else
                 MapGridSetMetatileIdAt(x, y, (gDecorations[decoration].tiles[j * decWidth + i] + (NUM_TILES_IN_PRIMARY | overlapsWall)) | impassableFlag);
@@ -1331,7 +1340,8 @@ static void DecorationItemsMenuAction_AttemptPlace(u8 taskId)
         else
         {
             ConvertIntToDecimalStringN(gStringVar1, sDecorationContext.size, STR_CONV_MODE_RIGHT_ALIGN, 2);
-            if (sDecorationContext.isPlayerRoom == FALSE) {
+            if (sDecorationContext.isPlayerRoom == FALSE)
+            {
                 StringExpandPlaceholders(gStringVar4, gText_NoMoreDecorations);
             }
             else
@@ -1504,6 +1514,17 @@ static bool8 IsFloorOrBoardAndHole(u16 behaviorAt, const struct Decoration *deco
     return FALSE;
 }
 
+#ifdef BUGFIX
+#define GetLayerType(tileId) UNPACK_LAYER_TYPE(GetMetatileAttributesById(tileId))
+#else
+// This incompletely extracts the layer type data. The result is that comparisons against any nonzero
+// value in the valid range always have the same result.
+// Because GF only compares against 0 (METATILE_LAYER_TYPE_NORMAL) there are no ill effects and it's possible this
+// is what they intended. We use the named constant for the comparisons, which implies you can use nonzero constants at
+// those locations (which you can't), so to avoid this trap and keep the better documentation this is included as a bug fix.
+#define GetLayerType(tileId) GetMetatileAttributesById(tileId) & METATILE_ATTR_LAYER_MASK
+#endif
+
 static bool8 CanPlaceDecoration(u8 taskId, const struct Decoration *decoration)
 {
     u8 i;
@@ -1528,7 +1549,7 @@ static bool8 CanPlaceDecoration(u8 taskId, const struct Decoration *decoration)
             {
                 curX = gTasks[taskId].tCursorX + j;
                 behaviorAt = MapGridGetMetatileBehaviorAt(curX, curY);
-                layerType = GetMetatileAttributesById(NUM_TILES_IN_PRIMARY + decoration->tiles[(mapY - 1 - i) * mapX + j]) & METATILE_ATTR_LAYER_MASK;
+                layerType = GetLayerType(NUM_TILES_IN_PRIMARY + decoration->tiles[(mapY - 1 - i) * mapX + j]);
                 if (!IsFloorOrBoardAndHole(behaviorAt, decoration))
                     return FALSE;
 
@@ -1549,7 +1570,7 @@ static bool8 CanPlaceDecoration(u8 taskId, const struct Decoration *decoration)
             {
                 curX = gTasks[taskId].tCursorX + j;
                 behaviorAt = MapGridGetMetatileBehaviorAt(curX, curY);
-                layerType = GetMetatileAttributesById(NUM_TILES_IN_PRIMARY + decoration->tiles[(mapY - 1 - i) * mapX + j]) & METATILE_ATTR_LAYER_MASK;
+                layerType = GetLayerType(NUM_TILES_IN_PRIMARY + decoration->tiles[(mapY - 1 - i) * mapX + j]);
                 if (!MetatileBehavior_IsNormal(behaviorAt) && !IsSecretBaseTrainerSpot(behaviorAt, layerType))
                     return FALSE;
 
@@ -1566,7 +1587,7 @@ static bool8 CanPlaceDecoration(u8 taskId, const struct Decoration *decoration)
         {
             curX = gTasks[taskId].tCursorX + j;
             behaviorAt = MapGridGetMetatileBehaviorAt(curX, curY);
-            layerType = GetMetatileAttributesById(NUM_TILES_IN_PRIMARY + decoration->tiles[j]) & METATILE_ATTR_LAYER_MASK;
+            layerType = GetLayerType(NUM_TILES_IN_PRIMARY + decoration->tiles[j]);
             if (!MetatileBehavior_IsNormal(behaviorAt) && !MetatileBehavior_IsSecretBaseNorthWall(behaviorAt))
                 return FALSE;
 
@@ -1911,12 +1932,12 @@ static void ClearPlaceDecorationGraphicsDataBuffer(struct PlaceDecorationGraphic
 
 static void CopyPalette(u16 *dest, u16 pal)
 {
-    CpuFastCopy(&((u16 *)gTilesetPointer_SecretBase->palettes)[pal * 16], dest, sizeof(u16) * 16);
+    CpuFastCopy(&gTilesetPointer_SecretBase->palettes[pal], dest, PLTT_SIZE_4BPP);
 }
 
 static void CopyTile(u8 *dest, u16 tile)
 {
-    u8 buffer[TILE_SIZE_4BPP];
+    u8 ALIGNED(4) buffer[TILE_SIZE_4BPP];
     u16 mode;
     u16 i;
 
@@ -1924,7 +1945,7 @@ static void CopyTile(u8 *dest, u16 tile)
     if (tile != 0)
         tile &= 0x03FF;
 
-    CpuFastCopy(&((u8 *)gTilesetPointer_SecretBase->tiles)[tile * TILE_SIZE_4BPP], buffer, TILE_SIZE_4BPP);
+    CpuFastCopy(&gTilesetPointer_SecretBase->tiles[tile * TILE_SIZE_4BPP / sizeof(u32)], buffer, TILE_SIZE_4BPP);
     switch (mode)
     {
     case 0:
@@ -1966,7 +1987,7 @@ static void SetDecorSelectionBoxTiles(struct PlaceDecorationGraphicsDataBuffer *
 
 static u16 GetMetatile(u16 tile)
 {
-    return ((u16 *)gTilesetPointer_SecretBaseRedCave->metatiles)[tile] & 0xFFF;
+    return gTilesetPointer_SecretBaseRedCave->metatiles[tile] & 0xFFF;
 }
 
 static void SetDecorSelectionMetatiles(struct PlaceDecorationGraphicsDataBuffer *data)
@@ -2037,7 +2058,7 @@ static u8 gpu_pal_decompress_alloc_tag_and_upload(struct PlaceDecorationGraphics
     SetDecorSelectionMetatiles(data);
     SetDecorSelectionBoxOamAttributes(data->decoration->shape);
     SetDecorSelectionBoxTiles(data);
-    CopyPalette(data->palette, ((u16 *)gTilesetPointer_SecretBaseRedCave->metatiles)[(data->decoration->tiles[0] * NUM_TILES_PER_METATILE) + 7] >> 12);
+    CopyPalette(data->palette, gTilesetPointer_SecretBaseRedCave->metatiles[(data->decoration->tiles[0] * NUM_TILES_PER_METATILE) + 7] >> 12);
     LoadSpritePalette(&sSpritePal_PlaceDecoration);
     return CreateSprite(&sDecorationSelectorSpriteTemplate, 0, 0, 0);
 }
@@ -2093,7 +2114,7 @@ static u8 AddDecorationIconObjectFromObjectEvent(u16 tilesTag, u16 paletteTag, u
         SetDecorSelectionMetatiles(&sPlaceDecorationGraphicsDataBuffer);
         SetDecorSelectionBoxOamAttributes(sPlaceDecorationGraphicsDataBuffer.decoration->shape);
         SetDecorSelectionBoxTiles(&sPlaceDecorationGraphicsDataBuffer);
-        CopyPalette(sPlaceDecorationGraphicsDataBuffer.palette, ((u16 *)gTilesetPointer_SecretBaseRedCave->metatiles)[(sPlaceDecorationGraphicsDataBuffer.decoration->tiles[0] * NUM_TILES_PER_METATILE) + 7] >> 12);
+        CopyPalette(sPlaceDecorationGraphicsDataBuffer.palette, gTilesetPointer_SecretBaseRedCave->metatiles[(sPlaceDecorationGraphicsDataBuffer.decoration->tiles[0] * NUM_TILES_PER_METATILE) + 7] >> 12);
         sheet.data = sPlaceDecorationGraphicsDataBuffer.image;
         sheet.size = sDecorShapeSizes[sPlaceDecorationGraphicsDataBuffer.decoration->shape] * TILE_SIZE_4BPP;
         sheet.tag = tilesTag;
@@ -2245,7 +2266,8 @@ static void Task_PutAwayDecoration(u8 taskId)
         gTasks[taskId].tState = 1;
         break;
     case 1:
-        if (!gPaletteFade.active) {
+        if (!gPaletteFade.active)
+        {
             DrawWholeMapView();
             ScriptContext_SetupScript(SecretBase_EventScript_PutAwayDecoration);
             ClearDialogWindowAndFrame(0, TRUE);

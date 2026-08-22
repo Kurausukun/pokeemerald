@@ -22,7 +22,7 @@ static void AnimTask_DigEndBounceMovementSetInvisible(u8);
 static void AnimTask_DigSetVisibleUnderground(u8);
 static void AnimTask_DigRiseUpFromHole(u8);
 static void SetDigScanlineEffect(u8, s16, s16);
-static void AnimTask_ShakeTerrain(u8);
+static void AnimTask_ShakePlatforms(u8);
 static void AnimTask_ShakeBattlers(u8);
 static void SetBattlersXOffsetForShake(struct Task *);
 static void WaitForFissureCompletion(u8);
@@ -415,7 +415,7 @@ static void AnimTask_DigSetVisibleUnderground(u8 taskId)
 
 static void AnimTask_DigRiseUpFromHole(u8 taskId)
 {
-    u8 var0;
+    u8 y;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -428,9 +428,9 @@ static void AnimTask_DigRiseUpFromHole(u8 taskId)
         else
             task->data[12] = gBattle_BG2_X;
 
-        var0 =  GetBattlerYCoordWithElevation(gBattleAnimAttacker);
-        task->data[14] = var0 - 32;
-        task->data[15] = var0 + 32;
+        y = GetBattlerYCoordWithElevation(gBattleAnimAttacker);
+task->data[14] = y - 32;
+task->data[15] = y + 32;
         task->data[0]++;
         break;
     case 1:
@@ -481,10 +481,10 @@ static void SetDigScanlineEffect(u8 useBG1, s16 y, s16 endY)
         y++;
     }
 
-    while (y < 160)
+    while (y < DISPLAY_HEIGHT)
     {
-        gScanlineEffectRegBuffers[0][y] = bgX + 240;
-        gScanlineEffectRegBuffers[1][y] = bgX + 240;
+        gScanlineEffectRegBuffers[0][y] = bgX + DISPLAY_WIDTH;
+        gScanlineEffectRegBuffers[1][y] = bgX + DISPLAY_WIDTH;
         y++;
     }
 
@@ -503,7 +503,7 @@ static void SetDigScanlineEffect(u8 useBG1, s16 y, s16 endY)
 // arg 5: duration
 void AnimDirtPlumeParticle(struct Sprite *sprite)
 {
-    s8 battler;
+    u16 battler; // Should be u8.
     s16 xOffset;
 
     if (gBattleAnimArgs[0] == 0)
@@ -542,7 +542,7 @@ static void AnimDirtPlumeParticle_Step(struct Sprite *sprite)
 // arg 2: duration
 static void AnimDigDirtMound(struct Sprite *sprite)
 {
-    s8 battler;
+    u8 battler;
 
     if (gBattleAnimArgs[0] == 0)
         battler = gBattleAnimAttacker;
@@ -564,12 +564,12 @@ static void AnimDigDirtMound(struct Sprite *sprite)
 #define tMaxTime             data[3]
 #define tbattlerSpriteIds(i) data[9 + (i)]
 #define tNumBattlers         data[13] // AnimTask_ShakeBattlers
-#define tInitialX            data[13] // AnimTask_ShakeTerrain
+#define tInitialX            data[13] // AnimTask_ShakePlatforms
 #define tHorizOffset         data[14]
 #define tInitHorizOffset     data[15]
 
-// Shakes battler(s) or the battle terrain back and forth horizontally. Used by e.g. Earthquake, Eruption
-// arg0: What to shake. 0-3 for any specific battler, MAX_BATTLERS_COUNT for all battlers, MAX_BATTLERS_COUNT + 1 for the terrain
+// Shakes battler(s) or the battle platforms back and forth horizontally. Used by e.g. Earthquake, Eruption
+// arg0: What to shake. 0-3 for any specific battler, MAX_BATTLERS_COUNT for all battlers, MAX_BATTLERS_COUNT + 1 for the platforms
 // arg1: Shake intensity, used to calculate horizontal pixel offset (if 0, use move power instead)
 // arg2: Length of time to shake for
 void AnimTask_HorizontalShake(u8 taskId)
@@ -585,9 +585,9 @@ void AnimTask_HorizontalShake(u8 taskId)
     task->tMaxTime = gBattleAnimArgs[2];
     switch (gBattleAnimArgs[0])
     {
-    case MAX_BATTLERS_COUNT + 1: // Shake terrain
+    case MAX_BATTLERS_COUNT + 1: // Shake platforms
         task->tInitialX = gBattle_BG3_X;
-        task->func = AnimTask_ShakeTerrain;
+        task->func = AnimTask_ShakePlatforms;
         break;
     case MAX_BATTLERS_COUNT: // Shake all battlers
         task->tNumBattlers = 0;
@@ -616,7 +616,7 @@ void AnimTask_HorizontalShake(u8 taskId)
     }
 }
 
-static void AnimTask_ShakeTerrain(u8 taskId)
+static void AnimTask_ShakePlatforms(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
@@ -708,7 +708,7 @@ static void AnimTask_ShakeBattlers(u8 taskId)
 static void SetBattlersXOffsetForShake(struct Task *task)
 {
     u16 i;
-    u16 xOffset;
+    s16 xOffset;
 
     if ((task->tTimer & 1) == 0)
         xOffset = (task->tHorizOffset / 2) + (task->tHorizOffset & 1);
@@ -733,7 +733,11 @@ static void SetBattlersXOffsetForShake(struct Task *task)
 
 void AnimTask_IsPowerOver99(u8 taskId)
 {
+#ifdef UBFIX
+    gBattleAnimArgs[7] = gAnimMovePower > 99;
+#else
     gBattleAnimArgs[15] = gAnimMovePower > 99;
+#endif
     DestroyAnimVisualTask(taskId);
 }
 

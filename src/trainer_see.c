@@ -49,19 +49,19 @@ static bool8 WaitRevealBuriedTrainer(u8 taskId, struct Task *task, struct Object
 static void SpriteCB_TrainerIcons(struct Sprite *sprite);
 
 // IWRAM common
-u16 gWhichTrainerToFaceAfterBattle;
-u8 gPostBattleMovementScript[4];
-struct ApproachingTrainer gApproachingTrainers[2];
-u8 gNoOfApproachingTrainers;
-bool8 gTrainerApproachedPlayer;
+COMMON_DATA u16 gWhichTrainerToFaceAfterBattle = 0;
+COMMON_DATA u8 gPostBattleMovementScript[4] = {0};
+COMMON_DATA struct ApproachingTrainer gApproachingTrainers[2] = {0};
+COMMON_DATA u8 gNoOfApproachingTrainers = 0;
+COMMON_DATA bool8 gTrainerApproachedPlayer = 0;
 
 // EWRAM
 EWRAM_DATA u8 gApproachingTrainerId = 0;
 
 // const rom data
-static const u8 sEmotion_ExclamationMarkGfx[] = INCBIN_U8("graphics/field_effects/pics/emotion_exclamation.4bpp");
-static const u8 sEmotion_QuestionMarkGfx[] = INCBIN_U8("graphics/field_effects/pics/emotion_question.4bpp");
-static const u8 sEmotion_HeartGfx[] = INCBIN_U8("graphics/field_effects/pics/emotion_heart.4bpp");
+static const u8 sEmotion_ExclamationMarkGfx[] = INCGFX_U8("graphics/field_effects/pics/emotion_exclamation.png", ".4bpp");
+static const u8 sEmotion_QuestionMarkGfx[] = INCGFX_U8("graphics/field_effects/pics/emotion_question.png", ".4bpp");
+static const u8 sEmotion_HeartGfx[] = INCGFX_U8("graphics/field_effects/pics/emotion_heart.png", ".4bpp");
 
 static u8 (*const sDirectionalApproachDistanceFuncs[])(struct ObjectEvent *trainerObj, s16 range, s16 x, s16 y) =
 {
@@ -131,11 +131,11 @@ static const struct SpriteFrameImage sSpriteImageTable_ExclamationQuestionMark[]
 {
     {
         .data = sEmotion_ExclamationMarkGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_ExclamationMarkGfx)
     },
     {
         .data = sEmotion_QuestionMarkGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_QuestionMarkGfx)
     }
 };
 
@@ -143,7 +143,7 @@ static const struct SpriteFrameImage sSpriteImageTable_HeartIcon[] =
 {
     {
         .data = sEmotion_HeartGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_HeartGfx)
     }
 };
 
@@ -256,7 +256,7 @@ static u8 CheckTrainer(u8 objectEventId)
     else
         scriptPtr = GetObjectEventScriptPointerByObjectEventId(objectEventId);
 
-    if (InBattlePyramid())
+    if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
     {
         if (GetBattlePyramidTrainerFlag(objectEventId))
             return 0;
@@ -389,15 +389,15 @@ static u8 CheckPathBetweenTrainerAndPlayer(struct ObjectEvent *trainerObj, u8 ap
             return 0;
     }
 
-    rangeX = trainerObj->rangeX;
-    rangeY = trainerObj->rangeY;
-    trainerObj->rangeX = 0;
-    trainerObj->rangeY = 0;
+    rangeX = trainerObj->range.rangeX;
+    rangeY = trainerObj->range.rangeY;
+    trainerObj->range.rangeX = 0;
+    trainerObj->range.rangeY = 0;
 
     collision = GetCollisionAtCoords(trainerObj, x, y, direction);
 
-    trainerObj->rangeX = rangeX;
-    trainerObj->rangeY = rangeY;
+    trainerObj->range.rangeX = rangeX;
+    trainerObj->range.rangeY = rangeY;
     if (collision == COLLISION_OBJECT_EVENT)
         return approachDistance;
 
@@ -595,7 +595,7 @@ static bool8 JumpInPlaceBuriedTrainer(u8 taskId, struct Task *task, struct Objec
     if (gSprites[task->tOutOfAshSpriteId].animCmdIndex == 2)
     {
         trainerObj->fixedPriority = 0;
-        trainerObj->triggerGroundEffectsOnMove = 1;
+        trainerObj->triggerGroundEffectsOnMove = TRUE;
 
         sprite = &gSprites[trainerObj->spriteId];
         sprite->oam.priority = 2;
@@ -627,7 +627,7 @@ static void Task_SetBuriedTrainerMovement(u8 taskId)
     struct Task *task = &gTasks[taskId];
     struct ObjectEvent *objEvent;
 
-    LoadWordFromTwoHalfwords(&task->tObjEvent, (u32 *)&objEvent);
+    LoadWordFromTwoHalfwords((u16*) &task->tObjEvent, (u32 *)&objEvent);
     if (!task->data[7])
     {
         ObjectEventClearHeldMovement(objEvent);
@@ -649,7 +649,7 @@ static void Task_SetBuriedTrainerMovement(u8 taskId)
 // Called when a buried Trainer has the reveal_trainer movement applied, from direct interaction
 void SetBuriedTrainerMovement(struct ObjectEvent *objEvent)
 {
-    StoreWordInTwoHalfwords(&gTasks[CreateTask(Task_SetBuriedTrainerMovement, 0)].tObjEvent, (u32)objEvent);
+    StoreWordInTwoHalfwords((u16*) &gTasks[CreateTask(Task_SetBuriedTrainerMovement, 0)].tObjEvent, (u32)objEvent);
 }
 
 void DoTrainerApproach(void)
@@ -800,15 +800,15 @@ void PlayerFaceTrainerAfterBattle(void)
         objEvent = &gObjectEvents[gApproachingTrainers[gWhichTrainerToFaceAfterBattle].objectEventId];
         gPostBattleMovementScript[0] = GetFaceDirectionMovementAction(GetOppositeDirection(objEvent->facingDirection));
         gPostBattleMovementScript[1] = MOVEMENT_ACTION_STEP_END;
-        ScriptMovement_StartObjectMovementScript(OBJ_EVENT_ID_PLAYER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, gPostBattleMovementScript);
+        ScriptMovement_StartObjectMovementScript(LOCALID_PLAYER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, gPostBattleMovementScript);
     }
     else
     {
         objEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
         gPostBattleMovementScript[0] = GetFaceDirectionMovementAction(objEvent->facingDirection);
         gPostBattleMovementScript[1] = MOVEMENT_ACTION_STEP_END;
-        ScriptMovement_StartObjectMovementScript(OBJ_EVENT_ID_PLAYER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, gPostBattleMovementScript);
+        ScriptMovement_StartObjectMovementScript(LOCALID_PLAYER, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, gPostBattleMovementScript);
     }
 
-    SetMovingNpcId(OBJ_EVENT_ID_PLAYER);
+    SetMovingNpcId(LOCALID_PLAYER);
 }

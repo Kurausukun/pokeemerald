@@ -8,16 +8,16 @@
 
 static EWRAM_DATA u8 *sPokedexAreaMapBgNum = NULL;
 
-static const u16 sPokedexAreaMap_Pal[] = INCBIN_U16("graphics/pokedex/region_map.gbapal");
-static const u32 sPokedexAreaMap_Gfx[] = INCBIN_U32("graphics/pokedex/region_map.8bpp.lz");
-static const u32 sPokedexAreaMap_Tilemap[] = INCBIN_U32("graphics/pokedex/region_map.bin.lz");
-static const u32 sPokedexAreaMapAffine_Gfx[] = INCBIN_U32("graphics/pokedex/region_map_affine.8bpp.lz");
-static const u32 sPokedexAreaMapAffine_Tilemap[] = INCBIN_U32("graphics/pokedex/region_map_affine.bin.lz");
+static const u16 ALIGNED(4) sPokedexAreaMap_Pal[] = INCGFX_U16("graphics/pokedex/region_map.pal", ".gbapal");
+static const u32 sPokedexAreaMap_Gfx[] = INCGFX_U32("graphics/pokedex/region_map.png", ".8bpp.lz", "-num_tiles 232 -Wnum_tiles");
+static const u32 sPokedexAreaMap_Tilemap[] = INCGFX_U32("graphics/pokedex/region_map.bin", ".lz");
+static const u32 sPokedexAreaMapAffine_Gfx[] = INCGFX_U32("graphics/pokedex/region_map_affine.png", ".8bpp.lz", "-num_tiles 233 -Wnum_tiles");
+static const u32 sPokedexAreaMapAffine_Tilemap[] = INCGFX_U32("graphics/pokedex/region_map_affine.bin", ".lz");
 
 void LoadPokedexAreaMapGfx(const struct PokedexAreaMapTemplate *template)
 {
     u8 mode;
-    void * tilemap;
+    void *tilemap;
     sPokedexAreaMapBgNum = Alloc(sizeof(sPokedexAreaMapBgNum));
     mode = template->mode;
 
@@ -41,7 +41,7 @@ void LoadPokedexAreaMapGfx(const struct PokedexAreaMapTemplate *template)
     ChangeBgX(template->bg, 0, BG_COORD_SET);
     ChangeBgY(template->bg, 0, BG_COORD_SET);
     SetBgAttribute(template->bg, BG_ATTR_PALETTEMODE, 1);
-    CpuCopy32(sPokedexAreaMap_Pal, &gPlttBufferUnfaded[0x70], sizeof(sPokedexAreaMap_Pal));
+    CpuCopy32(sPokedexAreaMap_Pal, &gPlttBufferUnfaded[BG_PLTT_ID(7)], sizeof(sPokedexAreaMap_Pal));
     *sPokedexAreaMapBgNum = template->bg;
 }
 

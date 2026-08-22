@@ -131,10 +131,10 @@ static EWRAM_DATA struct MatchCallState sMatchCallState = {0};
 static EWRAM_DATA struct BattleFrontierStreakInfo sBattleFrontierStreakInfo = {0};
 
 static u32 GetCurrentTotalMinutes(struct Time *);
-static u32 GetNumRegisteredNPCs(void);
+static u32 GetNumRegisteredTrainers(void);
 static u32 GetActiveMatchCallTrainerId(u32);
 static int GetTrainerMatchCallId(int);
-static u16 GetRematchTrainerLocation(int);
+static mapsec_u16_t GetRematchTrainerLocation(int);
 static bool32 TrainerIsEligibleForRematch(int);
 static void StartMatchCall(void);
 static void ExecuteMatchCall(u8);
@@ -1098,7 +1098,7 @@ static bool32 UpdateMatchCallStepCounter(void)
 static bool32 SelectMatchCallTrainer(void)
 {
     u32 matchCallId;
-    u32 numRegistered = GetNumRegisteredNPCs();
+    u32 numRegistered = GetNumRegisteredTrainers();
     if (numRegistered == 0)
         return FALSE;
 
@@ -1114,12 +1114,13 @@ static bool32 SelectMatchCallTrainer(void)
     return TRUE;
 }
 
-static u32 GetNumRegisteredNPCs(void)
+// Ignores registrable non-trainer NPCs, and special trainers like Wally and the gym leaders.
+static u32 GetNumRegisteredTrainers(void)
 {
     u32 i, count;
     for (i = 0, count = 0; i < REMATCH_SPECIAL_TRAINER_START; i++)
     {
-        if (FlagGet(FLAG_MATCH_CALL_REGISTERED + i))
+        if (FlagGet(TRAINER_REGISTERED_FLAGS_START + i))
             count++;
     }
 
@@ -1131,7 +1132,7 @@ static u32 GetActiveMatchCallTrainerId(u32 activeMatchCallId)
     u32 i;
     for (i = 0; i < REMATCH_SPECIAL_TRAINER_START; i++)
     {
-        if (FlagGet(FLAG_MATCH_CALL_REGISTERED + i))
+        if (FlagGet(TRAINER_REGISTERED_FLAGS_START + i))
         {
             if (!activeMatchCallId)
                 return gRematchTable[i].trainerIds[0];
@@ -1193,10 +1194,10 @@ static void StartMatchCall(void)
     CreateTask(ExecuteMatchCall, 1);
 }
 
-static const u16 sMatchCallWindow_Pal[] = INCBIN_U16("graphics/pokenav/match_call/window.gbapal");
-static const u8 sMatchCallWindow_Gfx[] = INCBIN_U8("graphics/pokenav/match_call/window.4bpp");
-static const u16 sPokenavIcon_Pal[] = INCBIN_U16("graphics/pokenav/match_call/nav_icon.gbapal");
-static const u32 sPokenavIcon_Gfx[] = INCBIN_U32("graphics/pokenav/match_call/nav_icon.4bpp.lz");
+static const u16 sMatchCallWindow_Pal[] = INCGFX_U16("graphics/pokenav/match_call/window.png", ".gbapal");
+static const u8 sMatchCallWindow_Gfx[] = INCGFX_U8("graphics/pokenav/match_call/window.png", ".4bpp");
+static const u16 sPokenavIcon_Pal[] = INCGFX_U16("graphics/pokenav/match_call/nav_icon.png", ".gbapal");
+static const u32 sPokenavIcon_Gfx[] = INCGFX_U32("graphics/pokenav/match_call/nav_icon.png", ".4bpp.lz");
 
 static const u8 sText_PokenavCallEllipsis[] = _("………………\p");
 
@@ -1367,7 +1368,7 @@ static bool32 MatchCall_EndCall(u8 taskId)
         if (!sMatchCallState.triggeredFromScript)
         {
             LoadMessageBoxAndBorderGfx();
-            playerObjectId = GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0);
+            playerObjectId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
             ObjectEventClearHeldMovementIfFinished(&gObjectEvents[playerObjectId]);
             ScriptMovement_UnfreezeObjectEvents();
             UnfreezeObjectEvents();
@@ -1462,7 +1463,7 @@ static bool32 TrainerIsEligibleForRematch(int matchCallId)
     return gSaveBlock1Ptr->trainerRematches[matchCallId] > 0;
 }
 
-static u16 GetRematchTrainerLocation(int matchCallId)
+static mapsec_u16_t GetRematchTrainerLocation(int matchCallId)
 {
     const struct MapHeader *mapHeader = Overworld_GetMapHeaderByGroupAndId(gRematchTable[matchCallId].mapGroup, gRematchTable[matchCallId].mapNum);
     return mapHeader->regionMapSectionId;
@@ -1696,45 +1697,51 @@ static void PopulateMapName(int matchCallId, u8 *destStr)
     GetMapName(destStr, GetRematchTrainerLocation(matchCallId), 0);
 }
 
+// Equivalent to ChooseWildMonIndex_Land
+// NUM_LAND_MONS_ENCOUNTER_SLOTS
 static u8 GetLandEncounterSlot(void)
 {
-    int rand = Random() % 100;
-    if (rand < 20)
+    int rand = Random() % ENCOUNTER_CHANCE_LAND_MONS_TOTAL;
+
+    if (rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_0)
         return 0;
-    else if (rand >= 20 && rand < 40)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_0 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_1)
         return 1;
-    else if (rand >= 40 && rand < 50)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_1 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_2)
         return 2;
-    else if (rand >= 50 && rand < 60)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_2 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_3)
         return 3;
-    else if (rand >= 60 && rand < 70)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_3 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_4)
         return 4;
-    else if (rand >= 70 && rand < 80)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_4 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_5)
         return 5;
-    else if (rand >= 80 && rand < 85)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_5 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_6)
         return 6;
-    else if (rand >= 85 && rand < 90)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_6 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_7)
         return 7;
-    else if (rand >= 90 && rand < 94)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_7 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_8)
         return 8;
-    else if (rand >= 94 && rand < 98)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_8 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_9)
         return 9;
-    else if (rand >= 98 && rand < 99)
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_9 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_10)
         return 10;
     else
         return 11;
 }
 
+// Equivalent to ChooseWildMonIndex_WaterRock
+// NUM_WATER_MONS_ENCOUNTER_SLOTS
 static u8 GetWaterEncounterSlot(void)
 {
-    int rand = Random() % 100;
-    if (rand < 60)
+    int rand = Random() % ENCOUNTER_CHANCE_WATER_MONS_TOTAL;
+
+    if (rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_0)
         return 0;
-    else if (rand >= 60 && rand < 90)
+    else if (rand >= ENCOUNTER_CHANCE_WATER_MONS_SLOT_0 && rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_1)
         return 1;
-    else if (rand >= 90 && rand < 95)
+    else if (rand >= ENCOUNTER_CHANCE_WATER_MONS_SLOT_1 && rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_2)
         return 2;
-    else if (rand >= 95 && rand < 99)
+    else if (rand >= ENCOUNTER_CHANCE_WATER_MONS_SLOT_2 && rand < ENCOUNTER_CHANCE_WATER_MONS_SLOT_3)
         return 3;
     else
         return 4;
@@ -1747,9 +1754,9 @@ static void PopulateSpeciesFromTrainerLocation(int matchCallId, u8 *destStr)
     u8 slot;
     int i = 0;
 
-    if (gWildMonHeaders[i].mapGroup != MAP_GROUP(UNDEFINED)) // ??? This check is nonsense.
+    if (gWildMonHeaders[i].mapGroup != MAP_GROUP(MAP_UNDEFINED)) // ??? This check is nonsense.
     {
-        while (gWildMonHeaders[i].mapGroup != MAP_GROUP(UNDEFINED))
+        while (gWildMonHeaders[i].mapGroup != MAP_GROUP(MAP_UNDEFINED))
         {
             if (gWildMonHeaders[i].mapGroup == gRematchTable[matchCallId].mapGroup
              && gWildMonHeaders[i].mapNum == gRematchTable[matchCallId].mapNum)
@@ -1758,7 +1765,7 @@ static void PopulateSpeciesFromTrainerLocation(int matchCallId, u8 *destStr)
             i++;
         }
 
-        if (gWildMonHeaders[i].mapGroup != MAP_GROUP(UNDEFINED))
+        if (gWildMonHeaders[i].mapGroup != MAP_GROUP(MAP_UNDEFINED))
         {
             numSpecies = 0;
             if (gWildMonHeaders[i].landMonsInfo)

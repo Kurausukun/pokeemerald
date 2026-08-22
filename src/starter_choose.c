@@ -26,7 +26,7 @@
 
 #define STARTER_MON_COUNT   3
 
-// Position of the sprite of the selected starter Pokemon
+// Position of the sprite of the selected starter Pokémon
 #define STARTER_PKMN_POS_X (DISPLAY_WIDTH / 2)
 #define STARTER_PKMN_POS_Y 64
 
@@ -51,14 +51,14 @@ static void SpriteCB_StarterPokemon(struct Sprite *sprite);
 
 static u16 sStarterLabelWindowId;
 
-const u16 gBirchBagGrass_Pal[] = INCBIN_U16("graphics/starter_choose/tiles.gbapal");
-static const u16 sPokeballSelection_Pal[] = INCBIN_U16("graphics/starter_choose/pokeball_selection.gbapal");
-static const u16 sStarterCircle_Pal[] = INCBIN_U16("graphics/starter_choose/starter_circle.gbapal");
-const u32 gBirchBagTilemap[] = INCBIN_U32("graphics/starter_choose/birch_bag.bin.lz");
-const u32 gBirchGrassTilemap[] = INCBIN_U32("graphics/starter_choose/birch_grass.bin.lz");
-const u32 gBirchBagGrass_Gfx[] = INCBIN_U32("graphics/starter_choose/tiles.4bpp.lz");
-const u32 gPokeballSelection_Gfx[] = INCBIN_U32("graphics/starter_choose/pokeball_selection.4bpp.lz");
-static const u32 sStarterCircle_Gfx[] = INCBIN_U32("graphics/starter_choose/starter_circle.4bpp.lz");
+const u16 gBirchBagGrass_Pal[] = INCGFX_U16("graphics/starter_choose/tiles.png", ".gbapal");
+static const u16 sPokeballSelection_Pal[] = INCGFX_U16("graphics/starter_choose/pokeball_selection.png", ".gbapal");
+static const u16 sStarterCircle_Pal[] = INCGFX_U16("graphics/starter_choose/starter_circle.png", ".gbapal");
+const u32 gBirchBagTilemap[] = INCGFX_U32("graphics/starter_choose/birch_bag.bin", ".lz");
+const u32 gBirchGrassTilemap[] = INCGFX_U32("graphics/starter_choose/birch_grass.bin", ".lz");
+const u32 gBirchBagGrass_Gfx[] = INCGFX_U32("graphics/starter_choose/tiles.png", ".4bpp.lz");
+const u32 gPokeballSelection_Gfx[] = INCGFX_U32("graphics/starter_choose/pokeball_selection.png", ".4bpp.lz");
+static const u32 sStarterCircle_Gfx[] = INCGFX_U32("graphics/starter_choose/starter_circle.png", ".4bpp.lz");
 
 static const struct WindowTemplate sWindowTemplates[] =
 {
@@ -248,18 +248,18 @@ static const union AnimCmd sAnim_StarterCircle[] =
     ANIMCMD_END,
 };
 
-static const union AnimCmd * const sAnims_Hand[] =
+static const union AnimCmd *const sAnims_Hand[] =
 {
     sAnim_Hand,
 };
 
-static const union AnimCmd * const sAnims_Pokeball[] =
+static const union AnimCmd *const sAnims_Pokeball[] =
 {
     sAnim_Pokeball_Still,
     sAnim_Pokeball_Moving,
 };
 
-static const union AnimCmd * const sAnims_StarterCircle[] =
+static const union AnimCmd *const sAnims_StarterCircle[] =
 {
     sAnim_StarterCircle,
 };
@@ -278,8 +278,8 @@ static const union AffineAnimCmd sAffineAnim_StarterCircle[] =
     AFFINEANIMCMD_END,
 };
 
-static const union AffineAnimCmd * const sAffineAnims_StarterPokemon = {sAffineAnim_StarterPokemon};
-static const union AffineAnimCmd * const sAffineAnims_StarterCircle[] = {sAffineAnim_StarterCircle};
+static const union AffineAnimCmd *const sAffineAnims_StarterPokemon = {sAffineAnim_StarterPokemon};
+static const union AffineAnimCmd *const sAffineAnims_StarterCircle[] = {sAffineAnim_StarterCircle};
 
 static const struct CompressedSpriteSheet sSpriteSheet_PokeballSelect[] =
 {
@@ -446,7 +446,7 @@ void CB2_ChooseStarter(void)
     spriteId = CreateSprite(&sSpriteTemplate_Hand, 120, 56, 2);
     gSprites[spriteId].data[0] = taskId;
 
-    // Create three Pokeball sprites
+    // Create three Poké Ball sprites
     spriteId = CreateSprite(&sSpriteTemplate_Pokeball, sPokeballCoords[0][0], sPokeballCoords[0][1], 2);
     gSprites[spriteId].sTaskId = taskId;
     gSprites[spriteId].sBallId = 0;
@@ -495,7 +495,7 @@ static void Task_HandleStarterChooseInput(u8 taskId)
         spriteId = CreateSprite(&sSpriteTemplate_StarterCircle, sPokeballCoords[selection][0], sPokeballCoords[selection][1], 1);
         gTasks[taskId].tCircleSpriteId = spriteId;
 
-        // Create Pokemon sprite
+        // Create Pokémon sprite
         spriteId = CreatePokemonFrontSprite(GetStarterPokemon(gTasks[taskId].tStarterSelection), sPokeballCoords[selection][0], sPokeballCoords[selection][1]);
         gSprites[spriteId].affineAnims = &sAffineAnims_StarterPokemon;
         gSprites[spriteId].callback = SpriteCB_StarterPokemon;
@@ -637,7 +637,7 @@ static u8 CreatePokemonFrontSprite(u16 species, u8 x, u8 y)
 
 static void SpriteCB_SelectionHand(struct Sprite *sprite)
 {
-    // Float up and down above selected pokeball
+    // Float up and down above selected Poké Ball
     sprite->x = sCursorCoords[gTasks[sprite->data[0]].tStarterSelection][0];
     sprite->y = sCursorCoords[gTasks[sprite->data[0]].tStarterSelection][1];
     sprite->y2 = Sin(sprite->data[1], 8);
@@ -646,7 +646,7 @@ static void SpriteCB_SelectionHand(struct Sprite *sprite)
 
 static void SpriteCB_Pokeball(struct Sprite *sprite)
 {
-    // Animate pokeball if currently selected
+    // Animate Poké Ball if currently selected
     if (gTasks[sprite->sTaskId].tStarterSelection == sprite->sBallId)
         StartSpriteAnimIfDifferent(sprite, 1);
     else

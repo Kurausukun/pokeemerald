@@ -131,11 +131,11 @@ static const struct BgTemplate sBgTemplates[4] = {
     },
 };
 
-static const u16 sGround_Tilemap[] = INCBIN_U16("graphics/cable_car/ground.bin.lz");
-static const u16 sTrees_Tilemap[] = INCBIN_U16("graphics/cable_car/trees.bin.lz");
-static const u16 sBgMountains_Tilemap[] = INCBIN_U16("graphics/cable_car/bg_mountains.bin.lz");
+static const u16 sGround_Tilemap[] = INCGFX_U16("graphics/cable_car/ground.bin", ".lz");
+static const u16 sTrees_Tilemap[] = INCGFX_U16("graphics/cable_car/trees.bin", ".lz");
+static const u16 sBgMountains_Tilemap[] = INCGFX_U16("graphics/cable_car/bg_mountains.bin", ".lz");
 static const u16 sPylonTop_Tilemap[] = INCBIN_U16("graphics/cable_car/pylon_top.bin");
-static const u16 sPylonPole_Tilemap[] = INCBIN_U16("graphics/cable_car/pylon_pole.bin.lz");
+static const u16 sPylonPole_Tilemap[] = INCGFX_U16("graphics/cable_car/pylon_pole.bin", ".lz");
 
 static const struct CompressedSpriteSheet sSpriteSheets[] = {
     { gCableCar_Gfx,      0x800, TAG_CABLE_CAR },
@@ -237,12 +237,11 @@ void CableCar(void)
 {
     LockPlayerFieldControls();
     CreateTask(Task_LoadCableCar, 1);
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB(0, 0, 0));
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
 }
 
 static void CB2_LoadCableCar(void)
 {
-    u16 imebak;
     u8 i = 0;
     u32 sizeOut = 0;
 
@@ -341,16 +340,13 @@ static void CB2_LoadCableCar(void)
         gMain.state++;
         break;
     case 8:
-        BeginNormalPaletteFade(PALETTES_ALL, 3, 16, 0, RGB(0, 0, 0));
+        BeginNormalPaletteFade(PALETTES_ALL, 3, 16, 0, RGB_BLACK);
         FadeInNewBGM(MUS_CABLE_CAR, 1);
         SetBgRegs(TRUE);
         gMain.state++;
         break;
     case 9:
-        imebak = REG_IME;
-        REG_IME = 0;
-        REG_IE |= INTR_FLAG_VBLANK;
-        REG_IME = imebak;
+        IntrEnable(INTR_FLAG_VBLANK);
         SetVBlankCallback(VBlankCB_CableCar);
         SetMainCallback2(CB2_CableCar);
         CreateTask(Task_CableCar, 0);
@@ -459,7 +455,7 @@ static void Task_CableCar(u8 taskId)
         if (sCableCar->timer == 570)
         {
             sCableCar->state = 3;
-            BeginNormalPaletteFade(PALETTES_ALL, 3, 0, 16, RGB(0, 0, 0));
+            BeginNormalPaletteFade(PALETTES_ALL, 3, 0, 16, RGB_BLACK);
             FadeOutBGM(4);
         }
         break;
@@ -880,8 +876,12 @@ static void CreateCableCarSprites(void)
     // 1/64 chance for an NPC to appear hiking on the ground below the Cable Car
     if ((rval % 64) == 0)
     {
-        // Unclear if this was intentional, but the - 1 in the below ARRAY_COUNT means the Zigzagoon is never used
+        // BUGFIX: The - 1 in the below ARRAY_COUNT means the Zigzagoon is never used
+#ifdef BUGFIX
+        spriteId = CreateObjectGraphicsSprite(hikerGraphicsIds[rval % ARRAY_COUNT(hikerGraphicsIds)], hikerCallbacks[GOING_DOWN], hikerCoords[GOING_DOWN][0], hikerCoords[GOING_DOWN][1], 106);
+#else
         spriteId = CreateObjectGraphicsSprite(hikerGraphicsIds[rval % (ARRAY_COUNT(hikerGraphicsIds) - 1)], hikerCallbacks[GOING_DOWN], hikerCoords[GOING_DOWN][0], hikerCoords[GOING_DOWN][1], 106);
+#endif
         if (spriteId != MAX_SPRITES)
         {
             gSprites[spriteId].oam.priority = 2;

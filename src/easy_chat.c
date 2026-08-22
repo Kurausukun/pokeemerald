@@ -230,7 +230,7 @@ enum {
     PALTAG_TRIANGLE_CURSOR,
     PALTAG_RECTANGLE_CURSOR,
     PALTAG_MISC_UI,
-    PALTAG_RS_INTERVIEW_FRAME,  
+    PALTAG_RS_INTERVIEW_FRAME,
 };
 
 enum {
@@ -240,7 +240,7 @@ enum {
     GFXTAG_START_SELECT_BUTTONS,
     GFXTAG_MODE_WINDOW,
     GFXTAG_RS_INTERVIEW_FRAME,
-    GFXTAG_BUTTON_WINDOW,  
+    GFXTAG_BUTTON_WINDOW,
 };
 
 
@@ -705,20 +705,20 @@ static const u16 sBerryMasterWifePhrases[][2] = {
     [PHRASE_SUPER_HUSTLE - 1]        = {EC_WORD_SUPER, EC_WORD_HUSTLE},
 };
 
-static const u16 sTriangleCursor_Pal[] = INCBIN_U16("graphics/easy_chat/triangle_cursor.gbapal");
-static const u32 sTriangleCursor_Gfx[] = INCBIN_U32("graphics/easy_chat/triangle_cursor.4bpp");
-static const u32 sScrollIndicator_Gfx[] = INCBIN_U32("graphics/easy_chat/scroll_indicator.4bpp");
-static const u32 sStartSelectButtons_Gfx[] = INCBIN_U32("graphics/easy_chat/start_select_buttons.4bpp");
+static const u16 sTriangleCursor_Pal[] = INCGFX_U16("graphics/easy_chat/triangle_cursor.png", ".gbapal");
+static const u32 sTriangleCursor_Gfx[] = INCGFX_U32("graphics/easy_chat/triangle_cursor.png", ".4bpp");
+static const u32 sScrollIndicator_Gfx[] = INCGFX_U32("graphics/easy_chat/scroll_indicator.png", ".4bpp");
+static const u32 sStartSelectButtons_Gfx[] = INCGFX_U32("graphics/easy_chat/start_select_buttons.png", ".4bpp");
 // In Ruby/Sapphire Easy Chat screens had a black background, and when the player & interviewer were present
 // on screen the interview_frame gfx was shown behind them.
 // In Emerald all Easy Chat screens have a filled background, so these gfx go unused
-static const u16 sRSInterviewFrame_Pal[] = INCBIN_U16("graphics/easy_chat/interview_frame.gbapal");
-static const u32 sRSInterviewFrame_Gfx[] = INCBIN_U32("graphics/easy_chat/interview_frame.4bpp.lz");
-static const u16 sTextInputFrameOrange_Pal[] = INCBIN_U16("graphics/easy_chat/text_input_frame_orange.gbapal");
-static const u16 sTextInputFrameGreen_Pal[] = INCBIN_U16("graphics/easy_chat/text_input_frame_green.gbapal");
-static const u32 sTextInputFrame_Gfx[] = INCBIN_U32("graphics/easy_chat/text_input_frame.4bpp.lz");
-static const u16 sTitleText_Pal[] = INCBIN_U16("graphics/easy_chat/title_text.gbapal");
-static const u16 sText_Pal[] = INCBIN_U16("graphics/easy_chat/text.gbapal");
+static const u16 sRSInterviewFrame_Pal[] = INCGFX_U16("graphics/easy_chat/interview_frame.png", ".gbapal");
+static const u32 sRSInterviewFrame_Gfx[] = INCGFX_U32("graphics/easy_chat/interview_frame.png", ".4bpp.lz");
+static const u16 sTextInputFrameOrange_Pal[] = INCGFX_U16("graphics/easy_chat/text_input_frame_orange.pal", ".gbapal");
+static const u16 sTextInputFrameGreen_Pal[] = INCGFX_U16("graphics/easy_chat/text_input_frame_green.pal", ".gbapal");
+static const u32 sTextInputFrame_Gfx[] = INCGFX_U32("graphics/easy_chat/text_input_frame.png", ".4bpp.lz");
+static const u16 sTitleText_Pal[] = INCGFX_U16("graphics/easy_chat/title_text.pal", ".gbapal");
+static const u16 sText_Pal[] = INCGFX_U16("graphics/easy_chat/text.pal", ".gbapal");
 
 static const struct EasyChatPhraseFrameDimensions sPhraseFrameDimensions[] = {
     [FRAMEID_GENERAL_2x2] = {
@@ -1478,10 +1478,10 @@ void ShowEasyChatScreen(void)
         break;
     case EASY_CHAT_TYPE_BARD_SONG:
         bard = &gSaveBlock1Ptr->oldMan.bard;
-        for (i = 0; i < BARD_SONG_LENGTH; i ++)
-            bard->temporaryLyrics[i] = bard->songLyrics[i];
+        for (i = 0; i < NUM_BARD_SONG_WORDS; i ++)
+            bard->newSongLyrics[i] = bard->songLyrics[i];
 
-        words = bard->temporaryLyrics;
+        words = bard->newSongLyrics;
         break;
     case EASY_CHAT_TYPE_INTERVIEW:
         words = gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].bravoTrainer.words;
@@ -2758,7 +2758,7 @@ static void GetEasyChatConfirmDeletionText(const u8 **str1, const u8 **str2)
     *str2 = gText_BeDeletedThatOkay;
 }
 
-static void GetKeyboardCursorColAndRow(u8 *column, u8 *row)
+static void GetKeyboardCursorColAndRow(s8 *column, s8 *row)
 {
     *column = sEasyChatScreen->keyboardColumn;
     *row = sEasyChatScreen->keyboardRow;
@@ -2774,7 +2774,7 @@ static u8 GetKeyboardScrollOffset(void)
     return sEasyChatScreen->keyboardScrollOffset;
 }
 
-static void GetWordSelectColAndRow(u8 *column, u8 *row)
+static void GetWordSelectColAndRow(s8 *column, s8 *row)
 {
     *column = sEasyChatScreen->wordSelectColumn;
     *row = sEasyChatScreen->wordSelectRow;
@@ -2790,7 +2790,7 @@ static u8 GetWordSelectLastRow(void)
     return sEasyChatScreen->wordSelectLastRow;
 }
 
-static u8 UnusedDummy(void)
+static u8 UNUSED UnusedDummy(void)
 {
     return FALSE;
 }
@@ -3930,12 +3930,12 @@ static void LoadEasyChatPalettes(void)
 {
     ResetPaletteFade();
     LoadPalette(gEasyChatMode_Pal, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-    LoadPalette(sTextInputFrameOrange_Pal, BG_PLTT_ID(1), PLTT_SIZE_4BPP);
-    LoadPalette(sTextInputFrameGreen_Pal, BG_PLTT_ID(4), PLTT_SIZE_4BPP);
-    LoadPalette(sTitleText_Pal, BG_PLTT_ID(10), PLTT_SIZEOF(4));
-    LoadPalette(sText_Pal, BG_PLTT_ID(11), PLTT_SIZEOF(6));
-    LoadPalette(sText_Pal, BG_PLTT_ID(15), PLTT_SIZEOF(6));
-    LoadPalette(sText_Pal, BG_PLTT_ID(3), PLTT_SIZEOF(6));
+    LoadPalette(sTextInputFrameOrange_Pal, BG_PLTT_ID(1), sizeof(sTextInputFrameOrange_Pal));
+    LoadPalette(sTextInputFrameGreen_Pal, BG_PLTT_ID(4), sizeof(sTextInputFrameGreen_Pal));
+    LoadPalette(sTitleText_Pal, BG_PLTT_ID(10), sizeof(sTitleText_Pal));
+    LoadPalette(sText_Pal, BG_PLTT_ID(11), sizeof(sText_Pal));
+    LoadPalette(sText_Pal, BG_PLTT_ID(15), sizeof(sText_Pal));
+    LoadPalette(sText_Pal, BG_PLTT_ID(3), sizeof(sText_Pal));
 }
 
 static void PrintTitle(void)
@@ -3952,7 +3952,7 @@ static void PrintTitle(void)
     CopyWindowToVram(WIN_TITLE, COPYWIN_FULL);
 }
 
-static void PrintEasyChatText(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+static void PrintEasyChatText(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, TextPrinterCallback callback)
 {
     AddTextPrinterParameterized(windowId, fontId, str, x, y, speed, callback);
 }
@@ -5264,7 +5264,7 @@ u8 *ConvertEasyChatWordsToString(u8 *dest, const u16 *src, u16 columns, u16 rows
     return dest;
 }
 
-static u8 *UnusedConvertEasyChatWordsToString(u8 *dest, const u16 *src, u16 columns, u16 rows)
+static u8 UNUSED *UnusedConvertEasyChatWordsToString(u8 *dest, const u16 *src, u16 columns, u16 rows)
 {
     u16 i, j, k;
     u16 numColumns;
@@ -5503,8 +5503,7 @@ u16 UnlockRandomTrendySaying(void)
     return EC_EMPTY_WORD;
 }
 
-// Unused
-static u16 GetRandomUnlockedTrendySaying(void)
+static u16 UNUSED GetRandomUnlockedTrendySaying(void)
 {
     u16 i;
     u16 n = GetNumTrendySayingsUnlocked();
@@ -5650,8 +5649,7 @@ static u8 GetUnlockedEasyChatGroupId(u8 index)
         return sWordData->unlockedGroupIds[index];
 }
 
-// Unused
-static u8 *BufferEasyChatWordGroupName(u8 *dest, u8 groupId, u16 totalChars)
+static u8 UNUSED *BufferEasyChatWordGroupName(u8 *dest, u8 groupId, u16 totalChars)
 {
     u16 i;
     u8 *str = StringCopy(dest, sEasyChatGroupNamePointers[groupId]);

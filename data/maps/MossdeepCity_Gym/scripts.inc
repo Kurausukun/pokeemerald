@@ -52,7 +52,7 @@ MossdeepCity_Gym_EventScript_TateAndLiza::
 	trainerbattle_double TRAINER_TATE_AND_LIZA_1, MossdeepCity_Gym_Text_TateAndLizaIntro, MossdeepCity_Gym_Text_TateAndLizaDefeat, MossdeepCity_Gym_Text_TateAndLizaNeedTwoMons, MossdeepCity_Gym_EventScript_TateAndLizaDefeated, NO_MUSIC
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, MossdeepCity_Gym_EventScript_TateAndLizaRematch
-	goto_if_unset FLAG_RECEIVED_TM04, MossdeepCity_Gym_EventScript_GiveCalmMind2
+	goto_if_unset FLAG_RECEIVED_TM_CALM_MIND, MossdeepCity_Gym_EventScript_GiveCalmMind2
 	msgbox MossdeepCity_Gym_Text_TateAndLizaPostBattle, MSGBOX_DEFAULT
 	release
 	end
@@ -90,18 +90,18 @@ MossdeepCity_Gym_EventScript_TateAndLizaDefeated::
 	end
 
 MossdeepCity_Gym_EventScript_GiveCalmMind2::
-	giveitem ITEM_TM04
+	giveitem ITEM_TM_CALM_MIND
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
 	msgbox MossdeepCity_Gym_Text_ExplainCalmMind, MSGBOX_DEFAULT
-	setflag FLAG_RECEIVED_TM04
+	setflag FLAG_RECEIVED_TM_CALM_MIND
 	release
 	end
 
 MossdeepCity_Gym_EventScript_GiveCalmMind::
-	giveitem ITEM_TM04
+	giveitem ITEM_TM_CALM_MIND
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_BagIsFull
 	msgbox MossdeepCity_Gym_Text_ExplainCalmMind, MSGBOX_DEFAULT
-	setflag FLAG_RECEIVED_TM04
+	setflag FLAG_RECEIVED_TM_CALM_MIND
 	return
 
 MossdeepCity_Gym_EventScript_TateAndLizaRematch::
@@ -114,7 +114,7 @@ MossdeepCity_Gym_EventScript_Switch1::
 	lockall
 	goto_if_set FLAG_MOSSDEEP_GYM_SWITCH_1, MossdeepCity_Gym_EventScript_ClearSwitch1
 	setflag FLAG_MOSSDEEP_GYM_SWITCH_1
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 5, 5, METATILE_RSMossdeepGym_RedArrow_Right, FALSE
 	setmetatile 2, 7, METATILE_RSMossdeepGym_Switch_Down, TRUE
@@ -129,7 +129,7 @@ MossdeepCity_Gym_EventScript_DrawMapAfterSwitchUsed::
 
 MossdeepCity_Gym_EventScript_ClearSwitch1::
 	clearflag FLAG_MOSSDEEP_GYM_SWITCH_1
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 5, 5, METATILE_RSMossdeepGym_RedArrow_Left, FALSE
 	setmetatile 2, 7, METATILE_RSMossdeepGym_Switch_Up, TRUE
@@ -140,7 +140,7 @@ MossdeepCity_Gym_EventScript_Switch2::
 	lockall
 	goto_if_set FLAG_MOSSDEEP_GYM_SWITCH_2, MossdeepCity_Gym_EventScript_ClearSwitch2
 	setflag FLAG_MOSSDEEP_GYM_SWITCH_2
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 8, 14, METATILE_RSMossdeepGym_RedArrow_Right, FALSE
 	setmetatile 8, 10, METATILE_RSMossdeepGym_Switch_Down, TRUE
@@ -149,7 +149,7 @@ MossdeepCity_Gym_EventScript_Switch2::
 
 MossdeepCity_Gym_EventScript_ClearSwitch2::
 	clearflag FLAG_MOSSDEEP_GYM_SWITCH_2
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 8, 14, METATILE_RSMossdeepGym_RedArrow_Down, FALSE
 	setmetatile 8, 10, METATILE_RSMossdeepGym_Switch_Up, TRUE
@@ -160,7 +160,7 @@ MossdeepCity_Gym_EventScript_Switch3::
 	lockall
 	goto_if_set FLAG_MOSSDEEP_GYM_SWITCH_3, MossdeepCity_Gym_EventScript_ClearSwitch3
 	setflag FLAG_MOSSDEEP_GYM_SWITCH_3
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 15, 17, METATILE_RSMossdeepGym_RedArrow_Left, FALSE
 	setmetatile 17, 15, METATILE_RSMossdeepGym_Switch_Down, TRUE
@@ -169,7 +169,7 @@ MossdeepCity_Gym_EventScript_Switch3::
 
 MossdeepCity_Gym_EventScript_ClearSwitch3::
 	clearflag FLAG_MOSSDEEP_GYM_SWITCH_3
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 15, 17, METATILE_RSMossdeepGym_RedArrow_Right, FALSE
 	setmetatile 17, 15, METATILE_RSMossdeepGym_Switch_Up, TRUE
@@ -180,7 +180,7 @@ MossdeepCity_Gym_EventScript_Switch4::
 	lockall
 	goto_if_set FLAG_MOSSDEEP_GYM_SWITCH_4, MossdeepCity_Gym_EventScript_ClearSwitch4
 	setflag FLAG_MOSSDEEP_GYM_SWITCH_4
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 1, 23, METATILE_RSMossdeepGym_RedArrow_Up, FALSE
 	setmetatile 5, 24, METATILE_RSMossdeepGym_Switch_Down, TRUE
@@ -189,7 +189,7 @@ MossdeepCity_Gym_EventScript_Switch4::
 
 MossdeepCity_Gym_EventScript_ClearSwitch4::
 	clearflag FLAG_MOSSDEEP_GYM_SWITCH_4
-	applymovement OBJ_EVENT_ID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
+	applymovement LOCALID_PLAYER, MossdeepCity_Gym_Movement_WaitAfterSwitchUse
 	waitmovement 0
 	setmetatile 1, 23, METATILE_RSMossdeepGym_RedArrow_Right, FALSE
 	setmetatile 5, 24, METATILE_RSMossdeepGym_Switch_Up, TRUE

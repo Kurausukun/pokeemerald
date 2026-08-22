@@ -37,39 +37,39 @@ struct IntroCreditsSpriteMetadata
     u16 xOff;
 };
 
-static const u16 sGrass_Pal[]             = INCBIN_U16("graphics/intro/scene_2/grass.gbapal");
-static const u16 sGrassSunset_Pal[]       = INCBIN_U16("graphics/intro/scene_2/grass_sunset.gbapal");
-static const u16 sGrassNight_Pal[]        = INCBIN_U16("graphics/intro/scene_2/grass_night.gbapal");
-static const u32 sGrass_Gfx[]             = INCBIN_U32("graphics/intro/scene_2/grass.4bpp.lz");
-static const u32 sGrass_Tilemap[]         = INCBIN_U32("graphics/intro/scene_2/grass_map.bin.lz");
-static const u16 sCloudsBg_Pal[]          = INCBIN_U16("graphics/intro/scene_2/clouds_bg.gbapal");
-static const u16 sCloudsBgSunset_Pal[]    = INCBIN_U16("graphics/intro/scene_2/clouds_bg_sunset.gbapal");
-static const u32 sCloudsBg_Gfx[]          = INCBIN_U32("graphics/intro/scene_2/clouds_bg.4bpp.lz");
-static const u32 sCloudsBg_Tilemap[]      = INCBIN_U32("graphics/intro/scene_2/clouds_bg_map.bin.lz");
-static const u16 sClouds_Pal[]            = INCBIN_U16("graphics/intro/scene_2/clouds.gbapal");
-static const u16 sCloudsSunset_Pal[]      = INCBIN_U16("graphics/intro/scene_2/clouds_sunset.gbapal");
-static const u32 sClouds_Gfx[]            = INCBIN_U32("graphics/intro/scene_2/clouds.4bpp.lz");
-static const u16 sTrees_Pal[]             = INCBIN_U16("graphics/intro/scene_2/trees.gbapal");
-static const u16 sTreesSunset_Pal[]       = INCBIN_U16("graphics/intro/scene_2/trees_sunset.gbapal");
-static const u32 sTrees_Gfx[]             = INCBIN_U32("graphics/intro/scene_2/trees.4bpp.lz");
-static const u32 sTrees_Tilemap[]         = INCBIN_U32("graphics/intro/scene_2/trees_map.bin.lz");
-static const u16 sTreesSmall_Pal[]        = INCBIN_U16("graphics/intro/scene_2/trees_small.gbapal");
-static const u32 sTreesSmall_Gfx[]        = INCBIN_U32("graphics/intro/scene_2/trees_small.4bpp.lz");
-static const u16 sHouses_Pal[]            = INCBIN_U16("graphics/intro/scene_2/houses.gbapal");
-static const u32 sHouses_Gfx[]            = INCBIN_U32("graphics/intro/scene_2/houses.4bpp.lz");
-static const u16 sHouseSilhouette_Pal[]   = INCBIN_U16("graphics/intro/scene_2/house_silhouette.gbapal");
-static const u32 sHouses_Tilemap[]        = INCBIN_U32("graphics/intro/scene_2/houses_map.bin.lz");
-static const u32 sHouseSilhouette_Gfx[]   = INCBIN_U32("graphics/intro/scene_2/house_silhouette.4bpp.lz");
-static const u16 sBrendanCredits_Pal[]    = INCBIN_U16("graphics/intro/scene_2/brendan_credits.gbapal");
-static const u32 sBrendanCredits_Gfx[]    = INCBIN_U32("graphics/intro/scene_2/brendan_credits.4bpp.lz");
-static const u16 sMayCredits_Pal[]        = INCBIN_U16("graphics/intro/scene_2/may_credits.gbapal");
+static const u16 sGrass_Pal[]             = INCGFX_U16("graphics/intro/scene_2/grass.png", ".gbapal");
+static const u16 sGrassSunset_Pal[]       = INCGFX_U16("graphics/intro/scene_2/grass_sunset.pal", ".gbapal");
+static const u16 sGrassNight_Pal[]        = INCGFX_U16("graphics/intro/scene_2/grass_night.pal", ".gbapal");
+static const u32 sGrass_Gfx[]             = INCGFX_U32("graphics/intro/scene_2/grass.png", ".4bpp.lz");
+static const u32 sGrass_Tilemap[]         = INCGFX_U32("graphics/intro/scene_2/grass_map.bin", ".lz");
+static const u16 sCloudsBg_Pal[]          = INCGFX_U16("graphics/intro/scene_2/clouds_bg.pal", ".gbapal");
+static const u16 sCloudsBgSunset_Pal[]    = INCGFX_U16("graphics/intro/scene_2/clouds_bg_sunset.pal", ".gbapal");
+static const u32 sCloudsBg_Gfx[]          = INCGFX_U32("graphics/intro/scene_2/clouds_bg.png", ".4bpp.lz");
+static const u32 sCloudsBg_Tilemap[]      = INCGFX_U32("graphics/intro/scene_2/clouds_bg_map.bin", ".lz");
+static const u16 sClouds_Pal[]            = INCGFX_U16("graphics/intro/scene_2/clouds.png", ".gbapal");
+static const u16 sCloudsSunset_Pal[]      = INCGFX_U16("graphics/intro/scene_2/clouds_sunset.pal", ".gbapal");
+static const u32 sClouds_Gfx[]            = INCGFX_U32("graphics/intro/scene_2/clouds.png", ".4bpp.lz");
+static const u16 sTrees_Pal[]             = INCGFX_U16("graphics/intro/scene_2/trees.png", ".gbapal");
+static const u16 sTreesSunset_Pal[]       = INCGFX_U16("graphics/intro/scene_2/trees_sunset.pal", ".gbapal");
+static const u32 sTrees_Gfx[]             = INCGFX_U32("graphics/intro/scene_2/trees.png", ".4bpp.lz");
+static const u32 sTrees_Tilemap[]         = INCGFX_U32("graphics/intro/scene_2/trees_map.bin", ".lz");
+static const u16 sTreesSmall_Pal[]        = INCGFX_U16("graphics/intro/scene_2/trees_small.png", ".gbapal");
+static const u32 sTreesSmall_Gfx[]        = INCGFX_U32("graphics/intro/scene_2/trees_small.png", ".4bpp.lz");
+static const u16 sHouses_Pal[]            = INCGFX_U16("graphics/intro/scene_2/houses.pal", ".gbapal");
+static const u32 sHouses_Gfx[]            = INCGFX_U32("graphics/intro/scene_2/houses.png", ".4bpp.lz");
+static const u16 sHouseSilhouette_Pal[]   = INCGFX_U16("graphics/intro/scene_2/house_silhouette.png", ".gbapal");
+static const u32 sHouses_Tilemap[]        = INCGFX_U32("graphics/intro/scene_2/houses_map.bin", ".lz");
+static const u32 sHouseSilhouette_Gfx[]   = INCGFX_U32("graphics/intro/scene_2/house_silhouette.png", ".4bpp.lz");
+static const u16 sBrendanCredits_Pal[]    = INCGFX_U16("graphics/intro/scene_2/brendan_credits.png", ".gbapal");
+static const u32 sBrendanCredits_Gfx[]    = INCGFX_U32("graphics/intro/scene_2/brendan_credits.png", ".4bpp.lz");
+static const u16 sMayCredits_Pal[]        = INCGFX_U16("graphics/intro/scene_2/may_credits.png", ".gbapal");
 static const u16 sUnused[0xF0]            = {0};
-static const u32 sMayCredits_Gfx[]        = INCBIN_U32("graphics/intro/scene_2/may_credits.4bpp.lz");
-static const u32 sBicycle_Gfx[]           = INCBIN_U32("graphics/intro/scene_2/bicycle.4bpp.lz");
-static const u16 sLatios_Pal[]            = INCBIN_U16("graphics/intro/scene_2/latios.gbapal");
-static const u32 sLatios_Gfx[]            = INCBIN_U32("graphics/intro/scene_2/latios.4bpp.lz");
-static const u16 sLatias_Pal[]            = INCBIN_U16("graphics/intro/scene_2/latias.gbapal");
-static const u32 sLatias_Gfx[]            = INCBIN_U32("graphics/intro/scene_2/latias.4bpp.lz");
+static const u32 sMayCredits_Gfx[]        = INCGFX_U32("graphics/intro/scene_2/may_credits.png", ".4bpp.lz");
+static const u32 sBicycle_Gfx[]           = INCGFX_U32("graphics/intro/scene_2/bicycle.png", ".4bpp.lz");
+static const u16 sLatios_Pal[]            = INCGFX_U16("graphics/intro/scene_2/latios.png", ".gbapal");
+static const u32 sLatios_Gfx[]            = INCGFX_U32("graphics/intro/scene_2/latios.png", ".4bpp.lz");
+static const u16 sLatias_Pal[]            = INCGFX_U16("graphics/intro/scene_2/latias.png", ".gbapal");
+static const u32 sLatias_Gfx[]            = INCGFX_U32("graphics/intro/scene_2/latias.png", ".4bpp.lz");
 
 static void SpriteCB_MovingScenery(struct Sprite *sprite);
 static void SpriteCB_Player(struct Sprite *sprite);
@@ -998,13 +998,13 @@ void CycleSceneryPalette(u8 mode)
                 break;
             if (gMain.vblankCounter1 & 4)
             {
-                x = gPlttBufferUnfaded[9];
-                y = gPlttBufferUnfaded[10];
+                x = gPlttBufferUnfaded[BG_PLTT_ID(0) + 9];
+                y = gPlttBufferUnfaded[BG_PLTT_ID(0) + 10];
             }
             else
             {
-                x = gPlttBufferUnfaded[10];
-                y = gPlttBufferUnfaded[9];
+                x = gPlttBufferUnfaded[BG_PLTT_ID(0) + 10];
+                y = gPlttBufferUnfaded[BG_PLTT_ID(0) + 9];
             }
             LoadPalette(&x, BG_PLTT_ID(0) + 9, sizeof(x));
             LoadPalette(&y, BG_PLTT_ID(0) + 10, sizeof(y));
@@ -1148,7 +1148,7 @@ static void SpriteCB_FlygonRightHalf(struct Sprite *sprite)
 }
 
 // In RS these were for Latios/Latias. In Emerald both are replaced with Flygon and now only 1 is used
-static u8 CreateIntroFlygonSprite_Unused(s16 x, s16 y)
+static u8 UNUSED CreateIntroFlygonSprite_Unused(s16 x, s16 y)
 {
     u8 leftSpriteId = CreateSprite(&sSpriteTemplate_FlygonLatios, x - 32, y, 5);
     u8 rightSpriteId = CreateSprite(&sSpriteTemplate_FlygonLatios, x + 32, y, 6);

@@ -3,6 +3,7 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "fieldmap.h"
+#include "rotating_gate.h"
 #include "sound.h"
 #include "sprite.h"
 #include "constants/songs.h"
@@ -17,12 +18,10 @@
 #define GATE_ROT_ACW(arm, longArm) GATE_ROT(ROTATE_ANTICLOCKWISE, arm, longArm)
 #define GATE_ROT_NONE 255
 
-// static functions
 static void SpriteCallback_RotatingGate(struct Sprite *sprite);
 static u8 RotatingGate_CreateGate(u8 gateId, s16 deltaX, s16 deltaY);
 static void RotatingGate_HideGatesOutsideViewport(struct Sprite *sprite);
 
-// enums
 enum
 {
     /*
@@ -180,7 +179,6 @@ enum
     PUZZLE_ROUTE110_TRICK_HOUSE_PUZZLE6,
 };
 
-// structure
 struct RotatingGatePuzzle
 {
     s16 x;
@@ -189,7 +187,6 @@ struct RotatingGatePuzzle
     u8 orientation;
 };
 
-// .rodata
 // Fortree
 static const struct RotatingGatePuzzle sRotatingGate_FortreePuzzleConfig[] =
 {
@@ -219,14 +216,23 @@ static const struct RotatingGatePuzzle sRotatingGate_TrickHousePuzzleConfig[] =
     {10, 19, GATE_SHAPE_L3, GATE_ORIENTATION_180},
 };
 
-static const u8 sRotatingGateTiles_1[] = INCBIN_U8("graphics/rotating_gates/l1.4bpp");
-static const u8 sRotatingGateTiles_2[] = INCBIN_U8("graphics/rotating_gates/l2.4bpp");
-static const u8 sRotatingGateTiles_3[] = INCBIN_U8("graphics/rotating_gates/l3.4bpp");
-static const u8 sRotatingGateTiles_4[] = INCBIN_U8("graphics/rotating_gates/l4.4bpp");
-static const u8 sRotatingGateTiles_5[] = INCBIN_U8("graphics/rotating_gates/t1.4bpp");
-static const u8 sRotatingGateTiles_6[] = INCBIN_U8("graphics/rotating_gates/t2.4bpp");
-static const u8 sRotatingGateTiles_7[] = INCBIN_U8("graphics/rotating_gates/t3.4bpp");
-static const u8 sRotatingGateTiles_8[] = INCBIN_U8("graphics/rotating_gates/t4.4bpp");
+#define MAX_GATES max(ARRAY_COUNT(sRotatingGate_FortreePuzzleConfig), \
+                      ARRAY_COUNT(sRotatingGate_TrickHousePuzzleConfig))
+
+// Rotating gate puzzles use the temp vars as a byte array to track the orientation of each gate.
+// The assert below makes sure the existing puzzles don't have too many gates, and aren't quietly
+// using vars outside the temp vars. Aside from potentially reading/writing vars being used for
+// something else, using vars that persist when exiting the map could softlock the puzzle.
+STATIC_ASSERT(MAX_GATES <= (2 * NUM_TEMP_VARS), TooManyRotatingGates)
+
+static const u8 sRotatingGateTiles_1[] = INCGFX_U8("graphics/rotating_gates/l1.png", ".4bpp");
+static const u8 sRotatingGateTiles_2[] = INCGFX_U8("graphics/rotating_gates/l2.png", ".4bpp");
+static const u8 sRotatingGateTiles_3[] = INCGFX_U8("graphics/rotating_gates/l3.png", ".4bpp");
+static const u8 sRotatingGateTiles_4[] = INCGFX_U8("graphics/rotating_gates/l4.png", ".4bpp");
+static const u8 sRotatingGateTiles_5[] = INCGFX_U8("graphics/rotating_gates/t1.png", ".4bpp");
+static const u8 sRotatingGateTiles_6[] = INCGFX_U8("graphics/rotating_gates/t2.png", ".4bpp");
+static const u8 sRotatingGateTiles_7[] = INCGFX_U8("graphics/rotating_gates/t3.png", ".4bpp");
+static const u8 sRotatingGateTiles_8[] = INCGFX_U8("graphics/rotating_gates/t4.png", ".4bpp");
 
 static const struct OamData sOamData_RotatingGateLarge =
 {
@@ -618,14 +624,14 @@ static EWRAM_DATA u8 sRotatingGate_PuzzleCount = 0;
 
 static s32 GetCurrentMapRotatingGatePuzzleType(void)
 {
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(FORTREE_CITY_GYM) &&
-        gSaveBlock1Ptr->location.mapNum == MAP_NUM(FORTREE_CITY_GYM))
+    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_FORTREE_CITY_GYM) &&
+        gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_FORTREE_CITY_GYM))
     {
         return PUZZLE_FORTREE_CITY_GYM;
     }
 
-    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE110_TRICK_HOUSE_PUZZLE6) &&
-        gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE110_TRICK_HOUSE_PUZZLE6))
+    if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAP_ROUTE110_TRICK_HOUSE_PUZZLE6) &&
+        gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAP_ROUTE110_TRICK_HOUSE_PUZZLE6))
     {
         return PUZZLE_ROUTE110_TRICK_HOUSE_PUZZLE6;
     }
@@ -639,9 +645,7 @@ static void RotatingGate_ResetAllGateOrientations(void)
     u8 *ptr = (u8 *)GetVarPointer(VAR_TEMP_0);
 
     for (i = 0; i < sRotatingGate_PuzzleCount; i++)
-    {
         ptr[i] = sRotatingGate_PuzzleConfig[i].orientation;
-    }
 }
 
 static s32 RotatingGate_GetGateOrientation(u8 gateId)
@@ -935,7 +939,7 @@ void RotatingGate_InitPuzzle(void)
     }
 }
 
-void RotatingGatePuzzleCameraUpdate(u16 deltaX, u16 deltaY)
+void RotatingGatePuzzleCameraUpdate(s16 deltaX, s16 deltaY)
 {
     if (GetCurrentMapRotatingGatePuzzleType())
     {
@@ -954,7 +958,7 @@ void RotatingGate_InitPuzzleAndGraphics(void)
     }
 }
 
-bool8 CheckForRotatingGatePuzzleCollision(u8 direction, s16 x, s16 y)
+bool32 CheckForRotatingGatePuzzleCollision(u8 direction, s16 x, s16 y)
 {
     s32 i;
 
@@ -992,7 +996,7 @@ bool8 CheckForRotatingGatePuzzleCollision(u8 direction, s16 x, s16 y)
     return FALSE;
 }
 
-bool8 CheckForRotatingGatePuzzleCollisionWithoutAnimation(u8 direction, s16 x, s16 y)
+bool32 CheckForRotatingGatePuzzleCollisionWithoutAnimation(u8 direction, s16 x, s16 y)
 {
     s32 i;
 

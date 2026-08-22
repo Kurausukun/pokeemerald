@@ -14,7 +14,7 @@
 #define FSP_ON    0x01
 #define FSP_START 0x02
 
-LINK_MANAGER lman;
+COMMON_DATA LINK_MANAGER lman = {0};
 
 static void rfu_LMAN_clearVariables(void);
 static void rfu_LMAN_settingPCSWITCH(u32 rand);
@@ -59,7 +59,9 @@ void rfu_LMAN_REQ_sendData(bool8 clockChangeFlag)
             clockChangeFlag = FALSE;
     }
     else
+    {
         lman.parentAck_flag = 0;
+    }
     rfu_REQ_sendData(clockChangeFlag);
 }
 
@@ -229,7 +231,7 @@ u8 rfu_LMAN_CHILD_connectParent(u16 parentId, u16 connect_period)
     return 0;
 }
 
-static void rfu_LMAN_PARENT_stopWaitLinkRecoveryAndDisconnect(u8 bm_targetSlot)
+static void UNUSED rfu_LMAN_PARENT_stopWaitLinkRecoveryAndDisconnect(u8 bm_targetSlot)
 {
     u8 i;
 
@@ -1295,7 +1297,7 @@ void rfu_LMAN_setMSCCallback(void (*MSC_callback_p)(u16))
     rfu_setMSCCallback(rfu_LMAN_MSC_callback);
 }
 
-static void rfu_LMAN_setLMANCallback(void (*func)(u8, u8))
+static void UNUSED rfu_LMAN_setLMANCallback(void (*func)(u8, u8))
 {
     lman.LMAN_callback = func;
 }
@@ -1315,7 +1317,7 @@ u8 rfu_LMAN_setLinkRecovery(u8 enable_flag, u16 recovery_period)
     return 0;
 }
 
-static u8 rfu_LMAN_setNIFailCounterLimit(u16 NI_failCounter_limit)
+static u8 UNUSED rfu_LMAN_setNIFailCounterLimit(u16 NI_failCounter_limit)
 {
     if (gRfuLinkStatus->sendSlotNIFlag | gRfuLinkStatus->recvSlotNIFlag)
     {
@@ -1327,7 +1329,7 @@ static u8 rfu_LMAN_setNIFailCounterLimit(u16 NI_failCounter_limit)
     return 0;
 }
 
-static u8 rfu_LMAN_setFastSearchParent(u8 enable_flag)
+static u8 UNUSED rfu_LMAN_setFastSearchParent(u8 enable_flag)
 {
     if (lman.state == LMAN_STATE_START_SEARCH_PARENT || lman.state == LMAN_STATE_POLL_SEARCH_PARENT || lman.state == LMAN_STATE_END_SEARCH_PARENT)
     {

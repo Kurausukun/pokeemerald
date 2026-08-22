@@ -77,10 +77,10 @@ static const LoopedTask sConditionSearchLoopedTaskFuncs[] =
     ConvertConditionsToListRanks
 };
 
-static const u16 sConditionSearchResultFramePal[] = INCBIN_U16("graphics/pokenav/condition/search_results.gbapal");
-static const u32 sConditionSearchResultTiles[] = INCBIN_U32("graphics/pokenav/condition/search_results.4bpp.lz");
-static const u32 sConditionSearchResultTilemap[] = INCBIN_U32("graphics/pokenav/condition/search_results.bin.lz");
-static const u16 sListBg_Pal[] = INCBIN_U16("graphics/pokenav/condition/search_results_list.gbapal");
+static const u16 sConditionSearchResultFramePal[] = INCGFX_U16("graphics/pokenav/condition/search_results.png", ".gbapal");
+static const u32 sConditionSearchResultTiles[] = INCGFX_U32("graphics/pokenav/condition/search_results.png", ".4bpp.lz");
+static const u32 sConditionSearchResultTilemap[] = INCGFX_U32("graphics/pokenav/condition/search_results.bin", ".lz");
+static const u16 sListBg_Pal[] = INCGFX_U16("graphics/pokenav/condition/search_results_list.pal", ".gbapal");
 
 static const struct BgTemplate sConditionSearchResultBgTemplates[] =
 {
@@ -125,8 +125,8 @@ static const struct WindowTemplate sSearchResultListMenuWindowTemplate =
     .baseBlock = 20
 };
 
-static const u8 sText_MaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW}{LIGHT_RED}{WHITE}{GREEN}♂{COLOR_HIGHLIGHT_SHADOW}{DARK_GRAY}{WHITE}{LIGHT_GRAY}");
-static const u8 sText_FemaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW}{LIGHT_GREEN}{WHITE}{BLUE}♀{COLOR_HIGHLIGHT_SHADOW}{DARK_GRAY}{WHITE}{LIGHT_GRAY}");
+static const u8 sText_MaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW LIGHT_RED WHITE GREEN}♂{COLOR_HIGHLIGHT_SHADOW DARK_GRAY WHITE LIGHT_GRAY}");
+static const u8 sText_FemaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW LIGHT_GREEN WHITE BLUE}♀{COLOR_HIGHLIGHT_SHADOW DARK_GRAY WHITE LIGHT_GRAY}");
 static const u8 sText_NoGenderSymbol[] = _("{UNK_SPACER}");
 
 bool32 PokenavCallback_Init_ConditionSearch(void)
@@ -184,13 +184,21 @@ static bool32 HandleConditionSearchInput_WaitSetup(struct Pokenav_SearchResults 
 static u32 HandleConditionSearchInput(struct Pokenav_SearchResults *menu)
 {
     if (JOY_REPEAT(DPAD_UP))
+    {
         return CONDITION_SEARCH_FUNC_MOVE_UP;
+    }
     else if (JOY_REPEAT(DPAD_DOWN))
+    {
         return CONDITION_SEARCH_FUNC_MOVE_DOWN;
+    }
     else if (JOY_NEW(DPAD_LEFT))
+    {
         return CONDITION_SEARCH_FUNC_PAGE_UP;
+    }
     else if (JOY_NEW(DPAD_RIGHT))
+    {
         return CONDITION_SEARCH_FUNC_PAGE_DOWN;
+    }
     else if (JOY_NEW(B_BUTTON))
     {
         // Exiting back to main search menu
@@ -207,7 +215,9 @@ static u32 HandleConditionSearchInput(struct Pokenav_SearchResults *menu)
         return CONDITION_SEARCH_FUNC_SELECT_MON;
     }
     else
+    {
         return CONDITION_SEARCH_FUNC_NONE;
+    }
 }
 
 static u32 ReturnToConditionSearchList(struct Pokenav_SearchResults *menu)
@@ -228,27 +238,27 @@ static u32 GetReturningFromGraph(void)
 
 static struct PokenavMonListItem * GetSearchResultsMonDataList(void)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     return menu->monList->monData;
 }
 
 static u16 GetSearchResultsMonListCount(void)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     return menu->monList->listCount;
 }
 
 // data below has been set by ConvertConditionsToListRanks
 static s32 GetSearchResultsSelectedMonRank(void)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     s32 i = PokenavList_GetSelectedIndex();
     return menu->monList->monData[i].data;
 }
 
 static u16 GetSearchResultsCurrentListIndex(void)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     return menu->monList->currIndex;
 }
 
@@ -261,7 +271,7 @@ static u32 BuildPartyMonSearchResults(s32 state)
 {
     s32 i;
     struct PokenavMonListItem item;
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
 
     menu->monList->listCount = 0;
     menu->monList->currIndex = 0;
@@ -284,7 +294,7 @@ static u32 BuildPartyMonSearchResults(s32 state)
 
 static u32 InitBoxMonSearchResults(s32 state)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     menu->monId = 0;
     menu->boxId = 0;
     return LT_INC_AND_CONTINUE;
@@ -292,7 +302,7 @@ static u32 InitBoxMonSearchResults(s32 state)
 
 static u32 BuildBoxMonSearchResults(s32 state)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     s32 boxId = menu->boxId;
     s32 monId = menu->monId;
     s32 boxCount = 0;
@@ -330,7 +340,7 @@ static u32 BuildBoxMonSearchResults(s32 state)
 // The condition value in data is then overwritten with their ranking.
 static u32 ConvertConditionsToListRanks(s32 state)
 {
-    struct Pokenav_SearchResults * menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
+    struct Pokenav_SearchResults *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_CONDITION_SEARCH_RESULTS);
     s32 listCount = menu->monList->listCount;
     s32 prevCondition = menu->monList->monData[0].data;
     s32 i;
@@ -432,7 +442,7 @@ static u32 LoopedTask_OpenConditionSearchResults(s32 state)
         SetBgTilemapBuffer(1, gfx->buff);
         CopyToBgTilemapBuffer(1, sConditionSearchResultTilemap, 0, 0);
         CopyBgTilemapBufferToVram(1);
-        CopyPaletteIntoBufferUnfaded(sConditionSearchResultFramePal, BG_PLTT_ID(1), PLTT_SIZE_4BPP);
+        CopyPaletteIntoBufferUnfaded(sConditionSearchResultFramePal, BG_PLTT_ID(1), sizeof(sConditionSearchResultFramePal));
         CopyBgTilemapBufferToVram(1);
         return LT_INC_AND_PAUSE;
     case 1:
@@ -444,7 +454,7 @@ static u32 LoopedTask_OpenConditionSearchResults(s32 state)
     case 2:
         if (FreeTempTileDataBuffersIfPossible())
             return LT_PAUSE;
-        CopyPaletteIntoBufferUnfaded(sListBg_Pal, BG_PLTT_ID(2), PLTT_SIZE_4BPP);
+        CopyPaletteIntoBufferUnfaded(sListBg_Pal, BG_PLTT_ID(2), sizeof(sListBg_Pal));
         CreateSearchResultsList();
         return LT_INC_AND_PAUSE;
     case 3:
@@ -688,12 +698,12 @@ static void CreateSearchResultsList(void)
     CreatePokenavList(&sConditionSearchResultBgTemplates[1], &template, 0);
 }
 
-static void BufferSearchMonListItem(struct PokenavMonListItem * item, u8 * dest)
+static void BufferSearchMonListItem(struct PokenavMonListItem *item, u8 *dest)
 {
     u8 gender;
     u8 level;
-    u8 * s;
-    const u8 * genderStr;
+    u8 *s;
+    const u8 *genderStr;
 
     // Mon is in party
     if (item->boxId == TOTAL_BOXES_COUNT)
@@ -706,7 +716,7 @@ static void BufferSearchMonListItem(struct PokenavMonListItem * item, u8 * dest)
     // Mon is in PC
     else
     {
-        struct BoxPokemon * mon = GetBoxedMonPtr(item->boxId, item->monId);
+        struct BoxPokemon *mon = GetBoxedMonPtr(item->boxId, item->monId);
         gender = GetBoxMonGender(mon);
         level = GetLevelFromBoxMonExp(mon);
         GetBoxMonData(mon, MON_DATA_NICKNAME, gStringVar3);

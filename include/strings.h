@@ -519,7 +519,7 @@ extern const u8 gText_Speed[];
 extern const u8 gText_Dash[];
 extern const u8 gText_Plus[];
 
-//pokedex text
+//Pokédex text
 extern const u8 gText_CryOf[];
 extern const u8 gText_SizeComparedTo[];
 extern const u8 gText_PokedexRegistration[];
@@ -1121,7 +1121,7 @@ extern const u8 gTrickHouse_Mechadoll_Six2[];
 extern const u8 gTrickHouse_Mechadoll_Seven2[];
 extern const u8 gTrickHouse_Mechadoll_Eight2[];
 
-// Pokedex strings
+// Pokédex strings
 extern const u8 gText_SearchForPkmnBasedOnParameters[];
 extern const u8 gText_SwitchPokedexListings[];
 extern const u8 gText_ReturnToPokedex[];
@@ -2118,7 +2118,7 @@ extern const u8 gText_PokemonCantBeSame[];
 extern const u8 gText_NoIdenticalHoldItems[];
 extern const u8 gText_DoWhatWithPokemon[];
 extern const u8 gText_RestoreWhichMove[];
-extern const u8 gText_BoostPp[];
+extern const u8 gText_BoostPP[];
 extern const u8 gText_DoWhatWithItem[];
 extern const u8 gText_DoWhatWithMail[];
 extern const u8 gText_AlreadyHoldingOne[];
@@ -2385,10 +2385,10 @@ extern const u8 MatchCall_Text_Norman2[];
 extern const u8 MatchCall_Text_Norman3[];
 extern const u8 MatchCall_Text_Norman4[];
 extern const u8 MatchCall_Text_Norman5[];
-extern const u8 MatchCall_Text_Norman6[];
-extern const u8 MatchCall_Text_Norman7[];
-extern const u8 MatchCall_Text_Norman8[];
-extern const u8 MatchCall_Text_Norman9[];
+extern const u8 MatchCall_Text_Norman_Preparing[];
+extern const u8 MatchCall_Text_Norman_PreparingPostGame[];
+extern const u8 MatchCall_Text_Norman_RematchReady[];
+extern const u8 MatchCall_Text_Norman_PostRematch[];
 extern const u8 MatchCall_Text_Mom1[];
 extern const u8 MatchCall_Text_Mom2[];
 extern const u8 MatchCall_Text_Mom3[];
@@ -2443,34 +2443,34 @@ extern const u8 MatchCall_Text_Scott4[];
 extern const u8 MatchCall_Text_Scott5[];
 extern const u8 MatchCall_Text_Scott6[];
 extern const u8 MatchCall_Text_Scott7[];
-extern const u8 MatchCall_Text_Roxanne1[];
-extern const u8 MatchCall_Text_Roxanne2[];
-extern const u8 MatchCall_Text_Roxanne3[];
-extern const u8 MatchCall_Text_Roxanne4[];
-extern const u8 MatchCall_Text_Brawly1[];
-extern const u8 MatchCall_Text_Brawly2[];
-extern const u8 MatchCall_Text_Brawly3[];
-extern const u8 MatchCall_Text_Brawly4[];
-extern const u8 MatchCall_Text_Wattson1[];
-extern const u8 MatchCall_Text_Wattson2[];
-extern const u8 MatchCall_Text_Wattson3[];
-extern const u8 MatchCall_Text_Wattson4[];
-extern const u8 MatchCall_Text_Flannery1[];
-extern const u8 MatchCall_Text_Flannery2[];
-extern const u8 MatchCall_Text_Flannery3[];
-extern const u8 MatchCall_Text_Flannery4[];
-extern const u8 MatchCall_Text_Winona1[];
-extern const u8 MatchCall_Text_Winona2[];
-extern const u8 MatchCall_Text_Winona3[];
-extern const u8 MatchCall_Text_Winona4[];
-extern const u8 MatchCall_Text_TateLiza1[];
-extern const u8 MatchCall_Text_TateLiza2[];
-extern const u8 MatchCall_Text_TateLiza3[];
-extern const u8 MatchCall_Text_TateLiza4[];
-extern const u8 MatchCall_Text_Juan1[];
-extern const u8 MatchCall_Text_Juan2[];
-extern const u8 MatchCall_Text_Juan3[];
-extern const u8 MatchCall_Text_Juan4[];
+extern const u8 MatchCall_Text_Roxanne_Preparing[];
+extern const u8 MatchCall_Text_Roxanne_PreparingPostGame[];
+extern const u8 MatchCall_Text_Roxanne_RematchReady[];
+extern const u8 MatchCall_Text_Roxanne_PostRematch[];
+extern const u8 MatchCall_Text_Brawly_Preparing[];
+extern const u8 MatchCall_Text_Brawly_PreparingPostGame[];
+extern const u8 MatchCall_Text_Brawly_RematchReady[];
+extern const u8 MatchCall_Text_Brawly_PostRematch[];
+extern const u8 MatchCall_Text_Wattson_Preparing[];
+extern const u8 MatchCall_Text_Wattson_PreparingPostGame[];
+extern const u8 MatchCall_Text_Wattson_RematchReady[];
+extern const u8 MatchCall_Text_Wattson_PostRematch[];
+extern const u8 MatchCall_Text_Flannery_Preparing[];
+extern const u8 MatchCall_Text_Flannery_PreparingPostGame[];
+extern const u8 MatchCall_Text_Flannery_RematchReady[];
+extern const u8 MatchCall_Text_Flannery_PostRematch[];
+extern const u8 MatchCall_Text_Winona_Preparing[];
+extern const u8 MatchCall_Text_Winona_PreparingPostGame[];
+extern const u8 MatchCall_Text_Winona_RematchReady[];
+extern const u8 MatchCall_Text_Winona_PostRematch[];
+extern const u8 MatchCall_Text_TateLiza_Preparing[];
+extern const u8 MatchCall_Text_TateLiza_PreparingPostGame[];
+extern const u8 MatchCall_Text_TateLiza_RematchReady[];
+extern const u8 MatchCall_Text_TateLiza_PostRematch[];
+extern const u8 MatchCall_Text_Juan_Preparing[];
+extern const u8 MatchCall_Text_Juan_PreparingPostGame[];
+extern const u8 MatchCall_Text_Juan_RematchReady[];
+extern const u8 MatchCall_Text_Juan_PostRematch[];
 extern const u8 MatchCall_Text_Sidney[];
 extern const u8 MatchCall_Text_Phoebe[];
 extern const u8 MatchCall_Text_Glacia[];
@@ -2874,7 +2874,7 @@ extern const u8 gText_WantToPlayAgain[];
 extern const u8 gText_CommunicationStandby3[];
 extern const u8 gText_SomeoneDroppedOut[];
 
-// Pokemon jump
+// Pokémon jump
 extern const u8 gText_WantToPlayAgain2[];
 extern const u8 gText_SomeoneDroppedOut2[];
 extern const u8 gText_CommunicationStandby4[];
@@ -2949,7 +2949,7 @@ extern const u8 gText_CutenessContest[];
 extern const u8 gText_SmartnessContest[];
 extern const u8 gText_ToughnessContest[];
 
-// Pokenav Match Call
+// PokéNav Match Call
 extern const u8 gText_CallCantBeMadeHere[];
 extern const u8 gText_NumberRegistered[];
 extern const u8 gText_NumberOfBattles[];
@@ -2959,7 +2959,7 @@ extern const u8 gText_Call[];
 extern const u8 gText_Check[];
 extern const u8 gText_Cancel6[];
 
-// Pokenav Menu Handler
+// PokéNav Menu Handler
 extern const u8 gText_CheckMapOfHoenn[];
 extern const u8 gText_CheckPokemonInDetail[];
 extern const u8 gText_CallRegisteredTrainer[];
@@ -2976,7 +2976,7 @@ extern const u8 gText_FindToughPokemon[];
 extern const u8 gText_ReturnToConditionMenu[];
 extern const u8 gText_NoRibbonWinners[];
 
-// Pokenav
+// PokéNav
 extern const u8 gText_NumberIndex[];
 extern const u8 gText_RibbonsF700[];
 

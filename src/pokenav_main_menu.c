@@ -53,9 +53,9 @@ static void DrawHelpBar(u32);
 static void SpriteCB_SpinningPokenav(struct Sprite *);
 static u32 LoopedTask_InitPokenavMenu(s32);
 
-static const u16 sSpinningPokenav_Pal[] = INCBIN_U16("graphics/pokenav/nav_icon.gbapal");
-static const u32 sSpinningPokenav_Gfx[] = INCBIN_U32("graphics/pokenav/nav_icon.4bpp.lz");
-static const u32 sBlueLightCopy[] = INCBIN_U32("graphics/pokenav/blue_light.4bpp.lz"); // Unused copy of sMatchCallBlueLightTiles
+static const u16 sSpinningPokenav_Pal[] = INCGFX_U16("graphics/pokenav/nav_icon.png", ".gbapal");
+static const u32 sSpinningPokenav_Gfx[] = INCGFX_U32("graphics/pokenav/nav_icon.png", ".4bpp.lz");
+static const u32 sBlueLightCopy[] = INCGFX_U32("graphics/pokenav/blue_light.png", ".4bpp.lz"); // Unused copy of sMatchCallBlueLightTiles
 
 const struct BgTemplate gPokenavMainMenuBgTemplates[] =
 {
@@ -443,7 +443,7 @@ static u32 LoopedTask_SlideMenuHeaderDown(s32 state)
 
 void CopyPaletteIntoBufferUnfaded(const u16 *palette, u32 bufferOffset, u32 size)
 {
-    CpuCopy16(palette, gPlttBufferUnfaded + bufferOffset, size);
+    CpuCopy16(palette, &gPlttBufferUnfaded[bufferOffset], size);
 }
 
 void Pokenav_AllocAndLoadPalettes(const struct SpritePalette *palettes)
@@ -468,7 +468,7 @@ void Pokenav_AllocAndLoadPalettes(const struct SpritePalette *palettes)
 
 void PokenavFillPalette(u32 palIndex, u16 fillValue)
 {
-    CpuFill16(fillValue, gPlttBufferFaded + 0x100 + (palIndex * 16), 16 * sizeof(u16));
+    CpuFill16(fillValue, &gPlttBufferFaded[OBJ_PLTT_ID(palIndex)], PLTT_SIZE_4BPP);
 }
 
 void PokenavCopyPalette(const u16 *src, const u16 *dest, int size, int a3, int a4, u16 *palette)

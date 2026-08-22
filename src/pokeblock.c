@@ -62,7 +62,7 @@ enum {
 struct PokeblockMenuStruct
 {
     u8 tilemap[BG_SCREEN_SIZE];
-    void (*callbackOnUse)(void);
+    MainCallback callbackOnUse;
     const u8 *pokeblockActionIds;
     u8 numActions;
     u8 caseId;
@@ -80,7 +80,7 @@ struct PokeblockMenuStruct
 
 struct PokeblockSavedData
 {
-    void (*callback)(void);
+    MainCallback callback;
     u16 selectedRow;
     u16 scrollOffset;
 };
@@ -215,12 +215,12 @@ const u8 *const gPokeblockNames[] =
 
 static const struct MenuAction sPokeblockMenuActions[] =
 {
-    [PKBL_USE_ON_FIELD]  = {gMenuText_Use, PokeblockAction_UseOnField},
-    [PKBL_TOSS]          = {gMenuText_Toss, PokeblockAction_Toss},
-    [PKBL_CANCEL]        = {gText_Cancel2, PokeblockAction_Cancel},
-    [PKBL_USE_IN_BATTLE] = {gMenuText_Use, PokeblockAction_UseInBattle},
-    [PKBL_USE_ON_FEEDER] = {gMenuText_Use, PokeblockAction_UseOnPokeblockFeeder},
-    [PKBL_GIVE_TO_LADY]  = {gMenuText_Give2, PokeblockAction_GiveToContestLady},
+    [PKBL_USE_ON_FIELD]  = {gMenuText_Use, {PokeblockAction_UseOnField}},
+    [PKBL_TOSS]          = {gMenuText_Toss, {PokeblockAction_Toss}},
+    [PKBL_CANCEL]        = {gText_Cancel2, {PokeblockAction_Cancel}},
+    [PKBL_USE_IN_BATTLE] = {gMenuText_Use, {PokeblockAction_UseInBattle}},
+    [PKBL_USE_ON_FEEDER] = {gMenuText_Use, {PokeblockAction_UseOnPokeblockFeeder}},
+    [PKBL_GIVE_TO_LADY]  = {gMenuText_Give2, {PokeblockAction_GiveToContestLady}},
 };
 
 static const u8 sActionsOnField[] = {PKBL_USE_ON_FIELD, PKBL_TOSS, PKBL_CANCEL};
@@ -699,7 +699,7 @@ static void DrawPokeblockMenuTitleText(void)
 {
     u8 i;
 
-    const u8 *itemName = ItemId_GetName(ITEM_POKEBLOCK_CASE);
+    const u8 *itemName = GetItemName(ITEM_POKEBLOCK_CASE);
     PrintOnPokeblockWindow(WIN_TITLE, itemName, GetStringCenterAlignXOffset(FONT_NORMAL, itemName, 0x48));
 
     PrintOnPokeblockWindow(WIN_SPICY,  gText_Spicy, 0);

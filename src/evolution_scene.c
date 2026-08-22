@@ -48,7 +48,7 @@ struct EvoInfo
 static EWRAM_DATA struct EvoInfo *sEvoStructPtr = NULL;
 static EWRAM_DATA u16 *sBgAnimPal = NULL;
 
-void (*gCB2_AfterEvolution)(void);
+COMMON_DATA void (*gCB2_AfterEvolution)(void) = NULL;
 
 #define sEvoCursorPos           gBattleCommunication[1] // when learning a new move
 #define sEvoGraphicsTaskId      gBattleCommunication[2]
@@ -67,15 +67,15 @@ static void StopBgAnimation(void);
 static void Task_AnimateBg(u8 taskId);
 static void RestoreBgAfterAnim(void);
 
-static const u16 sUnusedPal1[] = INCBIN_U16("graphics/evolution_scene/unused_1.gbapal");
-static const u32 sBgAnim_Gfx[] = INCBIN_U32("graphics/evolution_scene/bg.4bpp.lz");
-static const u32 sBgAnim_Inner_Tilemap[] = INCBIN_U32("graphics/evolution_scene/bg_inner.bin.lz");
-static const u32 sBgAnim_Outer_Tilemap[] = INCBIN_U32("graphics/evolution_scene/bg_outer.bin.lz");
-static const u16 sBgAnim_Intro_Pal[] = INCBIN_U16("graphics/evolution_scene/bg_anim_intro.gbapal");
-static const u16 sUnusedPal2[] = INCBIN_U16("graphics/evolution_scene/unused_2.gbapal");
-static const u16 sUnusedPal3[]  = INCBIN_U16("graphics/evolution_scene/unused_3.gbapal");
-static const u16 sUnusedPal4[] = INCBIN_U16("graphics/evolution_scene/unused_4.gbapal");
-static const u16 sBgAnim_Pal[] = INCBIN_U16("graphics/evolution_scene/bg_anim.gbapal");
+static const u16 sUnusedPal1[] = INCGFX_U16("graphics/evolution_scene/unused_1.pal", ".gbapal");
+static const u32 sBgAnim_Gfx[] = INCGFX_U32("graphics/evolution_scene/bg.png", ".4bpp.lz");
+static const u32 sBgAnim_Inner_Tilemap[] = INCGFX_U32("graphics/evolution_scene/bg_inner.bin", ".lz");
+static const u32 sBgAnim_Outer_Tilemap[] = INCGFX_U32("graphics/evolution_scene/bg_outer.bin", ".lz");
+static const u16 sBgAnim_Intro_Pal[] = INCGFX_U16("graphics/evolution_scene/bg_anim_intro.pal", ".gbapal");
+static const u16 sUnusedPal2[] = INCGFX_U16("graphics/evolution_scene/unused_2.pal", ".gbapal");
+static const u16 sUnusedPal3[]  = INCGFX_U16("graphics/evolution_scene/unused_3.pal", ".gbapal");
+static const u16 sUnusedPal4[] = INCGFX_U16("graphics/evolution_scene/unused_4.pal", ".gbapal");
+static const u16 sBgAnim_Pal[] = INCGFX_U16("graphics/evolution_scene/bg_anim.pal", ".gbapal");
 
 static const u8 sText_ShedinjaJapaneseName[] = _("ヌケニン");
 
@@ -208,10 +208,10 @@ void BeginEvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, bool8 canStopE
 
 void EvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, bool8 canStopEvo, u8 partyId)
 {
-    u8 name[20];
+    u8 name[POKEMON_NAME_BUFFER_SIZE];
     u16 currSpecies;
     u32 trainerId, personality;
-    const struct CompressedSpritePalette* pokePal;
+    const struct CompressedSpritePalette *pokePal;
     u8 id;
 
     SetHBlankCallback(NULL);
@@ -237,7 +237,7 @@ void EvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, bool8 canStopEvo, u
     gBattle_BG3_X = 256;
     gBattle_BG3_Y = 0;
 
-    gBattleTerrain = BATTLE_TERRAIN_PLAIN;
+    gBattleEnvironment = BATTLE_ENVIRONMENT_PLAIN;
 
     InitBattleBgsVideo();
     LoadBattleTextboxAndBackground();
@@ -298,7 +298,7 @@ void EvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, bool8 canStopEvo, u
     gTasks[id].tEvoWasStopped = FALSE;
     gTasks[id].tPartyId = partyId;
 
-    memcpy(&sEvoStructPtr->savedPalette, &gPlttBufferUnfaded[0x20], sizeof(sEvoStructPtr->savedPalette));
+    memcpy(&sEvoStructPtr->savedPalette, &gPlttBufferUnfaded[BG_PLTT_ID(2)], sizeof(sEvoStructPtr->savedPalette));
 
     SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_BG_ALL_ON | DISPCNT_OBJ_1D_MAP);
 
@@ -311,7 +311,7 @@ void EvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, bool8 canStopEvo, u
 static void CB2_EvolutionSceneLoadGraphics(void)
 {
     u8 id;
-    const struct CompressedSpritePalette* pokePal;
+    const struct CompressedSpritePalette *pokePal;
     u16 postEvoSpecies;
     u32 trainerId, personality;
     struct Pokemon *mon = &gPlayerParty[gTasks[sEvoStructPtr->evoTaskId].tPartyId];
@@ -343,7 +343,7 @@ static void CB2_EvolutionSceneLoadGraphics(void)
     gBattle_BG3_X = 256;
     gBattle_BG3_Y = 0;
 
-    gBattleTerrain = BATTLE_TERRAIN_PLAIN;
+    gBattleEnvironment = BATTLE_ENVIRONMENT_PLAIN;
 
     InitBattleBgsVideo();
     LoadBattleTextboxAndBackground();
@@ -420,7 +420,7 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
         break;
     case 4:
         {
-            const struct CompressedSpritePalette* pokePal;
+            const struct CompressedSpritePalette *pokePal;
             u32 trainerId = GetMonData(mon, MON_DATA_OT_ID);
             u32 personality = GetMonData(mon, MON_DATA_PERSONALITY);
             DecompressPicFromTable_2(&gMonFrontPicTable[postEvoSpecies],
@@ -467,10 +467,10 @@ static void CB2_TradeEvolutionSceneLoadGraphics(void)
 
 void TradeEvolutionScene(struct Pokemon *mon, u16 postEvoSpecies, u8 preEvoSpriteId, u8 partyId)
 {
-    u8 name[20];
+    u8 name[POKEMON_NAME_BUFFER_SIZE];
     u16 currSpecies;
     u32 trainerId, personality;
-    const struct CompressedSpritePalette* pokePal;
+    const struct CompressedSpritePalette *pokePal;
     u8 id;
 
     GetMonData(mon, MON_DATA_NICKNAME, name);
@@ -741,7 +741,7 @@ static void Task_EvolutionScene(u8 taskId)
         if (IsSEPlaying())
         {
             m4aMPlayAllStop();
-            memcpy(&gPlttBufferUnfaded[0x20], sEvoStructPtr->savedPalette, sizeof(sEvoStructPtr->savedPalette));
+            memcpy(&gPlttBufferUnfaded[BG_PLTT_ID(2)], sEvoStructPtr->savedPalette, sizeof(sEvoStructPtr->savedPalette));
             RestoreBgAfterAnim();
             BeginNormalPaletteFade(0x1C, 0, 0x10, 0, RGB_BLACK);
             gTasks[taskId].tState++;
@@ -775,8 +775,7 @@ static void Task_EvolutionScene(u8 taskId)
             var = MonTryLearningNewMove(mon, gTasks[taskId].tLearnsFirstMove);
             if (var != MOVE_NONE && !gTasks[taskId].tEvoWasStopped)
             {
-                u8 text[20];
-
+                u8 nickname[POKEMON_NAME_BUFFER_SIZE];
                 if (!(gTasks[taskId].tBits & TASK_BIT_LEARN_MOVE))
                 {
                     StopMapMusic();
@@ -786,8 +785,8 @@ static void Task_EvolutionScene(u8 taskId)
                 gTasks[taskId].tBits |= TASK_BIT_LEARN_MOVE;
                 gTasks[taskId].tLearnsFirstMove = FALSE;
                 gTasks[taskId].tLearnMoveState = MVSTATE_INTRO_MSG_1;
-                GetMonData(mon, MON_DATA_NICKNAME, text);
-                StringCopy_Nickname(gBattleTextBuff1, text);
+                GetMonData(mon, MON_DATA_NICKNAME, nickname);
+                StringCopy_Nickname(gBattleTextBuff1, nickname);
 
                 if (var == MON_HAS_MAX_MOVES)
                     gTasks[taskId].tState = EVOSTATE_REPLACE_MOVE;
@@ -1170,7 +1169,7 @@ static void Task_TradeEvolutionScene(u8 taskId)
             // Restore bg, do mon anim/cry
             Free(sBgAnimPal);
             EvoScene_DoMonAnimAndCry(sEvoStructPtr->postEvoSpriteId, gTasks[taskId].tPostEvoSpecies);
-            memcpy(&gPlttBufferUnfaded[0x20], sEvoStructPtr->savedPalette, sizeof(sEvoStructPtr->savedPalette));
+            memcpy(&gPlttBufferUnfaded[BG_PLTT_ID(2)], sEvoStructPtr->savedPalette, sizeof(sEvoStructPtr->savedPalette));
             gTasks[taskId].tState++;
         }
         break;
@@ -1195,13 +1194,12 @@ static void Task_TradeEvolutionScene(u8 taskId)
             var = MonTryLearningNewMove(mon, gTasks[taskId].tLearnsFirstMove);
             if (var != MOVE_NONE && !gTasks[taskId].tEvoWasStopped)
             {
-                u8 text[20];
-
+                u8 nickname[POKEMON_NAME_BUFFER_SIZE];
                 gTasks[taskId].tBits |= TASK_BIT_LEARN_MOVE;
                 gTasks[taskId].tLearnsFirstMove = FALSE;
                 gTasks[taskId].tLearnMoveState = 0;
-                GetMonData(mon, MON_DATA_NICKNAME, text);
-                StringCopy_Nickname(gBattleTextBuff1, text);
+                GetMonData(mon, MON_DATA_NICKNAME, nickname);
+                StringCopy_Nickname(gBattleTextBuff1, nickname);
 
                 if (var == MON_HAS_MAX_MOVES)
                     gTasks[taskId].tState = T_EVOSTATE_REPLACE_MOVE;
@@ -1636,8 +1634,7 @@ static void StartBgAnimation(bool8 isLink)
     CreateBgAnimTask(isLink);
 }
 
-// Unused
-static void PauseBgPaletteAnim(void)
+static void UNUSED PauseBgPaletteAnim(void)
 {
     u8 taskId = FindTaskIdByFunc(Task_UpdateBgPalette);
 

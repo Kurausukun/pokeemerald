@@ -26,7 +26,7 @@ static void SetRandomPalacePrize(void);
 static void GivePalacePrize(void);
 
 // Const rom data.
-static void (* const sBattlePalaceFunctions[])(void) =
+static void (*const sBattlePalaceFunctions[])(void) =
 {
     [BATTLE_PALACE_FUNC_INIT]               = InitPalaceChallenge,
     [BATTLE_PALACE_FUNC_GET_DATA]           = GetPalaceData,
@@ -181,7 +181,7 @@ static void IncrementPalaceStreak(void)
 static void SavePalaceChallenge(void)
 {
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
-    VarSet(VAR_TEMP_0, 0);
+    VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
     SaveGameFrontier();
 }

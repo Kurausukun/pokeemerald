@@ -40,12 +40,12 @@ static void VBlankCB(void)
 
 static const u16 sDiplomaPalettes[][16] =
 {
-    INCBIN_U16("graphics/diploma/national.gbapal"),
-    INCBIN_U16("graphics/diploma/hoenn.gbapal"),
+    INCGFX_U16("graphics/diploma/national.pal", ".gbapal"),
+    INCGFX_U16("graphics/diploma/hoenn.pal", ".gbapal"),
 };
 
-static const u32 sDiplomaTilemap[] = INCBIN_U32("graphics/diploma/tilemap.bin.lz");
-static const u32 sDiplomaTiles[] = INCBIN_U32("graphics/diploma/tiles.4bpp.lz");
+static const u32 sDiplomaTilemap[] = INCGFX_U32("graphics/diploma/tilemap.bin", ".lz");
+static const u32 sDiplomaTiles[] = INCGFX_U32("graphics/diploma/tiles.png", ".4bpp.lz");
 
 void CB2_ShowDiploma(void)
 {
@@ -72,7 +72,7 @@ void CB2_ShowDiploma(void)
     ResetSpriteData();
     ResetPaletteFade();
     FreeAllSpritePalettes();
-    LoadPalette(sDiplomaPalettes, BG_PLTT_ID(0), 2 * PLTT_SIZE_4BPP);
+    LoadPalette(sDiplomaPalettes, BG_PLTT_ID(0), sizeof(sDiplomaPalettes));
     sDiplomaTilemapPtr = Alloc(0x1000);
     InitDiplomaBg();
     InitDiplomaWindow();

@@ -144,14 +144,14 @@ struct
 #include "data/text/ribbon_descriptions.h"
 #include "data/text/gift_ribbon_descriptions.h"
 
-static const u16 sRibbonIcons1_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/icons1.gbapal");
-static const u16 sRibbonIcons2_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/icons2.gbapal");
-static const u16 sRibbonIcons3_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/icons3.gbapal");
-static const u16 sRibbonIcons4_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/icons4.gbapal");
-static const u16 sRibbonIcons5_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/icons5.gbapal");
-static const u16 sMonInfo_Pal[] = INCBIN_U16("graphics/pokenav/ribbons/mon_info.gbapal"); // palette for Pokémon's name/gender/level text
-static const u32 sRibbonIconsSmall_Gfx[] = INCBIN_U32("graphics/pokenav/ribbons/icons.4bpp.lz");
-static const u32 sRibbonIconsBig_Gfx[] = INCBIN_U32("graphics/pokenav/ribbons/icons_big.4bpp.lz");
+static const u16 sRibbonIcons1_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/icons1.pal", ".gbapal");
+static const u16 sRibbonIcons2_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/icons2.pal", ".gbapal");
+static const u16 sRibbonIcons3_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/icons3.pal", ".gbapal");
+static const u16 sRibbonIcons4_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/icons4.pal", ".gbapal");
+static const u16 sRibbonIcons5_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/icons5.pal", ".gbapal");
+static const u16 sMonInfo_Pal[] = INCGFX_U16("graphics/pokenav/ribbons/mon_info.pal", ".gbapal"); // palette for Pokémon's name/gender/level text
+static const u32 sRibbonIconsSmall_Gfx[] = INCGFX_U32("graphics/pokenav/ribbons/icons.png", ".4bpp.lz");
+static const u32 sRibbonIconsBig_Gfx[] = INCGFX_U32("graphics/pokenav/ribbons/icons_big.png", ".4bpp.lz");
 
 static const struct BgTemplate sBgTemplates[] =
 {
@@ -584,7 +584,7 @@ static u32 LoopedTask_OpenRibbonsSummaryMenu(s32 state)
             SetBgTilemapBuffer(1, menu->tilemapBuffers[1]);
             FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, 32, 20);
             CopyPaletteIntoBufferUnfaded(sRibbonIcons1_Pal, BG_PLTT_ID(2), 5 * PLTT_SIZE_4BPP);
-            CopyPaletteIntoBufferUnfaded(sMonInfo_Pal, BG_PLTT_ID(10), PLTT_SIZE_4BPP);
+            CopyPaletteIntoBufferUnfaded(sMonInfo_Pal, BG_PLTT_ID(10), sizeof(sMonInfo_Pal));
             CopyBgTilemapBufferToVram(1);
             return LT_INC_AND_PAUSE;
         }
@@ -865,8 +865,8 @@ static void AddRibbonSummaryMonNameWindow(struct Pokenav_RibbonsSummaryMenu *men
     PrintRibbbonsSummaryMonInfo(menu);
 }
 
-static const u8 sMaleIconString[] = _("{COLOR_HIGHLIGHT_SHADOW}{LIGHT_RED}{WHITE}{GREEN}♂{COLOR_HIGHLIGHT_SHADOW}{DARK_GRAY}{WHITE}{LIGHT_GRAY}");
-static const u8 sFemaleIconString[] = _("{COLOR_HIGHLIGHT_SHADOW}{LIGHT_GREEN}{WHITE}{BLUE}♀{COLOR_HIGHLIGHT_SHADOW}{DARK_GRAY}{WHITE}{LIGHT_GRAY}");
+static const u8 sText_MaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW LIGHT_RED WHITE GREEN}♂{COLOR_HIGHLIGHT_SHADOW DARK_GRAY WHITE LIGHT_GRAY}");
+static const u8 sText_FemaleSymbol[] = _("{COLOR_HIGHLIGHT_SHADOW LIGHT_GREEN WHITE BLUE}♀{COLOR_HIGHLIGHT_SHADOW DARK_GRAY WHITE LIGHT_GRAY}");
 static const u8 sGenderlessIconString[] = _("{UNK_SPACER}");
 
 static void PrintRibbbonsSummaryMonInfo(struct Pokenav_RibbonsSummaryMenu *menu)
@@ -882,10 +882,10 @@ static void PrintRibbbonsSummaryMonInfo(struct Pokenav_RibbonsSummaryMenu *menu)
     switch (gender)
     {
     case MON_MALE:
-        genderTxt = sMaleIconString;
+        genderTxt = sText_MaleSymbol;
         break;
     case MON_FEMALE:
-        genderTxt = sFemaleIconString;
+        genderTxt = sText_FemaleSymbol;
         break;
     default:
         genderTxt = sGenderlessIconString;
@@ -1080,7 +1080,7 @@ enum {
     RIBBONGFX_GIFT_3,
 };
 
-#define TO_PAL_OFFSET(palNum)((palNum) - PALTAG_RIBBON_ICONS_1)
+#define TO_PAL_OFFSET(palNum) ((palNum) - PALTAG_RIBBON_ICONS_1)
 
 struct
 {

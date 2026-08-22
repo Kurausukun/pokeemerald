@@ -23,12 +23,23 @@
  *   +---------------------------+
  */
 
-#define MAX_BATTLERS_COUNT  4
+enum BattlerPosition
+{
+    B_POSITION_PLAYER_LEFT,
+    B_POSITION_OPPONENT_LEFT,
+    B_POSITION_PLAYER_RIGHT,
+    B_POSITION_OPPONENT_RIGHT,
+    MAX_POSITION_COUNT,
+};
 
-#define B_POSITION_PLAYER_LEFT        0
-#define B_POSITION_OPPONENT_LEFT      1
-#define B_POSITION_PLAYER_RIGHT       2
-#define B_POSITION_OPPONENT_RIGHT     3
+enum BattlerId
+{
+    B_BATTLER_0,
+    B_BATTLER_1,
+    B_BATTLER_2,
+    B_BATTLER_3,
+    MAX_BATTLERS_COUNT,
+};
 
 // These macros can be used with either battler ID or positions to get the partner or the opposite mon
 #define BATTLE_OPPOSITE(id) ((id) ^ BIT_SIDE)
@@ -98,8 +109,8 @@
 #define B_OUTCOME_MON_TELEPORTED       10
 #define B_OUTCOME_LINK_BATTLE_RAN      (1 << 7) // 128
 
-// Non-volatile status conditions
-// These persist remain outside of battle and after switching out
+// Non-volatile status conditions select from gBattleMons[n].status1, which is a u32.
+// These persist outside of battle and after switching out.
 #define STATUS1_NONE             0
 #define STATUS1_SLEEP            (1 << 0 | 1 << 1 | 1 << 2) // First 3 bits (Number of turns to sleep)
 #define STATUS1_SLEEP_TURN(num)  ((num) << 0) // Just for readability (or if rearranging statuses)
@@ -113,8 +124,8 @@
 #define STATUS1_PSN_ANY          (STATUS1_POISON | STATUS1_TOXIC_POISON)
 #define STATUS1_ANY              (STATUS1_SLEEP | STATUS1_POISON | STATUS1_BURN | STATUS1_FREEZE | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON)
 
-// Volatile status ailments
-// These are removed after exiting the battle or switching out
+// Volatile status conditions select from gBattleMons[n].status2, which is a u32.
+// They are removed after exiting the battle or switching out.
 #define STATUS2_CONFUSION             (1 << 0 | 1 << 1 | 1 << 2)
 #define STATUS2_CONFUSION_TURN(num)   ((num) << 0)
 #define STATUS2_FLINCHED              (1 << 3)
@@ -143,7 +154,7 @@
 #define STATUS2_DEFENSE_CURL          (1 << 30)
 #define STATUS2_TORMENT               (1 << 31)
 
-// Seems like per-battler statuses. Not quite sure how to categorize these
+// These select from gStatuses3[n], which is a u32.
 #define STATUS3_LEECHSEED_BATTLER       (1 << 0 | 1 << 1) // The battler to receive HP from Leech Seed
 #define STATUS3_LEECHSEED               (1 << 2)
 #define STATUS3_ALWAYS_HITS             (1 << 3 | 1 << 4)
@@ -168,7 +179,7 @@
 
 // Not really sure what a "hitmarker" is.
 #define HITMARKER_WAKE_UP_CLEAR         (1 << 4) // Cleared when waking up. Never set or checked.
-#define HITMARKER_SKIP_DMG_TRACK        (1 << 5)
+#define HITMARKER_IGNORE_BIDE           (1 << 5)
 #define HITMARKER_DESTINYBOND           (1 << 6)
 #define HITMARKER_NO_ANIMATIONS         (1 << 7)
 #define HITMARKER_IGNORE_SUBSTITUTE     (1 << 8)
@@ -176,25 +187,26 @@
 #define HITMARKER_ATTACKSTRING_PRINTED  (1 << 10)
 #define HITMARKER_NO_PPDEDUCT           (1 << 11)
 #define HITMARKER_SWAP_ATTACKER_TARGET  (1 << 12)
-#define HITMARKER_IGNORE_SAFEGUARD      (1 << 13)
-#define HITMARKER_SYNCHRONISE_EFFECT    (1 << 14)
+#define HITMARKER_STATUS_ABILITY_EFFECT (1 << 13)
+#define HITMARKER_SYNCHRONIZE_EFFECT    (1 << 14)
 #define HITMARKER_RUN                   (1 << 15)
 #define HITMARKER_IGNORE_ON_AIR         (1 << 16)
 #define HITMARKER_IGNORE_UNDERGROUND    (1 << 17)
 #define HITMARKER_IGNORE_UNDERWATER     (1 << 18)
 #define HITMARKER_UNABLE_TO_USE_MOVE    (1 << 19)
-#define HITMARKER_PASSIVE_DAMAGE        (1 << 20)
+#define HITMARKER_PASSIVE_HP_UPDATE     (1 << 20)
 #define HITMARKER_DISOBEDIENT_MOVE      (1 << 21)
 #define HITMARKER_PLAYER_FAINTED        (1 << 22)
 #define HITMARKER_ALLOW_NO_PP           (1 << 23)
 #define HITMARKER_GRUDGE                (1 << 24)
-#define HITMARKER_OBEYS                 (1 << 25)
+#define HITMARKER_OBEYS                 (1 << 25) // Set after obedience check has been performed
 #define HITMARKER_NEVER_SET             (1 << 26) // Cleared as part of a large group. Never set or checked
 #define HITMARKER_CHARGING              (1 << 27)
 #define HITMARKER_FAINTED(battler)      (gBitTable[battler] << 28)
 #define HITMARKER_FAINTED2(battler)     ((1 << 28) << battler)
 
-// Per-side statuses that affect an entire party
+// Per-side statuses that affect an entire party.
+// These select from gSideStatuses[n], which is a u16.
 #define SIDE_STATUS_REFLECT          (1 << 0)
 #define SIDE_STATUS_LIGHTSCREEN      (1 << 1)
 #define SIDE_STATUS_X4               (1 << 2)
@@ -215,7 +227,8 @@
 #define MOVE_RESULT_FOE_HUNG_ON        (1 << 7)
 #define MOVE_RESULT_NO_EFFECT          (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED)
 
-// Battle Weather flags
+// Battle weather flags.
+// These select from gBattleWeather, which is a u16.
 #define B_WEATHER_RAIN_TEMPORARY      (1 << 0)
 #define B_WEATHER_RAIN_DOWNPOUR       (1 << 1)  // unused
 #define B_WEATHER_RAIN_PERMANENT      (1 << 2)
@@ -296,17 +309,17 @@
 #define MOVE_EFFECT_AFFECTS_USER        (1 << 6) // 64
 #define MOVE_EFFECT_CERTAIN             (1 << 7) // 128
 
-// Battle terrain defines for gBattleTerrain.
-#define BATTLE_TERRAIN_GRASS        0
-#define BATTLE_TERRAIN_LONG_GRASS   1
-#define BATTLE_TERRAIN_SAND         2
-#define BATTLE_TERRAIN_UNDERWATER   3
-#define BATTLE_TERRAIN_WATER        4
-#define BATTLE_TERRAIN_POND         5
-#define BATTLE_TERRAIN_MOUNTAIN     6
-#define BATTLE_TERRAIN_CAVE         7
-#define BATTLE_TERRAIN_BUILDING     8
-#define BATTLE_TERRAIN_PLAIN        9
+// Battle environment defines for gBattleEnvironment.
+#define BATTLE_ENVIRONMENT_GRASS        0
+#define BATTLE_ENVIRONMENT_LONG_GRASS   1
+#define BATTLE_ENVIRONMENT_SAND         2
+#define BATTLE_ENVIRONMENT_UNDERWATER   3
+#define BATTLE_ENVIRONMENT_WATER        4
+#define BATTLE_ENVIRONMENT_POND         5
+#define BATTLE_ENVIRONMENT_MOUNTAIN     6
+#define BATTLE_ENVIRONMENT_CAVE         7
+#define BATTLE_ENVIRONMENT_BUILDING     8
+#define BATTLE_ENVIRONMENT_PLAIN        9
 
 #define B_WAIT_TIME_LONG  64
 #define B_WAIT_TIME_MED   48

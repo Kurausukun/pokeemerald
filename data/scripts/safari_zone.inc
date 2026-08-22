@@ -51,8 +51,10 @@ EventScript_PokeBlockFeeder::
 SafariZone_EventScript_ChoosePokeblock::
 	fadescreen FADE_TO_BLACK
 	special OpenPokeblockCaseOnFeeder
-	waitstate
 	goto_if_ne VAR_RESULT, 0xFFFF, SafariZone_EventScript_PokeblockPlaced
+#ifdef BUGFIX
+	releaseall  @ Only gets called from EventScript_PokeBlockFeeder which uses lockall.
+#endif
 	end
 
 SafariZone_EventScript_PokeblockPlaced::

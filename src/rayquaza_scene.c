@@ -4,7 +4,6 @@
 #include "task.h"
 #include "graphics.h"
 #include "bg.h"
-#include "main.h"
 #include "malloc.h"
 #include "palette.h"
 #include "scanline_effect.h"
@@ -60,10 +59,12 @@ enum
 
 #define MAX_SMOKE 10
 
+typedef u8 ALIGNED(4) TilemapBuffer[BG_SCREEN_SIZE];
+
 struct RayquazaScene
 {
     MainCallback exitCallback;
-    u8 tilemapBuffers[4][BG_SCREEN_SIZE];
+    TilemapBuffer tilemapBuffers[4];
     u16 unk; // never read
     u8 animId;
     bool8 endEarly;
@@ -1283,7 +1284,7 @@ static const struct BgTemplate sBgTemplates_ChasesAway[] =
     }
 };
 
-void DoRayquazaScene(u8 animId, bool8 endEarly, void (*exitCallback)(void))
+void DoRayquazaScene(u8 animId, bool8 endEarly, MainCallback exitCallback)
 {
     sRayScene = AllocZeroed(sizeof(*sRayScene));
     sRayScene->animId = animId;
@@ -1636,7 +1637,7 @@ static void Task_DuoFightAnim(u8 taskId)
 static void Task_DuoFight_AnimateClouds(u8 taskId)
 {
     s16 i;
-    u16 *data = gTasks[taskId].data;
+    u16 *data = (u16*)gTasks[taskId].data;
 
     for (i = 24; i < 92; i++)
     {

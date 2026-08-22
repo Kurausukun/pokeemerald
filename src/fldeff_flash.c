@@ -61,13 +61,13 @@ static const struct FlashStruct sTransitionTypes[] =
     {},
 };
 
-static const u16 sCaveTransitionPalette_White[] = INCBIN_U16("graphics/cave_transition/white.gbapal");
-static const u16 sCaveTransitionPalette_Black[] = INCBIN_U16("graphics/cave_transition/black.gbapal");
+static const u16 sCaveTransitionPalette_White[] = INCGFX_U16("graphics/cave_transition/white.pal", ".gbapal");
+static const u16 sCaveTransitionPalette_Black[] = INCGFX_U16("graphics/cave_transition/black.pal", ".gbapal");
 
-static const u16 sCaveTransitionPalette_Enter[] = INCBIN_U16("graphics/cave_transition/enter.gbapal");
-static const u16 sCaveTransitionPalette_Exit[] = INCBIN_U16("graphics/cave_transition/exit.gbapal");
-static const u32 sCaveTransitionTilemap[] = INCBIN_U32("graphics/cave_transition/tilemap.bin.lz");
-static const u32 sCaveTransitionTiles[] = INCBIN_U32("graphics/cave_transition/tiles.4bpp.lz");
+static const u16 sCaveTransitionPalette_Enter[] = INCGFX_U16("graphics/cave_transition/enter.pal", ".gbapal");
+
+static const u32 sCaveTransitionTilemap[] = INCGFX_U32("graphics/cave_transition/tilemap.bin", ".lz");
+static const u32 sCaveTransitionTiles[] = INCGFX_U32("graphics/cave_transition/tiles.png", ".4bpp.lz");
 
 bool8 SetUpFieldMove_Flash(void)
 {
@@ -122,8 +122,6 @@ static void VBC_ChangeMapVBlank(void)
 
 void CB2_DoChangeMap(void)
 {
-    u16 ime;
-
     SetVBlankCallback(NULL);
     SetGpuReg(REG_OFFSET_DISPCNT, 0);
     SetGpuReg(REG_OFFSET_BG2CNT, 0);
@@ -141,10 +139,7 @@ void CB2_DoChangeMap(void)
     ResetPaletteFade();
     ResetTasks();
     ResetSpriteData();
-    ime = REG_IME;
-    REG_IME = 0;
-    REG_IE |= INTR_FLAG_VBLANK;
-    REG_IME = ime;
+    IntrEnable(INTR_FLAG_VBLANK);
     SetVBlankCallback(VBC_ChangeMapVBlank);
     SetMainCallback2(CB2_ChangeMapMain);
     if (!TryDoMapTransition())
@@ -219,7 +214,7 @@ static void Task_ExitCaveTransition2(u8 taskId)
     LZ77UnCompVram(sCaveTransitionTiles, (void *)(VRAM + 0xC000));
     LZ77UnCompVram(sCaveTransitionTilemap, (void *)(VRAM + 0xF800));
     LoadPalette(sCaveTransitionPalette_White, BG_PLTT_ID(14), PLTT_SIZE_4BPP);
-    LoadPalette(sCaveTransitionPalette_Exit, BG_PLTT_ID(14), PLTT_SIZEOF(8));
+    LoadPalette(&sCaveTransitionPalette_Enter[8], BG_PLTT_ID(14), PLTT_SIZEOF(8));
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG0
                                 | BLDCNT_EFFECT_BLEND
                                 | BLDCNT_TGT2_BG1
@@ -249,7 +244,7 @@ static void Task_ExitCaveTransition3(u8 taskId)
     u16 blend = count + 0x1000;
 
     SetGpuReg(REG_OFFSET_BLDALPHA, blend);
-    if (count <= 0x10)
+    if (count <= 16)
     {
         gTasks[taskId].data[1]++;
     }
@@ -270,7 +265,7 @@ static void Task_ExitCaveTransition4(u8 taskId)
     if (count < 8)
     {
         gTasks[taskId].data[2]++;
-        LoadPalette(&sCaveTransitionPalette_Exit[count], BG_PLTT_ID(14), PLTT_SIZEOF(8) - PLTT_SIZEOF(count));
+        LoadPalette(&sCaveTransitionPalette_Enter[8 + count], BG_PLTT_ID(14), PLTT_SIZEOF(8) - PLTT_SIZEOF(count));
     }
     else
     {

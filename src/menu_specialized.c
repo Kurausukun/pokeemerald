@@ -236,8 +236,7 @@ void MailboxMenu_RemoveWindow(u8 windowIdx)
     sMailboxWindowIds[windowIdx] = WINDOW_NONE;
 }
 
-// Unused
-static u8 MailboxMenu_GetWindowId(u8 windowIdx)
+static u8 UNUSED MailboxMenu_GetWindowId(u8 windowIdx)
 {
     return sMailboxWindowIds[windowIdx];
 }
@@ -318,7 +317,7 @@ void MailboxMenu_Free(void)
 // filled with the graph color.
 //---------------------------------------
 
-#define SHIFT_RIGHT_ADJUSTED(n, s)(((n) >> (s)) + (((n) >> ((s) - 1)) & 1))
+#define SHIFT_RIGHT_ADJUSTED(n, s) (((n) >> (s)) + (((n) >> ((s) - 1)) & 1))
 
 void ConditionGraph_Init(struct ConditionGraph *graph)
 {
@@ -588,7 +587,7 @@ static void ConditionGraph_CalcRightHalf(struct ConditionGraph *graph)
     // No need for conditional, positions on the Beauty line are always above the Cute line
     ConditionGraph_CalcLine(graph, graph->scanlineRight[0], &graph->curPositions[GRAPH_BEAUTY], &graph->curPositions[GRAPH_CUTE], TRUE, NULL);
 
-    // Calculate Cute -> Tough line (includes left scanline because this crosses the halfway point)
+    // Calculate Cute -> Smart line (includes left scanline because this crosses the halfway point)
     i = (graph->curPositions[GRAPH_CUTE].y <= graph->curPositions[GRAPH_SMART].y);
     ConditionGraph_CalcLine(graph, graph->scanlineRight[0], &graph->curPositions[GRAPH_CUTE], &graph->curPositions[GRAPH_SMART], i, graph->scanlineLeft[0]);
 
@@ -918,7 +917,7 @@ static u8 *GetConditionMenuMonString(u8 *dst, u16 boxId, u16 monId)
     *(dst++) = TEXT_COLOR_TRANSPARENT;
     *(dst++) = TEXT_COLOR_LIGHT_BLUE;
     if (GetBoxOrPartyMonData(box, mon, MON_DATA_IS_EGG, NULL))
-        return StringCopyPadded(dst, gText_EggNickname, 0, 12);
+        return StringCopyPadded(dst, gText_EggNickname, 0, POKEMON_NAME_LENGTH + 2);
     GetBoxOrPartyMonData(box, mon, MON_DATA_NICKNAME, dst);
     StringGet_Nickname(dst);
     species = GetBoxOrPartyMonData(box, mon, MON_DATA_SPECIES, NULL);
@@ -1020,7 +1019,7 @@ void GetConditionMenuMonNameAndLocString(u8 *locationDst, u8 *nameDst, u16 boxId
         locationDst[3] = TEXT_COLOR_TRANSPARENT;
         locationDst[4] = TEXT_COLOR_LIGHT_BLUE;
         if (box == TOTAL_BOXES_COUNT) // Party mon.
-            BufferConditionMenuSpacedStringN(&locationDst[5], gText_InParty, 8);
+            BufferConditionMenuSpacedStringN(&locationDst[5], gText_InParty, BOX_NAME_LENGTH);
         else
             BufferConditionMenuSpacedStringN(&locationDst[5], GetBoxNamePtr(box), BOX_NAME_LENGTH);
     }
@@ -1029,7 +1028,7 @@ void GetConditionMenuMonNameAndLocString(u8 *locationDst, u8 *nameDst, u16 boxId
         for (i = 0; i < POKEMON_NAME_LENGTH + 2; i++)
             nameDst[i] = CHAR_SPACE;
         nameDst[i] = EOS;
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < BOX_NAME_LENGTH; i++)
             locationDst[i] = CHAR_SPACE;
         locationDst[i] = EOS;
     }
@@ -1115,10 +1114,10 @@ bool8 ConditionMenu_UpdateMonExit(struct ConditionGraph *graph, s16 *x)
     return (graphUpdating || monUpdating);
 }
 
-static const u32 sConditionPokeball_Gfx[] = INCBIN_U32("graphics/pokenav/condition/pokeball.4bpp");
-static const u32 sConditionPokeballPlaceholder_Gfx[] = INCBIN_U32("graphics/pokenav/condition/pokeball_placeholder.4bpp");
-static const u16 sConditionSparkle_Gfx[] = INCBIN_U16("graphics/pokenav/condition/sparkle.gbapal");
-static const u32 sConditionSparkle_Pal[] = INCBIN_U32("graphics/pokenav/condition/sparkle.4bpp");
+static const u32 sConditionPokeball_Gfx[] = INCGFX_U32("graphics/pokenav/condition/pokeball.png", ".4bpp");
+static const u32 sConditionPokeballPlaceholder_Gfx[] = INCGFX_U32("graphics/pokenav/condition/pokeball_placeholder.png", ".4bpp");
+static const u16 sConditionSparkle_Gfx[] = INCGFX_U16("graphics/pokenav/condition/sparkle.png", ".gbapal");
+static const u32 sConditionSparkle_Pal[] = INCGFX_U32("graphics/pokenav/condition/sparkle.png", ".4bpp");
 
 static const struct OamData sOam_ConditionMonPic =
 {
@@ -1195,7 +1194,7 @@ void LoadConditionMonPicTemplate(struct SpriteSheet *sheet, struct SpriteTemplat
     *pal = dataPal;
 }
 
-void LoadConditionSelectionIcons(struct SpriteSheet *sheets, struct SpriteTemplate * template, struct SpritePalette *pals)
+void LoadConditionSelectionIcons(struct SpriteSheet *sheets, struct SpriteTemplate *template, struct SpritePalette *pals)
 {
     u8 i;
 

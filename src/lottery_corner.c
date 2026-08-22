@@ -26,7 +26,7 @@ void ResetLotteryCorner(void)
     u16 rand = Random();
 
     SetLotteryNumber((Random() << 16) | rand);
-    VarSet(VAR_POKELOT_PRIZE_ITEM, 0);
+    VarSet(VAR_POKELOT_PRIZE_ITEM, ITEM_NONE);
 }
 
 void SetRandomLotteryNumber(u16 i)
@@ -75,8 +75,10 @@ void PickLotteryCornerTicket(void)
                 }
             }
         }
-        else // pokemon are always arranged from populated spots first to unpopulated, so the moment a NONE species is found, that's the end of the list.
+        else // Pokémon are always arranged from populated spots first to unpopulated, so the moment a NONE species is found, that's the end of the list.
+        {
             break;
+        }
     }
 
     for (i = 0; i < TOTAL_BOXES_COUNT; i++)
@@ -134,7 +136,9 @@ static u8 GetMatchingDigits(u16 winNumber, u16 otId)
             matchingDigits++;
         }
         else
+        {
             break;
+        }
     }
     return matchingDigits;
 }

@@ -194,7 +194,7 @@ static void SwapMoveDescAndContestTilemaps(void);
 #define CONTESTANT_TEXT_COLOR_START 10
 
 enum {
-// The "{Pokemon Name} / {Trainer Name}" windows.
+// The "{Pokémon Name} / {Trainer Name}" windows.
     WIN_CONTESTANT0_NAME,
     WIN_CONTESTANT1_NAME,
     WIN_CONTESTANT2_NAME,
@@ -358,7 +358,7 @@ EWRAM_DATA bool8 gCurContestWinnerIsForArtist = 0;
 EWRAM_DATA u8 gCurContestWinnerSaveIdx = 0;
 
 // IWRAM common vars.
-u32 gContestRngValue;
+COMMON_DATA u32 gContestRngValue = 0;
 
 extern const u8 gText_LinkStandby4[];
 extern const u8 gText_BDot[];
@@ -420,7 +420,7 @@ static const union AffineAnimCmd sAffineAnim_SliderHeart_SpinAppear[] =
     AFFINEANIMCMD_END
 };
 
-static const union AffineAnimCmd* const sAffineAnims_SliderHeart[] =
+static const union AffineAnimCmd *const sAffineAnims_SliderHeart[] =
 {
     [SLIDER_HEART_ANIM_NORMAL]    = sAffineAnim_SliderHeart_Normal,
     [SLIDER_HEART_ANIM_DISAPPEAR] = sAffineAnim_SliderHeart_SpinDisappear,
@@ -684,7 +684,7 @@ static const struct SpriteTemplate sSpriteTemplate_JudgeSpeechBubble =
     .callback = SpriteCallbackDummy
 };
 
-static const u16 sText_Pal[] = INCBIN_U16("graphics/contest/text.gbapal");
+static const u16 sText_Pal[] = INCGFX_U16("graphics/contest/text.pal", ".gbapal");
 
 #include "data/contest_text_tables.h"
 
@@ -858,23 +858,22 @@ static const struct CompressedSpriteSheet sSpriteSheets_ContestantsTurnBlinkEffe
     }
 };
 
-// Yup this is super dangerous but that's how it is here
 static const struct SpritePalette sSpritePalettes_ContestantsTurnBlinkEffect[CONTESTANT_COUNT] =
 {
     {
-        .data = (u16 *)(gHeap + 0x1A0A4),
+        .data = eContestTempSave.cachedWindowPalettes[5],
         .tag = TAG_BLINK_EFFECT_CONTESTANT0
     },
     {
-        .data = (u16 *)(gHeap + 0x1A0C4),
+        .data = eContestTempSave.cachedWindowPalettes[6],
         .tag = TAG_BLINK_EFFECT_CONTESTANT1
     },
     {
-        .data = (u16 *)(gHeap + 0x1A0E4),
+        .data = eContestTempSave.cachedWindowPalettes[7],
         .tag = TAG_BLINK_EFFECT_CONTESTANT2
     },
     {
-        .data = (u16 *)(gHeap + 0x1A104),
+        .data = eContestTempSave.cachedWindowPalettes[8],
         .tag = TAG_BLINK_EFFECT_CONTESTANT3
     }
 };
@@ -1076,10 +1075,10 @@ static void LoadContestPalettes(void)
 {
     s32 i;
 
-    LoadPalette(sText_Pal, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(sText_Pal, BG_PLTT_ID(15), sizeof(sText_Pal));
     SetBackdropFromColor(RGB_BLACK);
     for (i = 10; i < 14; i++)
-        LoadPalette(gPlttBufferUnfaded + BG_PLTT_ID(15) + 1, BG_PLTT_ID(15) + i, PLTT_SIZEOF(1));
+        LoadPalette(&gPlttBufferUnfaded[BG_PLTT_ID(15) + 1], BG_PLTT_ID(15) + i, PLTT_SIZEOF(1));
     FillPalette(RGB(31, 17, 31), BG_PLTT_ID(15) + 3, PLTT_SIZEOF(1));
 }
 
@@ -1112,10 +1111,10 @@ static void InitContestResources(void)
 
     for (i = 0; i < CONTESTANT_COUNT; i++)
     {
-        eContestantStatus[i].nextTurnOrder = 0xFF;
+        eContestantStatus[i].nextTurnOrder = CONTESTANT_NONE;
         eContest.prevTurnOrder[i] = gContestantTurnOrder[i];
     }
-    // Calling this here while all the nextTurnOrder values are 0xFF will actually
+    // Calling this here while all the nextTurnOrder values are CONTESTANT_NONE will actually
     // just reverse the turn order.
     ApplyNextTurnOrder();
     memset(gContestResources->tv, 0, sizeof(*gContestResources->tv) * CONTESTANT_COUNT);
@@ -1301,8 +1300,8 @@ static void Task_ReadyStartLinkContest(u8 taskId)
 
 static bool8 SetupContestGraphics(u8 *stateVar)
 {
-    u16 tempPalette1[16];
-    u16 tempPalette2[16];
+    u16 ALIGNED(4) tempPalette1[16];
+    u16 ALIGNED(4) tempPalette2[16];
 
     switch (*stateVar)
     {
@@ -1331,10 +1330,10 @@ static bool8 SetupContestGraphics(u8 *stateVar)
         break;
     case 5:
         LoadCompressedPalette(gContestInterfaceAudiencePalette, BG_PLTT_OFFSET, BG_PLTT_SIZE);
-        CpuCopy32(gPlttBufferUnfaded + BG_PLTT_ID(8), tempPalette1, PLTT_SIZE_4BPP);
-        CpuCopy32(gPlttBufferUnfaded + BG_PLTT_ID(5 + gContestPlayerMonIndex), tempPalette2, PLTT_SIZE_4BPP);
-        CpuCopy32(tempPalette2, gPlttBufferUnfaded + BG_PLTT_ID(8), PLTT_SIZE_4BPP);
-        CpuCopy32(tempPalette1, gPlttBufferUnfaded + BG_PLTT_ID(5 + gContestPlayerMonIndex), PLTT_SIZE_4BPP);
+        CpuCopy32(&gPlttBufferUnfaded[BG_PLTT_ID(8)], tempPalette1, PLTT_SIZE_4BPP);
+        CpuCopy32(&gPlttBufferUnfaded[BG_PLTT_ID(5 + gContestPlayerMonIndex)], tempPalette2, PLTT_SIZE_4BPP);
+        CpuCopy32(tempPalette2, &gPlttBufferUnfaded[BG_PLTT_ID(8)], PLTT_SIZE_4BPP);
+        CpuCopy32(tempPalette1, &gPlttBufferUnfaded[BG_PLTT_ID(5 + gContestPlayerMonIndex)], PLTT_SIZE_4BPP);
         DmaCopy32Defvars(3, gPlttBufferUnfaded, eContestTempSave.cachedWindowPalettes, sizeof(eContestTempSave.cachedWindowPalettes));
         LoadContestPalettes();
         break;
@@ -1348,13 +1347,13 @@ static bool8 SetupContestGraphics(u8 *stateVar)
         CreateApplauseMeterSprite();
         CreateJudgeAttentionEyeTask();
         CreateUnusedBlendTask();
-        gBattlerPositions[0] = B_POSITION_PLAYER_LEFT;
-        gBattlerPositions[1] = B_POSITION_OPPONENT_LEFT;
-        gBattlerPositions[2] = B_POSITION_OPPONENT_RIGHT;
-        gBattlerPositions[3] = B_POSITION_PLAYER_RIGHT;
+        gBattlerPositions[B_BATTLER_0] = B_POSITION_PLAYER_LEFT;
+        gBattlerPositions[B_BATTLER_1] = B_POSITION_OPPONENT_LEFT;
+        gBattlerPositions[B_BATTLER_2] = B_POSITION_OPPONENT_RIGHT;
+        gBattlerPositions[B_BATTLER_3] = B_POSITION_PLAYER_RIGHT;
         gBattleTypeFlags = 0;
-        gBattlerAttacker = B_POSITION_PLAYER_RIGHT;
-        gBattlerTarget = B_POSITION_OPPONENT_RIGHT;
+        gBattlerAttacker = B_BATTLER_2;
+        gBattlerTarget = B_BATTLER_3;
         // Unclear why judge sprite is assigned here
         // Overwritten in APPEALSTATE_SLIDE_MON_IN with the attacking contest mon
         gBattlerSpriteIds[gBattlerAttacker] = CreateJudgeSprite();
@@ -1475,7 +1474,7 @@ static void Task_DisplayAppealNumberText(u8 taskId)
         gBattle_BG0_Y = 0;
         gBattle_BG2_Y = 0;
         ContestDebugDoPrint();
-        DmaCopy32Defvars(3, gPlttBufferUnfaded, eContestTempSave.cachedPlttBufferUnfaded, PLTT_BUFFER_SIZE * 2);
+        DmaCopy32Defvars(3, gPlttBufferUnfaded, eContestTempSave.cachedPlttBufferUnfaded, PLTT_SIZE);
         ConvertIntToDecimalStringN(gStringVar1, eContest.appealNumber + 1, STR_CONV_MODE_LEFT_ALIGN, 1);
         if (!Contest_IsMonsTurnDisabled(gContestPlayerMonIndex))
             StringCopy(gDisplayedStringBattle, gText_AppealNumWhichMoveWillBePlayed);
@@ -1674,8 +1673,8 @@ static void Task_HideMoveSelectScreen(u8 taskId)
     }
     Contest_SetBgCopyFlags(0);
     // This seems to be a bug; it should have just copied PLTT_BUFFER_SIZE.
-    DmaCopy32Defvars(3, gPlttBufferFaded, eContestTempSave.cachedPlttBufferFaded, PLTT_BUFFER_SIZE * 2);
-    LoadPalette(eContestTempSave.cachedPlttBufferUnfaded, 0, PLTT_BUFFER_SIZE * 2);
+    DmaCopy32Defvars(3, gPlttBufferFaded, eContestTempSave.cachedPlttBufferFaded, PLTT_SIZE);
+    LoadPalette(eContestTempSave.cachedPlttBufferUnfaded, 0, PLTT_SIZE);
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = 0;
     gTasks[taskId].func = Task_HideApplauseMeterForAppealStart;
@@ -2561,7 +2560,7 @@ static void Task_WaitForHeartSliders(u8 taskId)
 
 static void Task_RestorePlttBufferUnfaded(u8 taskId)
 {
-    DmaCopy32Defvars(3, eContestTempSave.cachedPlttBufferUnfaded, gPlttBufferUnfaded, PLTT_BUFFER_SIZE * 2);
+    DmaCopy32Defvars(3, eContestTempSave.cachedPlttBufferUnfaded, gPlttBufferUnfaded, PLTT_SIZE);
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = 2;
     gTasks[taskId].func = Task_WaitPrintRoundResult;
@@ -2668,7 +2667,9 @@ static void Task_EndAppeals(u8 taskId)
     CalculateFinalScores();
     ContestClearGeneralTextWindow();
     if (!(gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK))
+    {
         BravoTrainerPokemonProfile_BeforeInterview1(eContestantStatus[gContestPlayerMonIndex].prevMove);
+    }
     else
     {
         CalculateContestLiveUpdateData();
@@ -2775,7 +2776,7 @@ static bool8 IsPlayerLinkLeader(void)
 
 void CreateContestMonFromParty(u8 partyIndex)
 {
-    u8 name[20];
+    u8 name[max(PLAYER_NAME_LENGTH + 1, POKEMON_NAME_BUFFER_SIZE)];
     u16 heldItem;
     s16 cool;
     s16 beauty;
@@ -2785,10 +2786,8 @@ void CreateContestMonFromParty(u8 partyIndex)
 
     StringCopy(name, gSaveBlock2Ptr->playerName);
     if (gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK)
-    {
         StripPlayerNameForLinkContest(name);
-    }
-    memcpy(gContestMons[gContestPlayerMonIndex].trainerName, name, 8);
+    memcpy(gContestMons[gContestPlayerMonIndex].trainerName, name, PLAYER_NAME_LENGTH + 1);
     if (gSaveBlock2Ptr->playerGender == MALE)
         gContestMons[gContestPlayerMonIndex].trainerGfxId = OBJ_EVENT_GFX_LINK_BRENDAN;
     else
@@ -2856,7 +2855,7 @@ void SetContestants(u8 contestType, u8 rank)
     u8 opponentsCount = 0;
     u8 opponents[100];
     bool8 allowPostgameContestants = FALSE;
-    const u8 * filter;
+    const u8 *filter;
 
     TryPutPlayerLast();
 
@@ -2891,7 +2890,7 @@ void SetContestants(u8 contestType, u8 rank)
                 opponents[opponentsCount++] = i;
         }
     }
-    opponents[opponentsCount] = 0xFF;
+    opponents[opponentsCount] = CONTESTANT_NONE;
 
     // Choose three random opponents from the list
     for (i = 0; i < CONTESTANT_COUNT - 1; i++)
@@ -2900,7 +2899,7 @@ void SetContestants(u8 contestType, u8 rank)
         s32 j;
 
         gContestMons[i] = gContestOpponents[opponents[rnd]];
-        for (j = rnd; opponents[j] != 0xFF; j++)
+        for (j = rnd; opponents[j] != CONTESTANT_NONE; j++)
             opponents[j] = opponents[j + 1];
         opponentsCount--;
     }
@@ -2940,7 +2939,7 @@ void SetLinkAIContestants(u8 contestType, u8 rank, bool32 isPostgame)
             || (contestType == CONTEST_CATEGORY_TOUGH && gContestOpponents[i].aiPool_Tough))
             opponents[opponentsCount++] = i;
     }
-    opponents[opponentsCount] = 0xFF;
+    opponents[opponentsCount] = CONTESTANT_NONE;
 
     // Fill remaining contestant slots with random AI opponents from the list
     for (i = 0; i < CONTESTANT_COUNT - gNumLinkContestPlayers; i++)
@@ -2950,7 +2949,7 @@ void SetLinkAIContestants(u8 contestType, u8 rank, bool32 isPostgame)
         gContestMons[gNumLinkContestPlayers + i] = gContestOpponents[opponents[rnd]];
         StripPlayerNameForLinkContest(gContestMons[gNumLinkContestPlayers + i].trainerName);
         StripMonNameForLinkContest(gContestMons[gNumLinkContestPlayers + i].nickname, GAME_LANGUAGE);
-        for (j = rnd; opponents[j] != 0xFF; j++)
+        for (j = rnd; opponents[j] != CONTESTANT_NONE; j++)
             opponents[j] = opponents[j + 1];
         opponentsCount--;
     }
@@ -3012,7 +3011,7 @@ static void DrawContestantWindowText(void)
 
 static u8 *Contest_CopyStringWithColor(const u8 *string, u8 color)
 {
-    u8 * ptr = StringCopy(gDisplayedStringBattle, gText_ColorTransparent);
+    u8 *ptr = StringCopy(gDisplayedStringBattle, gText_ColorTransparent);
     ptr[-1] = color; // Overwrites the "{COLOR TRANSPARENT}" part of the string.
     ptr = StringCopy(ptr, string);
 
@@ -3172,16 +3171,19 @@ static u16 GetMoveEffectSymbolTileOffset(u16 move, u8 contestant)
 
     switch (gContestEffects[gContestMoves[move].effect].effectType)
     {
-    case 0:
-    case 1:
-    case 8:
+    case CONTEST_EFFECT_TYPE_APPEAL:
+    case CONTEST_EFFECT_TYPE_AVOID_STARTLE:
+    case CONTEST_EFFECT_TYPE_UNKNOWN:
         offset = 0x9082;
         break;
-    case 2:
-    case 3:
+    case CONTEST_EFFECT_TYPE_STARTLE_MON:
+    case CONTEST_EFFECT_TYPE_STARTLE_MONS:
         offset = 0x9088;
         break;
     default:
+    //case CONTEST_EFFECT_TYPE_WORSEN:
+    //case CONTEST_EFFECT_TYPE_SPECIAL_APPEAL:
+    //case CONTEST_EFFECT_TYPE_TURN_ORDER:
         offset = 0x9086;
         break;
     }
@@ -3253,8 +3255,7 @@ static void DrawMoveEffectSymbol(u16 move, u8 contestant)
     }
 }
 
-// Unused
-static void DrawMoveEffectSymbols(void)
+static void UNUSED DrawMoveEffectSymbols(void)
 {
     s32 i;
 
@@ -3437,11 +3438,11 @@ static void RankContestants(void)
 
     // For each contestant, find the best rank with their point total.
     // Normally, each point total is different, and this will output the
-    // rankings as expected. However, if two pokemon are tied, then they
+    // rankings as expected. However, if two Pokémon are tied, then they
     // both get the best rank for that point total.
     //
     // For example if the point totals are [100, 80, 80, 50], the ranks will
-    // be [1, 2, 2, 4]. The pokemon with a point total of 80 stop looking
+    // be [1, 2, 2, 4]. The Pokémon with a point total of 80 stop looking
     // when they see the first 80 in the array, so they both share the '2'
     // rank.
     for (i = 0; i < CONTESTANT_COUNT; i++)
@@ -4068,14 +4069,14 @@ static void UpdateBlendTaskContestantData(u8 contestant)
 
     palOffset1 = contestant + 5;
     DmaCopy16Defvars(3,
-                     gPlttBufferUnfaded + palOffset1 * 16 + 10,
-                     gPlttBufferFaded   + palOffset1 * 16 + 10,
-                     2);
-    palOffset2 = (contestant + 5) * 16 + 12 + contestant;
+                     &gPlttBufferUnfaded[PLTT_ID(palOffset1) + 10],
+                     &gPlttBufferFaded[PLTT_ID(palOffset1) + 10],
+                     PLTT_SIZEOF(1));
+    palOffset2 = PLTT_ID(contestant + 5) + 12 + contestant;
     DmaCopy16Defvars(3,
-                     gPlttBufferUnfaded + palOffset2,
-                     gPlttBufferFaded + palOffset2,
-                     2);
+                     &gPlttBufferUnfaded[palOffset2],
+                     &gPlttBufferFaded[palOffset2],
+                     PLTT_SIZEOF(1));
 }
 
 // See comments on CreateUnusedBlendTask
@@ -4223,8 +4224,7 @@ static void SpriteCB_EndBlinkContestantBox(struct Sprite *sprite)
     ResetBlendForContestantBoxBlink();
 }
 
-// Unused.
-static void ContestDebugTogglePointTotal(void)
+static void UNUSED ContestDebugTogglePointTotal(void)
 {
     if(eContestDebugMode == CONTEST_DEBUG_MODE_PRINT_POINT_TOTAL)
         eContestDebugMode = CONTEST_DEBUG_MODE_OFF;
@@ -4370,7 +4370,7 @@ void SortContestants(bool8 useRanking)
         // Note that ranking is calculated so that shared places still take up a ranking
         // space. A ranking like [1, 2, 2, 3] is not possible; it would be [1, 2, 2, 4]
         // instead.
-        memset(scratch, 0xFF, sizeof(scratch));
+        memset(scratch, CONTESTANT_NONE, sizeof(scratch));
         for (i = 0; i < CONTESTANT_COUNT; i++)
         {
             u8 j = eContestantStatus[i].ranking;
@@ -4378,7 +4378,7 @@ void SortContestants(bool8 useRanking)
             while (1)
             {
                 u8 *ptr = &scratch[j];
-                if (*ptr == 0xFF)
+                if (*ptr == CONTESTANT_NONE)
                 {
                     *ptr = i;
                     gContestantTurnOrder[i] = j;
@@ -4594,10 +4594,10 @@ void MakeContestantNervous(u8 p)
 // ContestantStatus::nextTurnOrder field of each contestant. The remaining
 // turns are assigned such that the turn order will reverse.
 //
-// For example, if no pokemon have a defined nextTurnOrder, then the 4th
+// For example, if no Pokémon have a defined nextTurnOrder, then the 4th
 // will become 1st, the 3rd will become 2nd, etc.
 //
-// Note: This function assumes that multiple pokemon cannot have the same
+// Note: This function assumes that multiple Pokémon cannot have the same
 // nextTurnOrder value.
 static void ApplyNextTurnOrder(void)
 {
@@ -4636,7 +4636,7 @@ static void ApplyNextTurnOrder(void)
             // First, look for the first unassigned contestant.
             for (j = 0; j < CONTESTANT_COUNT; j++)
             {
-                if (!isContestantOrdered[j] && eContestantStatus[j].nextTurnOrder == 0xFF)
+                if (!isContestantOrdered[j] && eContestantStatus[j].nextTurnOrder == CONTESTANT_NONE)
                 {
                     nextContestant = j;
                     j++;
@@ -4647,7 +4647,7 @@ static void ApplyNextTurnOrder(void)
             // Then, look for a better candidate, with a higher turn order.
             for (; j < CONTESTANT_COUNT; j++)
             {
-                if (!isContestantOrdered[j] && eContestantStatus[j].nextTurnOrder == 0xFF
+                if (!isContestantOrdered[j] && eContestantStatus[j].nextTurnOrder == CONTESTANT_NONE
                  && gContestantTurnOrder[nextContestant] > gContestantTurnOrder[j])
                     nextContestant = j;
             }
@@ -4661,7 +4661,7 @@ static void ApplyNextTurnOrder(void)
     for (i = 0; i < CONTESTANT_COUNT; i++)
     {
         eContestAppealResults.turnOrder[i] = newTurnOrder[i];
-        eContestantStatus[i].nextTurnOrder = 0xFF;
+        eContestantStatus[i].nextTurnOrder = CONTESTANT_NONE;
         eContestantStatus[i].turnOrderMod = 0;
         gContestantTurnOrder[i] = newTurnOrder[i];
     }
@@ -4878,15 +4878,13 @@ static void Task_ShowAndUpdateApplauseMeter(u8 taskId)
     }
 }
 
-// Unused.
-static void HideApplauseMeterNoAnim(void)
+static void UNUSED HideApplauseMeterNoAnim(void)
 {
     gSprites[eContest.applauseMeterSpriteId].x2 = 0;
     gSprites[eContest.applauseMeterSpriteId].invisible = FALSE;
 }
 
-// Unused.
-static void ShowApplauseMeterNoAnim(void)
+static void UNUSED ShowApplauseMeterNoAnim(void)
 {
     gSprites[eContest.applauseMeterSpriteId].invisible = TRUE;
 }
@@ -6020,8 +6018,10 @@ static u8 GetMonNicknameLanguage(u8 *nickname)
     if (nickname[0] == EXT_CTRL_CODE_BEGIN && nickname[1] == EXT_CTRL_CODE_JPN)
         return GAME_LANGUAGE;
 
-    if (StringLength(nickname) < PLAYER_NAME_LENGTH - 1)
+    if (StringLength(nickname) <= 5)
     {
+        // Name is short enough that it might be Japanese.
+        // Make sure  all the character values are valid latin name characters.
         while (*nickname != EOS)
         {
             if ((*nickname >= CHAR_A && *nickname <= CHAR_z)
@@ -6039,12 +6039,18 @@ static u8 GetMonNicknameLanguage(u8 *nickname)
                 || *nickname == CHAR_DBL_QUOTE_LEFT
                 || *nickname == CHAR_DBL_QUOTE_RIGHT
                 || *nickname == CHAR_SGL_QUOTE_LEFT
-                || *nickname == CHAR_DBL_QUOTE_LEFT) // Most likely a typo, CHAR_SGL_QUOTE_RIGHT should be here instead.
+#ifdef BUGFIX
+                || *nickname == CHAR_SGL_QUOTE_RIGHT
+#else
+                || *nickname == CHAR_DBL_QUOTE_LEFT // Most likely a typo, CHAR_SGL_QUOTE_RIGHT should be here instead.
+#endif
+                )
             {
                 nickname++;
             }
             else
             {
+                // Invalid latin name character, assume the name was Japanese.
                 ret = LANGUAGE_JAPANESE;
                 break;
             }
@@ -6101,7 +6107,7 @@ void StripPlayerAndMonNamesForLinkContest(struct ContestPokemon *mon, s32 langua
     name = mon->trainerName;
     if (language == LANGUAGE_JAPANESE)
     {
-        name[PLAYER_NAME_LENGTH] = EOS;
+        name[7] = EOS;
         name[6] = name[4];
         name[5] = name[3];
         name[4] = name[2];

@@ -131,7 +131,7 @@ struct PokemonSubstruct2
 struct PokemonSubstruct3
 {
  /* 0x00 */ u8 pokerus;
- /* 0x01 */ u8 metLocation;
+ /* 0x01 */ metloc_u8_t metLocation;
 
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
@@ -202,7 +202,8 @@ struct BoxPokemon
     u8 isBadEgg:1;
     u8 hasSpecies:1;
     u8 isEgg:1;
-    u8 unused:5;
+    u8 blockBoxRS:1; // Unused, but Pokémon Box Ruby & Sapphire will refuse to deposit a Pokémon with this flag set
+    u8 unused:4;
     u8 otName[PLAYER_NAME_LENGTH];
     u8 markings;
     u16 checksum;
@@ -275,8 +276,7 @@ struct BattlePokemon
     /*0x17*/ u32 abilityNum:1;
     /*0x18*/ s8 statStages[NUM_BATTLE_STATS];
     /*0x20*/ u8 ability;
-    /*0x21*/ u8 type1;
-    /*0x22*/ u8 type2;
+    /*0x21*/ u8 types[2];
     /*0x23*/ u8 unknown;
     /*0x24*/ u8 pp[MAX_MON_MOVES];
     /*0x28*/ u16 hp;
@@ -408,7 +408,7 @@ void CreateBattleTowerMon_HandleLevel(struct Pokemon *mon, struct BattleTowerPok
 void CreateApprenticeMon(struct Pokemon *mon, const struct Apprentice *src, u8 monId);
 void CreateMonWithEVSpreadNatureOTID(struct Pokemon *mon, u16 species, u8 level, u8 nature, u8 fixedIV, u8 evSpread, u32 otId);
 void ConvertPokemonToBattleTowerPokemon(struct Pokemon *mon, struct BattleTowerPokemon *dest);
-bool8 ShouldIgnoreDeoxysForm(u8 caseId, u8 battlerId);
+bool8 ShouldIgnoreDeoxysForm(u8 caseId, u8 battler);
 void SetDeoxysStats(void);
 u16 GetUnionRoomTrainerPic(void);
 u16 GetUnionRoomTrainerClass(void);
@@ -426,22 +426,27 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon);
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
-s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 bankAtk, u8 bankDef);
+s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef);
 u8 CountAliveMonsInBattle(u8 caseId);
-u8 GetDefaultMoveTarget(u8 battlerId);
+u8 GetDefaultMoveTarget(u8 battler);
 u8 GetMonGender(struct Pokemon *mon);
 u8 GetBoxMonGender(struct BoxPokemon *boxMon);
 u8 GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
 void SetMultiuseSpriteTemplateToPokemon(u16 speciesTag, u8 battlerPosition);
-void SetMultiuseSpriteTemplateToTrainerBack(u16 trainerSpriteId, u8 battlerPosition);
+void SetMultiuseSpriteTemplateToTrainerBack(u16 trainerPicId, u8 battlerPosition);
 void SetMultiuseSpriteTemplateToTrainerFront(u16 trainerPicId, u8 battlerPosition);
 
-// These are full type signatures for GetMonData() and GetBoxMonData(),
-// but they are not used since some code erroneously omits the third arg.
-// u32 GetMonData(struct Pokemon *mon, s32 field, u8 *data);
-// u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
-u32 GetMonData();
-u32 GetBoxMonData();
+/* GameFreak called Get(Box)MonData with either 2 or 3 arguments, for
+ * type safety we have a Get(Box)MonData macro which dispatches to
+ * either Get(Box)MonData2 or Get(Box)MonData3 based on the number of
+ * arguments. The two functions are aliases of each other, but they
+ * differ for matching purposes in the caller's codegen. */
+#define GetMonData(...) CAT(GetMonData, NARG_8(__VA_ARGS__))(__VA_ARGS__)
+#define GetBoxMonData(...) CAT(GetBoxMonData, NARG_8(__VA_ARGS__))(__VA_ARGS__)
+u32 GetMonData3(struct Pokemon *mon, s32 field, u8 *data);
+u32 GetMonData2(struct Pokemon *mon, s32 field);
+u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data);
+u32 GetBoxMonData2(struct BoxPokemon *boxMon, s32 field);
 
 void SetMonData(struct Pokemon *mon, s32 field, const void *dataArg);
 void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg);
@@ -462,15 +467,15 @@ void GetSpeciesName(u8 *name, u16 species);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);
-void CopyPlayerPartyMonToBattleData(u8 battlerId, u8 partyIndex);
+void CopyPlayerPartyMonToBattleData(u8 battler, u8 partyIndex);
 bool8 ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
-bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 e);
-bool8 HealStatusConditions(struct Pokemon *mon, u32 battlePartyId, u32 healMask, u8 battlerId);
+bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, bool8 usedByAI);
+bool8 HealStatusConditions(struct Pokemon *mon, u32 battlePartyId, u32 healMask, u8 battler);
 u8 GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
 u8 *UseStatIncreaseItem(u16 itemId);
 u8 GetNature(struct Pokemon *mon);
 u8 GetNatureFromPersonality(u32 personality);
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
+u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem);
 u16 HoennPokedexNumToSpecies(u16 hoennNum);
 u16 NationalPokedexNumToSpecies(u16 nationalNum);
 u16 NationalToHoennOrder(u16 nationalNum);
@@ -481,10 +486,10 @@ u16 SpeciesToCryId(u16 species);
 void DrawSpindaSpots(u16 species, u32 personality, u8 *dest, bool8 isFrontPic);
 void EvolutionRenameMon(struct Pokemon *mon, u16 oldSpecies, u16 newSpecies);
 u8 GetPlayerFlankId(void);
-u16 GetLinkTrainerFlankId(u8 id);
+u16 GetLinkTrainerFlankId(u8 linkPlayerId);
 s32 GetBattlerMultiplayerId(u16 id);
 u8 GetTrainerEncounterMusicId(u16 trainerOpponentId);
-u16 ModifyStatByNature(u8 nature, u16 n, u8 statIndex);
+u16 ModifyStatByNature(u8 nature, u16 stat, u8 statIndex);
 void AdjustFriendship(struct Pokemon *mon, u8 event);
 void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 u16 GetMonEVCount(struct Pokemon *mon);

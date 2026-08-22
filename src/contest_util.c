@@ -187,9 +187,9 @@ static void SpriteCB_Confetti(struct Sprite *sprite);
 static void Task_ShowContestEntryMonPic(u8 taskId);
 static void Task_LinkContestWaitForConnection(u8 taskId);
 
-static const u16 sResultsTextWindow_Pal[] = INCBIN_U16("graphics/contest/results_screen/text_window.gbapal");
-static const u8 sResultsTextWindow_Gfx[] = INCBIN_U8("graphics/contest/results_screen/text_window.4bpp");
-static const u16 sMiscBlank_Pal[] = INCBIN_U16("graphics/interface/blank.gbapal");
+static const u16 sResultsTextWindow_Pal[] = INCGFX_U16("graphics/contest/results_screen/text_window.pal", ".gbapal");
+static const u8 sResultsTextWindow_Gfx[] = INCGFX_U8("graphics/contest/results_screen/text_window.png", ".4bpp");
+static const u16 sMiscBlank_Pal[] = INCGFX_U16("graphics/interface/blank.pal", ".gbapal");
 
 static const struct OamData sOamData_ResultsTextWindow =
 {
@@ -456,7 +456,7 @@ static void LoadContestResultsBgGfx(void)
     CopyToBgTilemapBuffer(2, gContestResults_Interface_Tilemap, 0, 0);
     CopyToBgTilemapBuffer(0, gContestResults_WinnerBanner_Tilemap, 0, 0);
     LoadContestResultsTitleBarTilemaps();
-    LoadCompressedPalette(gContestResults_Pal, BG_PLTT_ID(0), 16 * PLTT_SIZE_4BPP);
+    LoadCompressedPalette(gContestResults_Pal, BG_PLTT_OFFSET, BG_PLTT_SIZE);
     LoadPalette(sResultsTextWindow_Pal, BG_PLTT_ID(15), sizeof(sResultsTextWindow_Pal));
 
     for (i = 0; i < CONTESTANT_COUNT; i++)
@@ -2011,7 +2011,7 @@ void GiveMonContestRibbon(void)
     {
     case CONTEST_CATEGORY_COOL:
         ribbonData = GetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_COOL_RIBBON);
-        if (ribbonData <= gSpecialVar_ContestRank && ribbonData < 4)
+        if (ribbonData <= gSpecialVar_ContestRank && ribbonData <= CONTEST_RANK_MASTER)
         {
             ribbonData++;
             SetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_COOL_RIBBON, &ribbonData);
@@ -2021,7 +2021,7 @@ void GiveMonContestRibbon(void)
         break;
     case CONTEST_CATEGORY_BEAUTY:
         ribbonData = GetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_BEAUTY_RIBBON);
-        if (ribbonData <= gSpecialVar_ContestRank && ribbonData < 4)
+        if (ribbonData <= gSpecialVar_ContestRank && ribbonData <= CONTEST_RANK_MASTER)
         {
             ribbonData++;
             SetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_BEAUTY_RIBBON, &ribbonData);
@@ -2031,7 +2031,7 @@ void GiveMonContestRibbon(void)
         break;
     case CONTEST_CATEGORY_CUTE:
         ribbonData = GetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_CUTE_RIBBON);
-        if (ribbonData <= gSpecialVar_ContestRank && ribbonData < 4)
+        if (ribbonData <= gSpecialVar_ContestRank && ribbonData <= CONTEST_RANK_MASTER)
         {
             ribbonData++;
             SetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_CUTE_RIBBON, &ribbonData);
@@ -2041,7 +2041,7 @@ void GiveMonContestRibbon(void)
         break;
     case CONTEST_CATEGORY_SMART:
         ribbonData = GetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_SMART_RIBBON);
-        if (ribbonData <= gSpecialVar_ContestRank && ribbonData < 4)
+        if (ribbonData <= gSpecialVar_ContestRank && ribbonData <= CONTEST_RANK_MASTER)
         {
             ribbonData++;
             SetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_SMART_RIBBON, &ribbonData);
@@ -2051,7 +2051,7 @@ void GiveMonContestRibbon(void)
         break;
     case CONTEST_CATEGORY_TOUGH:
         ribbonData = GetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_TOUGH_RIBBON);
-        if (ribbonData <= gSpecialVar_ContestRank && ribbonData < 4)
+        if (ribbonData <= gSpecialVar_ContestRank && ribbonData <= CONTEST_RANK_MASTER)
         {
             ribbonData++;
             SetMonData(&gPlayerParty[gContestMonPartyIndex], MON_DATA_TOUGH_RIBBON, &ribbonData);
@@ -2306,13 +2306,13 @@ void GetNpcContestantLocalId(void)
     switch (contestant)
     {
     case 0:
-        localId = 3;
+        localId = LOCALID_CONTESTANT_1;
         break;
     case 1:
-        localId = 4;
+        localId = LOCALID_CONTESTANT_2;
         break;
     case 2:
-        localId = 5;
+        localId = LOCALID_CONTESTANT_3;
         break;
     default: // Invalid
         localId = 100;
@@ -2512,7 +2512,12 @@ void LoadLinkContestPlayerPalettes(void)
     u8 objectEventId;
     int version;
     struct Sprite *sprite;
-    static const u8 sContestantLocalIds[CONTESTANT_COUNT] = { 3, 4, 5, 14 };
+    static const u8 sContestantLocalIds[CONTESTANT_COUNT] = {
+        LOCALID_CONTESTANT_1,
+        LOCALID_CONTESTANT_2,
+        LOCALID_CONTESTANT_3,
+        LOCALID_CONTESTANT_4,
+    };
 
     gReservedSpritePaletteCount = 12;
     if (gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK)

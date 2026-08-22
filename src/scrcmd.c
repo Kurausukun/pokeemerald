@@ -49,6 +49,7 @@
 #include "tv.h"
 #include "window.h"
 #include "constants/event_objects.h"
+#include "constants/comparison_operators.h"
 
 typedef u16 (*SpecialFunc)(void);
 typedef void (*NativeFunc)(void);
@@ -71,20 +72,20 @@ static void CloseBrailleWindow(void);
 
 // This is defined in here so the optimizer can't see its value when compiling
 // script.c.
-void * const gNullScriptPtr = NULL;
+void *const gNullScriptPtr = NULL;
 
-static const u8 sScriptConditionTable[6][3] =
+static const u8 sScriptConditionTable[COMPARISON_OPERATORS_COUNT][3] =
 {
-//  <  =  >
-    1, 0, 0, // <
-    0, 1, 0, // =
-    0, 0, 1, // >
-    1, 1, 0, // <=
-    0, 1, 1, // >=
-    1, 0, 1, // !=
+//                              <  =  >
+    [LESS_THAN] =              {1, 0, 0},
+    [EQUAL] =                  {0, 1, 0},
+    [GREATER_THAN] =           {0, 0, 1},
+    [LESS_THAN_OR_EQUAL] =     {1, 1, 0},
+    [GREATER_THAN_OR_EQUAL] =  {0, 1, 1},
+    [NOT_EQUAL] =              {1, 0, 1},
 };
 
-static u8 * const sScriptStringVars[] =
+static u8 *const sScriptStringVars[] =
 {
     gStringVar1,
     gStringVar2,
@@ -169,7 +170,7 @@ bool8 ScrCmd_call(struct ScriptContext *ctx)
 
 bool8 ScrCmd_goto_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     const u8 *ptr = (const u8 *)ScriptReadWord(ctx);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -179,7 +180,7 @@ bool8 ScrCmd_goto_if(struct ScriptContext *ctx)
 
 bool8 ScrCmd_call_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     const u8 *ptr = (const u8 *)ScriptReadWord(ctx);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -214,7 +215,7 @@ bool8 ScrCmd_vcall(struct ScriptContext *ctx)
 
 bool8 ScrCmd_vgoto_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     const u8 *ptr = (const u8 *)(ScriptReadWord(ctx) - sAddressOffset);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -224,7 +225,7 @@ bool8 ScrCmd_vgoto_if(struct ScriptContext *ctx)
 
 bool8 ScrCmd_vcall_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     const u8 *ptr = (const u8 *)(ScriptReadWord(ctx) - sAddressOffset);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -254,7 +255,7 @@ bool8 ScrCmd_callstd(struct ScriptContext *ctx)
 
 bool8 ScrCmd_gotostd_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     u8 index = ScriptReadByte(ctx);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -268,7 +269,7 @@ bool8 ScrCmd_gotostd_if(struct ScriptContext *ctx)
 
 bool8 ScrCmd_callstd_if(struct ScriptContext *ctx)
 {
-    u8 condition = ScriptReadByte(ctx);
+    enum ComparisonOperators condition = ScriptReadByte(ctx);
     u8 index = ScriptReadByte(ctx);
 
     if (sScriptConditionTable[condition][ctx->comparisonResult] == 1)
@@ -649,12 +650,12 @@ bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
     case FADE_TO_BLACK:
     case FADE_TO_WHITE:
     default:
-        CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE);
+        CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_SIZE);
         FadeScreen(mode, 0);
         break;
     case FADE_FROM_BLACK:
     case FADE_FROM_WHITE:
-        CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE);
+        CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_SIZE);
         FadeScreen(mode, 0);
         break;
     }
@@ -786,7 +787,7 @@ bool8 ScrCmd_warphole(struct ScriptContext *ctx)
     u16 y;
 
     PlayerGetDestCoords(&x, &y);
-    if (mapGroup == MAP_GROUP(UNDEFINED) && mapNum == MAP_NUM(UNDEFINED))
+    if (mapGroup == MAP_GROUP(MAP_UNDEFINED) && mapNum == MAP_NUM(MAP_UNDEFINED))
         SetWarpDestinationToFixedHoleWarp(x - MAP_OFFSET, y - MAP_OFFSET);
     else
         SetWarpDestination(mapGroup, mapNum, WARP_ID_NONE, x - MAP_OFFSET, y - MAP_OFFSET);
@@ -1020,7 +1021,7 @@ bool8 ScrCmd_waitmovement(struct ScriptContext *ctx)
 {
     u16 localId = VarGet(ScriptReadHalfword(ctx));
 
-    if (localId != 0)
+    if (localId != LOCALID_NONE)
         sMovingNpcId = localId;
     sMovingNpcMapGroup = gSaveBlock1Ptr->location.mapGroup;
     sMovingNpcMapNum = gSaveBlock1Ptr->location.mapNum;
@@ -1034,7 +1035,7 @@ bool8 ScrCmd_waitmovementat(struct ScriptContext *ctx)
     u8 mapGroup;
     u8 mapNum;
 
-    if (localId != 0)
+    if (localId != LOCALID_NONE)
         sMovingNpcId = localId;
     mapGroup = ScriptReadByte(ctx);
     mapNum = ScriptReadByte(ctx);
@@ -1241,7 +1242,7 @@ bool8 ScrCmd_releaseall(struct ScriptContext *ctx)
     u8 playerObjectId;
 
     HideFieldMessageBox();
-    playerObjectId = GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0);
+    playerObjectId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
     ObjectEventClearHeldMovementIfFinished(&gObjectEvents[playerObjectId]);
     ScriptMovement_UnfreezeObjectEvents();
     UnfreezeObjectEvents();
@@ -1255,7 +1256,7 @@ bool8 ScrCmd_release(struct ScriptContext *ctx)
     HideFieldMessageBox();
     if (gObjectEvents[gSelectedObjectEvent].active)
         ObjectEventClearHeldMovementIfFinished(&gObjectEvents[gSelectedObjectEvent]);
-    playerObjectId = GetObjectEventIdByLocalIdAndMap(OBJ_EVENT_ID_PLAYER, 0, 0);
+    playerObjectId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
     ObjectEventClearHeldMovementIfFinished(&gObjectEvents[playerObjectId]);
     ScriptMovement_UnfreezeObjectEvents();
     UnfreezeObjectEvents();
@@ -1607,9 +1608,9 @@ bool8 ScrCmd_bufferdecorationname(struct ScriptContext *ctx)
 bool8 ScrCmd_buffermovename(struct ScriptContext *ctx)
 {
     u8 stringVarIndex = ScriptReadByte(ctx);
-    u16 moveId = VarGet(ScriptReadHalfword(ctx));
+    u16 move = VarGet(ScriptReadHalfword(ctx));
 
-    StringCopy(sScriptStringVars[stringVarIndex], gMoveNames[moveId]);
+    StringCopy(sScriptStringVars[stringVarIndex], gMoveNames[move]);
     return FALSE;
 }
 
@@ -1712,7 +1713,7 @@ bool8 ScrCmd_setmonmove(struct ScriptContext *ctx)
 bool8 ScrCmd_checkpartymove(struct ScriptContext *ctx)
 {
     u8 i;
-    u16 moveId = ScriptReadHalfword(ctx);
+    u16 move = ScriptReadHalfword(ctx);
 
     gSpecialVar_Result = PARTY_SIZE;
     for (i = 0; i < PARTY_SIZE; i++)
@@ -1720,7 +1721,7 @@ bool8 ScrCmd_checkpartymove(struct ScriptContext *ctx)
         u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
         if (!species)
             break;
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && MonKnowsMove(&gPlayerParty[i], moveId) == TRUE)
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && MonKnowsMove(&gPlayerParty[i], move) == TRUE)
         {
             gSpecialVar_Result = i;
             gSpecialVar_0x8004 = species;
@@ -2043,7 +2044,7 @@ bool8 ScrCmd_setmetatile(struct ScriptContext *ctx)
     if (!isImpassable)
         MapGridSetMetatileIdAt(x, y, metatileId);
     else
-        MapGridSetMetatileIdAt(x, y, metatileId | MAPGRID_COLLISION_MASK);
+        MapGridSetMetatileIdAt(x, y, metatileId | MAPGRID_IMPASSABLE);
     return FALSE;
 }
 
@@ -2207,7 +2208,7 @@ bool8 ScrCmd_lockfortrainer(struct ScriptContext *ctx)
 }
 
 // This command will set a Pokémon's modernFatefulEncounter bit; there is no similar command to clear it.
-bool8 ScrCmd_setmonmodernfatefulencounter(struct ScriptContext *ctx)
+bool8 ScrCmd_setmodernfatefulencounter(struct ScriptContext *ctx)
 {
     bool8 isModernFatefulEncounter = TRUE;
     u16 partyIndex = VarGet(ScriptReadHalfword(ctx));
@@ -2216,7 +2217,7 @@ bool8 ScrCmd_setmonmodernfatefulencounter(struct ScriptContext *ctx)
     return FALSE;
 }
 
-bool8 ScrCmd_checkmonmodernfatefulencounter(struct ScriptContext *ctx)
+bool8 ScrCmd_checkmodernfatefulencounter(struct ScriptContext *ctx)
 {
     u16 partyIndex = VarGet(ScriptReadHalfword(ctx));
 

@@ -77,9 +77,6 @@ struct RfuDebug
     u8 unused4[88];
 };
 
-EWRAM_DATA u32 gRfuAPIBuffer[RFU_API_BUFF_SIZE_RAM / 4] = {};
-EWRAM_DATA struct RfuManager gRfu = {};
-
 static u8 sHeldKeyCount;
 static u8 sResendBlock8[CMD_LENGTH * 2];
 static u16 sResendBlock16[CMD_LENGTH];
@@ -88,6 +85,8 @@ EWRAM_DATA struct RfuGameData gHostRfuGameData = {};
 EWRAM_DATA u8 gHostRfuUsername[RFU_USER_NAME_LENGTH] = {};
 static EWRAM_DATA INIT_PARAM sRfuReqConfig = {};
 static EWRAM_DATA struct RfuDebug sRfuDebug = {};
+EWRAM_DATA u32 gRfuAPIBuffer[RFU_API_BUFF_SIZE_RAM / 4] = {};
+EWRAM_DATA struct RfuManager gRfu = {};
 
 static void ResetSendDataManager(struct RfuBlockSend *);
 static void InitChildRecvBuffers(void);
@@ -138,7 +137,7 @@ static const u8 sAvailSlots[] = {
     [4] = AVAIL_SLOT4
 };
 
-#define BLOCK_MASK(bitNum)((1 << (bitNum)) - 1)
+#define BLOCK_MASK(bitNum) ((1 << (bitNum)) - 1)
 static const u32 sAllBlocksReceived[] = {
     BLOCK_MASK(0),
     BLOCK_MASK(1),
@@ -699,8 +698,7 @@ void StopUnionRoomLinkManager(void)
     gRfu.state = RFUSTATE_UR_STOP_MANAGER;
 }
 
-// Unused
-static void ReadySendDataForSlots(u8 slots)
+static void UNUSED ReadySendDataForSlots(u8 slots)
 {
     u8 i;
 
@@ -1176,7 +1174,9 @@ static void RfuHandleReceiveCommand(u8 unused)
                 gRfu.numBlocksReceived[i] = 0;
             }
             else
+            {
                 gRfu.numBlocksReceived[i]++;
+            }
         }
     }
 }
@@ -1303,7 +1303,9 @@ bool32 Rfu_InitBlockSend(const u8 *src, size_t size)
     gRfu.sendBlock.count = (size / 12) + r4;
     gRfu.sendBlock.next = 0;
     if (size > BLOCK_BUFFER_SIZE)
+    {
         gRfu.sendBlock.payload = src;
+    }
     else
     {
         if (src != gBlockSendBuffer)
@@ -1630,9 +1632,8 @@ static bool8 CheckForLeavingGroupMembers(void)
 
             }
             else if (gRfuSlotStatusNI[gRfu.childSlot]->recv.state == SLOT_STATE_RECV_FAILED)
-                rfu_clearSlot(TYPE_NI_RECV, i);
             {
-
+                rfu_clearSlot(TYPE_NI_RECV, i);
             }
         }
     }
@@ -1778,7 +1779,9 @@ static void Task_PlayerExchange(u8 taskId)
             gTasks[taskId].tState = 101;
         }
         else
+        {
             gTasks[taskId].tState = 2;
+        }
         break;
     case 101:
         if (gSendCmd[0] == 0)
@@ -1799,7 +1802,9 @@ static void Task_PlayerExchange(u8 taskId)
             }
         }
         else
+        {
             gTasks[taskId].tState++;
+        }
         break;
     case 4:
         if (AreAllPlayersFinishedReceiving())
@@ -1918,7 +1923,8 @@ static void Task_PlayerExchangeUpdate(u8 taskId)
         for (i = 0; i < RFU_CHILD_MAX; i++)
             sio->linkPlayerIdx[i] = gRfu.linkPlayerIdx[i];
         memcpy(sio->linkPlayers, gLinkPlayers, sizeof(gLinkPlayers));
-        if (SendBlock(0, gBlockSendBuffer, 0xa0))
+        // Send SioInfo but exclude the 92 unused bytes at the end
+        if (SendBlock(0, gBlockSendBuffer, offsetof(struct SioInfo, filler)))
             gTasks[taskId].tState++;
         break;
     case 5:
@@ -2145,7 +2151,7 @@ void RfuSetErrorParams(u32 errorInfo)
     }
 }
 
-static void ResetErrorState(void)
+static void UNUSED ResetErrorState(void)
 {
     gRfu.errorState = RFU_ERROR_STATE_NONE;
 }
@@ -2559,8 +2565,7 @@ static void VBlank_RfuIdle(void)
     TransferPlttBuffer();
 }
 
-// Unused
-static void Debug_RfuIdle(void)
+static void UNUSED Debug_RfuIdle(void)
 {
     s32 i;
 
@@ -2933,7 +2938,7 @@ static void Debug_PrintEmpty(void)
         Debug_PrintString(sASCII_30Spaces, 0, i);
 }
 
-static void Debug_PrintStatus(void)
+static void UNUSED Debug_PrintStatus(void)
 {
     s32 i, j;
     Debug_PrintNum(GetBlockReceivedStatus(), 28, 19, 2);
@@ -2989,7 +2994,7 @@ static void Debug_PrintStatus(void)
     }
 }
 
-static u32 GetRfuSendQueueLength(void)
+static u32 UNUSED GetRfuSendQueueLength(void)
 {
     return gRfu.sendQueue.count;
 }

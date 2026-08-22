@@ -70,13 +70,13 @@
 
 // Get the id of the col/row from the selection ID
 // e.g. GET_ROW(SQU_PURPLE_SKITTY) is ROW_PURPLE
-#define GET_COL(selectionId)((selectionId) % (NUM_BOARD_POKES + 1))
-#define GET_ROW(selectionId)((selectionId) / (NUM_BOARD_POKES + 1) * (NUM_BOARD_POKES + 1))
+#define GET_COL(selectionId) ((selectionId) % (NUM_BOARD_POKES + 1))
+#define GET_ROW(selectionId) ((selectionId) / (NUM_BOARD_POKES + 1) * (NUM_BOARD_POKES + 1))
 
 // Get the col/row index from the selection ID
 // e.g. GET_ROW_IDX(SQU_PURPLE_SKITTY) is 2 (purple being the 3rd row)
-#define GET_COL_IDX(selectionId)(selectionId - 1)
-#define GET_ROW_IDX(selectionId)(selectionId / 5 - 1)
+#define GET_COL_IDX(selectionId) (selectionId - 1)
+#define GET_ROW_IDX(selectionId) (selectionId / 5 - 1)
 
 // Flags for the above selections, used to set which spaces have been hit or bet on
 #define F_WYNAUT_COL      (1 << COL_WYNAUT)
@@ -149,7 +149,7 @@
 
 // 2 different Roulette tables with 2 different rates (normal vs service day special)
 // & 1 gets which table, >> 7 gets if ROULETTE_SPECIAL_RATE is set
-#define GET_MIN_BET_ID(var)(((var) & 1) + (((var) >> 7) * 2))
+#define GET_MIN_BET_ID(var) (((var) & 1) + (((var) >> 7) * 2))
 
 // Having Shroomish or Taillow in the party can make rolls more consistent in length
 // It also increases the likelihood that, if they appear to unstick a ball, they'll move it to a slot the player bet on
@@ -416,9 +416,9 @@ static void SetBallStuck(struct Sprite *);
 static void SpriteCB_Shroomish(struct Sprite *);
 static void SpriteCB_Taillow(struct Sprite *);
 
-static const u16 sWheel_Pal[] = INCBIN_U16("graphics/roulette/wheel.gbapal"); // also palette for grid
-static const u32 sGrid_Tilemap[] = INCBIN_U32("graphics/roulette/grid.bin.lz");
-static const u32 sWheel_Tilemap[] = INCBIN_U32("graphics/roulette/wheel.bin.lz");
+static const u16 sWheel_Pal[] = INCGFX_U16("graphics/roulette/wheel.png", ".gbapal"); // also palette for grid
+static const u32 sGrid_Tilemap[] = INCGFX_U32("graphics/roulette/grid.bin", ".lz");
+static const u32 sWheel_Tilemap[] = INCGFX_U32("graphics/roulette/wheel.bin", ".lz");
 static const struct BgTemplate sBgTemplates[] =
 {
     // Text box
@@ -860,7 +860,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
 {
     { // F_FLASH_COLOR_O_WYNAUT
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x5,
+        .paletteOffset = BG_PLTT_ID(0) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -870,7 +870,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_G_AZURILL
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0xA,
+        .paletteOffset = BG_PLTT_ID(0) + 10,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -880,7 +880,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_P_SKITTY
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x15,
+        .paletteOffset = BG_PLTT_ID(1) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -890,7 +890,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_O_MAKUHITA
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x55,
+        .paletteOffset = BG_PLTT_ID(5) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -900,7 +900,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_G_WYNAUT
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x5A,
+        .paletteOffset = BG_PLTT_ID(5) + 10,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -910,7 +910,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_P_AZURILL
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x65,
+        .paletteOffset = BG_PLTT_ID(6) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -920,7 +920,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_O_SKITTY
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x75,
+        .paletteOffset = BG_PLTT_ID(7) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -930,7 +930,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_G_MAKUHITA
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x7A,
+        .paletteOffset = BG_PLTT_ID(7) + 10,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -940,7 +940,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_P_WYNAUT
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x85,
+        .paletteOffset = BG_PLTT_ID(8) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -950,7 +950,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_O_AZURILL
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x95,
+        .paletteOffset = BG_PLTT_ID(9) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -960,7 +960,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_G_SKITTY
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0x9A,
+        .paletteOffset = BG_PLTT_ID(9) + 10,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -970,7 +970,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_COLOR_P_MAKUHITA
         .color = FLASHUTIL_USE_EXISTING_COLOR,
-        .paletteOffset = 0xA5,
+        .paletteOffset = BG_PLTT_ID(10) + 5,
         .numColors = 1,
         .delay = 1,
         .unk6 = -1,
@@ -980,7 +980,7 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
     { // F_FLASH_OUTER_EDGES
         .color = RGB(22, 30, 29),
-        .paletteOffset = 0x28,
+        .paletteOffset = BG_PLTT_ID(2) + 8,
         .numColors = 2,
         .delay = 10,
         .unk6 = -1,
@@ -990,13 +990,13 @@ static const struct RouletteFlashSettings sFlashData_Colors[NUM_ROULETTE_SLOTS +
     },
 };
 
-// Data to flash any pokemon icon (F_FLASH_ICON) on the roulette wheel. One entry for each color row
-// Each poke icon flashes with the tint of the row color it belongs to, so the pokemon itself is irrelevant
+// Data to flash any Pokémon icon (F_FLASH_ICON) on the roulette wheel. One entry for each color row
+// Each poke icon flashes with the tint of the row color it belongs to, so the Pokémon itself is irrelevant
 static const struct RouletteFlashSettings sFlashData_PokeIcons[NUM_BOARD_COLORS] =
 {
     [GET_ROW_IDX(ROW_ORANGE)] = {
         .color = RGB(31, 31, 20),
-        .paletteOffset = 0x101,
+        .paletteOffset = OBJ_PLTT_ID(0) + 1,
         .numColors = 5,
         .delay = 30,
         .unk6 = -1,
@@ -1006,7 +1006,7 @@ static const struct RouletteFlashSettings sFlashData_PokeIcons[NUM_BOARD_COLORS]
     },
     [GET_ROW_IDX(ROW_GREEN)] = {
         .color = RGB(27, 31, 31),
-        .paletteOffset = 0x106,
+        .paletteOffset = OBJ_PLTT_ID(0) + 6,
         .numColors = 5,
         .delay = 30,
         .unk6 = -1,
@@ -1016,7 +1016,7 @@ static const struct RouletteFlashSettings sFlashData_PokeIcons[NUM_BOARD_COLORS]
     },
     [GET_ROW_IDX(ROW_PURPLE)] = {
         .color = RGB(31, 27, 31),
-        .paletteOffset = 0x10B,
+        .paletteOffset = OBJ_PLTT_ID(0) + 11,
         .numColors = 5,
         .delay = 30,
         .unk6 = -1,
@@ -1129,9 +1129,9 @@ static void InitRouletteTableData(void)
 
     // Left table (with min bet of 1) has red background, other table has green
     if (sRoulette->minBet == 1)
-        gPlttBufferUnfaded[0] = gPlttBufferUnfaded[0x51] = gPlttBufferFaded[0] = gPlttBufferFaded[0x51] = bgColors[0];
+        gPlttBufferUnfaded[BG_PLTT_ID(0)] = gPlttBufferUnfaded[BG_PLTT_ID(5) + 1] = gPlttBufferFaded[BG_PLTT_ID(0)] = gPlttBufferFaded[BG_PLTT_ID(5) + 1] = bgColors[0];
     else
-        gPlttBufferUnfaded[0] = gPlttBufferUnfaded[0x51] = gPlttBufferFaded[0] = gPlttBufferFaded[0x51] = bgColors[1];
+        gPlttBufferUnfaded[BG_PLTT_ID(0)] = gPlttBufferUnfaded[BG_PLTT_ID(5) + 1] = gPlttBufferFaded[BG_PLTT_ID(0)] = gPlttBufferFaded[BG_PLTT_ID(5) + 1] = bgColors[1];
 
     RouletteFlash_Reset(&sRoulette->flashUtil);
 
@@ -2323,29 +2323,29 @@ static void UpdateWheelPosition(void)
 }
 
 static const u8 sFiller[3] = {};
-static const u16 sShadow_Pal[] = INCBIN_U16("graphics/roulette/shadow.gbapal");
-static const u16 sBall_Pal[] = INCBIN_U16("graphics/roulette/ball.gbapal");
-static const u16 sBallCounter_Pal[] = INCBIN_U16("graphics/roulette/ball_counter.gbapal");
-static const u16 sCursor_Pal[] = INCBIN_U16("graphics/roulette/cursor.gbapal");
-static const u16 sCredit_Pal[] = INCBIN_U16("graphics/roulette/credit.gbapal");
-static const u16 sShroomish_Pal[] = INCBIN_U16("graphics/roulette/shroomish.gbapal");
-static const u16 sTaillow_Pal[] = INCBIN_U16("graphics/roulette/tailow.gbapal");
-static const u16 sGridIcons_Pal[] = INCBIN_U16("graphics/roulette/grid_icons.gbapal");
-static const u16 sWynaut_Pal[] = INCBIN_U16("graphics/roulette/wynaut.gbapal");
-static const u16 sAzurill_Pal[] = INCBIN_U16("graphics/roulette/azurill.gbapal");
-static const u16 sSkitty_Pal[] = INCBIN_U16("graphics/roulette/skitty.gbapal");
-static const u16 sMakuhita_Pal[] = INCBIN_U16("graphics/roulette/makuhita.gbapal");
-static const u16 sUnused1_Pal[] = INCBIN_U16("graphics/roulette/unused_1.gbapal");
-static const u16 sUnused2_Pal[] = INCBIN_U16("graphics/roulette/unused_2.gbapal");
-static const u16 sUnused3_Pal[] = INCBIN_U16("graphics/roulette/unused_3.gbapal");
-static const u16 sUnused4_Pal[] = INCBIN_U16("graphics/roulette/unused_4.gbapal");
-static const u32 sBall_Gfx[] = INCBIN_U32("graphics/roulette/ball.4bpp.lz");
-static const u32 sBallCounter_Gfx[] = INCBIN_U32("graphics/roulette/ball_counter.4bpp.lz");
-static const u32 sShroomishTaillow_Gfx[] = INCBIN_U32("graphics/roulette/roulette_tilt.4bpp.lz");
-static const u32 sGridIcons_Gfx[] = INCBIN_U32("graphics/roulette/grid_icons.4bpp.lz");
-static const u32 sWheelIcons_Gfx[] = INCBIN_U32("graphics/roulette/wheel_icons.4bpp.lz");
-static const u32 sShadow_Gfx[] = INCBIN_U32("graphics/roulette/shadow.4bpp.lz");
-static const u32 sCursor_Gfx[] = INCBIN_U32("graphics/roulette/cursor.4bpp.lz");
+static const u16 sShadow_Pal[] = INCGFX_U16("graphics/roulette/shadow.png", ".gbapal");
+static const u16 sBall_Pal[] = INCGFX_U16("graphics/roulette/ball.png", ".gbapal");
+static const u16 sBallCounter_Pal[] = INCGFX_U16("graphics/roulette/ball_counter.png", ".gbapal");
+static const u16 sCursor_Pal[] = INCGFX_U16("graphics/roulette/cursor.png", ".gbapal");
+static const u16 sCredit_Pal[] = INCGFX_U16("graphics/roulette/credit.png", ".gbapal");
+static const u16 sShroomish_Pal[] = INCGFX_U16("graphics/roulette/shroomish.png", ".gbapal");
+static const u16 sTaillow_Pal[] = INCGFX_U16("graphics/roulette/tailow.png", ".gbapal");
+static const u16 sGridIcons_Pal[] = INCGFX_U16("graphics/roulette/grid_icons.png", ".gbapal");
+static const u16 sWynaut_Pal[] = INCGFX_U16("graphics/roulette/wynaut.png", ".gbapal");
+static const u16 sAzurill_Pal[] = INCGFX_U16("graphics/roulette/azurill.png", ".gbapal");
+static const u16 sSkitty_Pal[] = INCGFX_U16("graphics/roulette/skitty.png", ".gbapal");
+static const u16 sMakuhita_Pal[] = INCGFX_U16("graphics/roulette/makuhita.png", ".gbapal");
+static const u16 sUnused1_Pal[] = INCGFX_U16("graphics/roulette/unused_1.pal", ".gbapal");
+static const u16 sUnused2_Pal[] = INCGFX_U16("graphics/roulette/unused_2.pal", ".gbapal");
+static const u16 sUnused3_Pal[] = INCGFX_U16("graphics/roulette/unused_3.pal", ".gbapal");
+static const u16 sUnused4_Pal[] = INCGFX_U16("graphics/roulette/unused_4.pal", ".gbapal");
+static const u32 sBall_Gfx[] = INCGFX_U32("graphics/roulette/ball.png", ".4bpp.lz");
+static const u32 sBallCounter_Gfx[] = INCGFX_U32("graphics/roulette/ball_counter.png", ".4bpp.lz");
+static const u32 sShroomishTaillow_Gfx[] = INCGFX_U32("graphics/roulette/roulette_tilt.4bpp", ".lz");
+static const u32 sGridIcons_Gfx[] = INCGFX_U32("graphics/roulette/grid_icons.png", ".4bpp.lz");
+static const u32 sWheelIcons_Gfx[] = INCGFX_U32("graphics/roulette/wheel_icons.4bpp", ".lz");
+static const u32 sShadow_Gfx[] = INCGFX_U32("graphics/roulette/shadow.png", ".4bpp.lz");
+static const u32 sCursor_Gfx[] = INCGFX_U32("graphics/roulette/cursor.png", ".4bpp.lz");
 
 static const struct SpritePalette sSpritePalettes[] =
 {
@@ -2702,7 +2702,7 @@ static const struct SpriteTemplate sSpriteTemplates_GridIcons[NUM_BOARD_POKES] =
     }
 };
 
-// Wheel icons are listed clockwise starting from 1 oclock on the roulette wheel (with pokeball upside right)
+// Wheel icons are listed clockwise starting from 1 oclock on the roulette wheel (with Poké Ball upside right)
 // They go Wynaut -> Azurill -> Skitty -> Makuhita, and Orange -> Green -> Purple
 static const struct SpriteTemplate sSpriteTemplates_WheelIcons[NUM_ROULETTE_SLOTS] =
 {
@@ -3556,8 +3556,7 @@ static void CreateGridSprites(void)
     }
 }
 
-// Unused
-static void DestroyGridSprites(void)
+static void UNUSED DestroyGridSprites(void)
 {
     u8 i;
     for (i = 0; i < NUM_ROULETTE_SLOTS; i++)
@@ -4353,7 +4352,7 @@ static void CreateShroomishSprite(struct Sprite *ball)
         {116, 44},
         {116, 112}
     };
-    struct Roulette *roulette;
+    struct Roulette UNUSED *roulette;
 
     t = ball->data[7] - 2;
     roulette = sRoulette;  // Unnecessary, needed to match
@@ -4482,7 +4481,7 @@ static void SetBallStuck(struct Sprite *sprite)
     // The below slot ids are relative to the slot the ball got stuck on
     if ((sRoulette->useTaillow + 1) & sRoulette->partySpeciesFlags)
     {
-        // If the player has the corresponding pokemon in their party (HAS_SHROOMISH or HAS_TAILLOW),
+        // If the player has the corresponding Pokémon in their party (HAS_SHROOMISH or HAS_TAILLOW),
         // there's a 75% chance that the ball will be moved to a spot they bet on
         // assuming it was one of the slots identified as a candidate
         if (betSlotId && (rand % 256) < 192)

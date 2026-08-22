@@ -11,7 +11,7 @@
 
 #define PICS_COUNT 8
 
-// Needs to be large enough to store either a decompressed pokemon pic or trainer pic
+// Needs to be large enough to store either a decompressed Pokémon pic or trainer pic
 #define PIC_SPRITE_SIZE max(MON_PIC_SIZE, TRAINER_PIC_SIZE)
 #define MAX_PIC_FRAMES  max(MAX_MON_PIC_FRAMES, MAX_TRAINER_PIC_FRAMES)
 
@@ -57,10 +57,11 @@ bool16 ResetAllPicSprites(void)
     return FALSE;
 }
 
-static bool16 DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *dest, bool8 isTrainer, bool8 ignoreDeoxys)
+static bool16 DecompressPic(u16 picId, u32 personality, bool8 isFrontPic, u8 *dest, bool8 isTrainer, bool8 ignoreDeoxys)
 {
     if (!isTrainer)
     {
+        u16 species = picId;
         if (isFrontPic)
         {
             if (!ignoreDeoxys)
@@ -78,10 +79,23 @@ static bool16 DecompressPic(u16 species, u32 personality, bool8 isFrontPic, u8 *
     }
     else
     {
+        u16 trainerPicId = picId;
         if (isFrontPic)
-            DecompressPicFromTable(&gTrainerFrontPicTable[species], dest, species);
+        {
+            DecompressPicFromTable(&gTrainerFrontPicTable[trainerPicId], dest, trainerPicId);
+        }
         else
-            DecompressPicFromTable(&gTrainerBackPicTable[species], dest, species);
+        {
+#ifdef BUGFIX
+            CpuCopy32(gTrainerBackPicTable[trainerPicId].data, dest, gTrainerBackPicTable[trainerPicId].size);
+#else
+            // Trainer back pics aren't compressed!
+            // Attempting to decompress the uncompressed data can softlock or crash the game.
+            // This is ok in vanilla by chance, because the pixels in the trainer back sprites that correspond
+            // to the compressed data's header are all 0, so the decompression does nothing.
+            DecompressPicFromTable(&gTrainerBackPicTable[trainerPicId], dest, trainerPicId);
+#endif
+        }
     }
     return FALSE;
 }
@@ -337,8 +351,7 @@ u16 FreeAndDestroyMonPicSprite(u16 spriteId)
     return FreeAndDestroyPicSpriteInternal(spriteId);
 }
 
-// Unused
-static u16 LoadMonPicInWindow(u16 species, u32 otId, u32 personality, bool8 isFrontPic, u8 paletteSlot, u8 windowId)
+static u16 UNUSED LoadMonPicInWindow(u16 species, u32 otId, u32 personality, bool8 isFrontPic, u8 paletteSlot, u8 windowId)
 {
     return LoadPicSpriteInWindow(species, otId, personality, isFrontPic, paletteSlot, windowId, FALSE);
 }
@@ -359,8 +372,7 @@ u16 FreeAndDestroyTrainerPicSprite(u16 spriteId)
     return FreeAndDestroyPicSpriteInternal(spriteId);
 }
 
-// Unused
-static u16 LoadTrainerPicInWindow(u16 species, bool8 isFrontPic, u8 paletteSlot, u8 windowId)
+static u16 UNUSED LoadTrainerPicInWindow(u16 species, bool8 isFrontPic, u8 paletteSlot, u8 windowId)
 {
     return LoadPicSpriteInWindow(species, 0, 0, isFrontPic, paletteSlot, windowId, TRUE);
 }

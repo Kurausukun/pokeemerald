@@ -1,7 +1,6 @@
 #include "global.h"
 #include "mail.h"
 #include "constants/items.h"
-#include "main.h"
 #include "overworld.h"
 #include "task.h"
 #include "scanline_effect.h"
@@ -48,8 +47,8 @@ struct MailLayout
 struct MailGraphics
 {
     const u16 *palette;
-    const u8 *tiles;
-    const u8 *tileMap;
+    const u32 *tiles;
+    const u32 *tileMap;
     u32 unused;
     u16 textColor;
     u16 textShadow;
@@ -443,7 +442,7 @@ static const struct MailLayout sMailLayouts_Tall[] = {
     },
 };
 
-void ReadMail(struct Mail *mail, void (*exitCallback)(void), bool8 hasText)
+void ReadMail(struct Mail *mail, MainCallback exitCallback, bool8 hasText)
 {
     u16 buffer[2];
     u16 species;
@@ -551,9 +550,7 @@ static bool8 MailReadBuildGraphics(void)
             break;
         case 9:
             if (FreeTempTileDataBuffersIfPossible())
-            {
                 return FALSE;
-            }
             break;
         case 10:
             FillBgTilemapBufferRect_Palette0(0, 0, 0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
@@ -567,23 +564,20 @@ static bool8 MailReadBuildGraphics(void)
             break;
         case 12:
             LoadPalette(GetOverworldTextboxPalettePtr(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+            gPlttBufferUnfaded[BG_PLTT_ID(15) + 10] = sMailGraphics[sMailRead->mailType].textColor;
+            gPlttBufferFaded[BG_PLTT_ID(15) + 10] = sMailGraphics[sMailRead->mailType].textColor;
+            gPlttBufferUnfaded[BG_PLTT_ID(15) + 11] = sMailGraphics[sMailRead->mailType].textShadow;
+            gPlttBufferFaded[BG_PLTT_ID(15) + 11] = sMailGraphics[sMailRead->mailType].textShadow;
 
-            gPlttBufferUnfaded[250] = sMailGraphics[sMailRead->mailType].textColor;
-            gPlttBufferFaded[250] = sMailGraphics[sMailRead->mailType].textColor;
-            gPlttBufferUnfaded[251] = sMailGraphics[sMailRead->mailType].textShadow;
-            gPlttBufferFaded[251] = sMailGraphics[sMailRead->mailType].textShadow;
             LoadPalette(sMailGraphics[sMailRead->mailType].palette, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-
-            gPlttBufferUnfaded[10] = sBgColors[gSaveBlock2Ptr->playerGender][0];
-            gPlttBufferFaded[10] = sBgColors[gSaveBlock2Ptr->playerGender][0];
-            gPlttBufferUnfaded[11] = sBgColors[gSaveBlock2Ptr->playerGender][1];
-            gPlttBufferFaded[11] = sBgColors[gSaveBlock2Ptr->playerGender][1];
+            gPlttBufferUnfaded[BG_PLTT_ID(0) + 10] = sBgColors[gSaveBlock2Ptr->playerGender][0];
+            gPlttBufferFaded[BG_PLTT_ID(0) + 10] = sBgColors[gSaveBlock2Ptr->playerGender][0];
+            gPlttBufferUnfaded[BG_PLTT_ID(0) + 11] = sBgColors[gSaveBlock2Ptr->playerGender][1];
+            gPlttBufferFaded[BG_PLTT_ID(0) + 11] = sBgColors[gSaveBlock2Ptr->playerGender][1];
             break;
         case 13:
             if (sMailRead->hasText)
-            {
                 BufferMailText();
-            }
             break;
         case 14:
             if (sMailRead->hasText)
